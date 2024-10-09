@@ -1,6 +1,15 @@
 // src/app/api/mlbb/details/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import dataJSON from "@/lib/data/ids.json"
+import dataJSON from "@/lib/data/ids.json";
+
+type sub_hero_types = {
+  heroid: string,
+  hero: {
+    data: { head: string }
+  },
+  hero_win_rate: string,
+  increase_win_rate: string
+}
 
 async function fetchData(match_type: string, hero_id: string | null) {
   const url = 'https://api.gms.moontontech.com/api/gms/source/2669606/2756569';
@@ -54,13 +63,13 @@ export async function GET(request: NextRequest) {
         appearance_rate: counters.main_hero_appearance_rate,
         ban_rate: counters.main_hero_ban_rate,
         win_rate: counters.main_hero_win_rate,
-        most_efficient_counters: counters.sub_hero.map((hero: unknown) => ({
+        most_efficient_counters: counters.sub_hero.map((hero: sub_hero_types) => ({
           heroid: hero.heroid,
           head: hero.hero.data.head,
           hero_win_rate: hero.hero_win_rate,
           increase_win_rate: hero.increase_win_rate
         })),
-        least_efficient_counters: counters.sub_hero_last.map((hero: unknown) => ({
+        least_efficient_counters: counters.sub_hero_last.map((hero: sub_hero_types) => ({
           heroid: hero.heroid,
           head: hero.hero.data.head,
           hero_win_rate: hero.hero_win_rate,
@@ -74,13 +83,13 @@ export async function GET(request: NextRequest) {
         appearance_rate: compatibilities.main_hero_appearance_rate,
         ban_rate: compatibilities.main_hero_ban_rate,
         win_rate: compatibilities.main_hero_win_rate,
-        most_compatible: compatibilities.sub_hero.map((hero: unknown) => ({
+        most_compatible: compatibilities.sub_hero.map((hero: sub_hero_types) => ({
           heroid: hero.heroid,
           head: hero.hero.data.head,
           hero_win_rate: hero.hero_win_rate,
           increase_win_rate: hero.increase_win_rate
         })),
-        least_compatible: compatibilities.sub_hero_last.map((hero: unknown) => ({
+        least_compatible: compatibilities.sub_hero_last.map((hero: sub_hero_types) => ({
           heroid: hero.heroid,
           head: hero.hero.data.head,
           hero_win_rate: hero.hero_win_rate,
@@ -97,5 +106,5 @@ export async function GET(request: NextRequest) {
 
 
 function getRank (rankId: string) {
-  return dataJSON["rank"][rankId];
+  return dataJSON.rank[rankId as keyof typeof dataJSON.rank] || "Unknown";
 }
