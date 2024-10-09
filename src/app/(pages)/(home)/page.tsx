@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { SearchBar } from "@/components/home/SearchBar"
 import { Loader } from "@/components/Loader"
-import {HeroDetails as HeroDetailsType, HeroInfo, MetaHeroesType} from "@/lib/types"
+import {HeroDetails as HeroDetailsType, HeroInfo, MetaHeroesType, StatsType} from "@/lib/types"
 import { HeroData } from "@/components/home/HeroData"
 import { RankSelector } from "@/components/home/RankSelector"
 import { Button } from "@/components/ui/button"
@@ -20,19 +20,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [recentSearches, setRecentSearches] = useState<Array<{id: string | number, name: string}>>([])
   const [metaHeroes, setMetaHeroes] = useState<MetaHeroesType[]>([])
-  const [stats, setStats] = useState<{
-    totalHeroes: number,
-    mostBanned: string,
-    mostWin: string,
-    winRate: number,
-    banRate: number,
-  }>({
-    totalHeroes: -1,
-    mostBanned: "N/A",
-    mostWin: "N/A",
-    winRate: -1,
-    banRate: -1,
-  })
+  const [stats, setStats] = useState<StatsType | null>(null)
 
   useEffect(() => {
     // Load recent searches from localStorage
@@ -145,6 +133,8 @@ export default function Home() {
   }
 
   const Stats = () => {
+    if (!stats) return null
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="bg-blue-800 text-white">
@@ -163,6 +153,13 @@ export default function Home() {
               <Shield className="h-4 w-4 text-blue-200"/>
             </CardHeader>
             <CardContent>
+              <Image
+                  src={stats.mostBannedHead}
+                  alt={stats.mostBanned}
+                  width={60}
+                  height={60}
+                  className="rounded-full"
+              />
               <div className="text-2xl font-bold">{stats.mostBanned}</div>
               <p className="text-xs text-blue-200">{Number(stats.banRate).toFixed(2)}% ban rate across all ranks</p>
             </CardContent>
@@ -173,6 +170,13 @@ export default function Home() {
               <Sword className="h-4 w-4 text-blue-200"/>
             </CardHeader>
             <CardContent>
+              <Image
+                  src={stats.mostWinHead}
+                  alt={stats.mostWin}
+                  width={60}
+                  height={60}
+                  className="rounded-full"
+              />
               <div className="text-2xl font-bold">{stats.mostWin}</div>
               <p className="text-xs text-blue-200">{Number(stats.winRate).toFixed(2)}% win rate across all ranks</p>
             </CardContent>
