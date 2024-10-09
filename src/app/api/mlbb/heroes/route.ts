@@ -2,18 +2,19 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_BASE_URL = process.env.MLBB_API_BASE_URL;
+const baseUrl = process.env.MLBB_API_BASE_URL;
+const firstId = process.env.MLBB_FIRST_ID || "/2669606";
+const secondId = process.env.MLBB_SECOND_ID_HEROES || "/2756564";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const heroId = searchParams.get('id');
   try {
-    let url: string;
     let requestBody: unknown;
+    const url = baseUrl + firstId + secondId;
 
     if (heroId) {
       // Fetch details for a specific hero
-      url = `${API_BASE_URL}/2669606/2756564`;
       requestBody = {
         pageSize: 1,
         filters: [
@@ -29,7 +30,6 @@ export async function GET(request: NextRequest) {
       };
     } else {
       // Fetch list of all heroes
-      url = `${API_BASE_URL}/2669606/2756564`;
       requestBody = {
         pageSize: 30,
         filters: [],
