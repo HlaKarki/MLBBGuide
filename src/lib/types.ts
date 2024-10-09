@@ -83,3 +83,13 @@ export type MetaHeroesType = {
   head: string,
   name: string,
 }
+
+export type StatsType = {
+  totalHeroes: string,
+  mostWin: string,
+  mostWinHead: string,
+  mostBanned: string,
+  mostBannedHead: string,
+  banRate: string,
+  winRate: string,
+}
