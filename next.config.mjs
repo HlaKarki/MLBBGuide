@@ -8,6 +8,12 @@ const nextConfig = {
                 port: '',
                 pathname: '/web/svnres/img/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'akmweb.youngjoygame.com',
+                port: '',
+                pathname: '/web/**',
+            },
         ],
     },
 };
