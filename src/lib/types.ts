@@ -13,8 +13,8 @@ type CountersData = {
   appearance_rate: number;
   ban_rate: number;
   win_rate: number;
-  most_efficient_counters: Info[];
-  least_efficient_counters: Info[];
+  counters: Info[];
+  most_countered_by: Info[];
 };
 
 type CompatibilitiesData = {
@@ -42,6 +42,7 @@ type Relation = {
 };
 
 export type HeroInfo = {
+  name: string;
   head: string;
   head_big: string;
   square_head: string;
