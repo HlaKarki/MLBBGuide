@@ -1,4 +1,4 @@
-// src/app/api/heroes/route.ts
+// src/app/api/mlbb/heroes/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -64,6 +64,7 @@ export async function GET(request: NextRequest) {
     const parsedData = data["data"]["records"][0]["data"]
 
     const processedData = {
+      name: parsedData.hero.data.name,
       head: parsedData.head,
       head_big: parsedData.head_big,
       square_head: parsedData.hero.data.squarehead,
