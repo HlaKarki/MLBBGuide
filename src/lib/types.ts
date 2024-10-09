@@ -59,3 +59,27 @@ export type HeroInfo = {
     weak_against: Relation;
   };
 };
+
+
+// meta heroes
+export type MetaHeroesQueryType = {
+  data: {
+    main_hero_ban_rate: string,
+    main_hero_win_rate: string,
+    main_heroid: string,
+    main_hero: {
+      data: {
+        head: string,
+        name: string,
+      }
+    }
+  }
+}
+
+export type MetaHeroesType = {
+  ban_rate: string,
+  win_rate: string,
+  heroid: string,
+  head: string,
+  name: string,
+}
