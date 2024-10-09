@@ -4,13 +4,14 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { SearchBar } from "@/components/home/SearchBar"
 import { Loader } from "@/components/Loader"
-import {HeroDetails as HeroDetailsType, HeroInfo, MetaHeroesType, StatsType} from "@/lib/types"
+import { HeroDetails as HeroDetailsType, HeroInfo, MetaHeroesType, StatsType } from "@/lib/types"
 import { HeroData } from "@/components/home/HeroData"
 import { RankSelector } from "@/components/home/RankSelector"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, Sword, Shield } from 'lucide-react'
+import { RecentSearch } from '@/components/home/RecentSearch'
+import { MetaHeroes } from '@/components/home/MetaHeroes'
+import { Stats } from '@/components/home/Stats'
 
 export default function Home() {
   const [heroDetails, setHeroDetails] = useState<HeroDetailsType | null>(null)
@@ -39,7 +40,7 @@ export default function Home() {
     ])
 
     if (metaHeroes.error || stats.error) {
-      setError("There was an error fetching meta hero data")
+      setError("There was an error fetching hero stats and metadata")
     }
 
     setMetaHeroes(metaHeroes)
@@ -73,116 +74,6 @@ export default function Home() {
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const RecentSearch = () => {
-    return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Searches</CardTitle>
-            <CardDescription>Your last 5 hero searches</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              {recentSearches.map((hero) => (
-                  <Button
-                      key={hero.id}
-                      variant="outline"
-                      onClick={() => fetchHeroDetails(hero.id)}
-                      className="w-full"
-                  >
-                    {hero.name}
-                  </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-    )
-  }
-
-  const MetaHeroes = () => {
-    return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Current Meta Heroes</CardTitle>
-            <CardDescription>Top performing heroes in the current meta</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {metaHeroes.map((hero) => (
-                  <Card key={hero.heroid} className="bg-blue-800 text-white">
-                    <CardHeader className="p-4">
-                      <CardTitle className="text-lg">{hero.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <p className="text-sm text-blue-200">Win Rate: {Number(hero.win_rate).toFixed(2)}%</p>
-                      <Button
-                          variant="secondary"
-                          className="w-full mt-2"
-                          onClick={() => fetchHeroDetails(hero.heroid || "30")}
-                      >
-                        View Details
-                      </Button>
-                    </CardContent>
-                  </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-    )
-  }
-
-  const Stats = () => {
-    if (!stats) return null
-
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-blue-800 text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Heroes</CardTitle>
-              <Users className="h-4 w-4 text-blue-200"/>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalHeroes}</div>
-              <p className="text-xs text-blue-200">+2 since last update</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-blue-800 text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Most Banned</CardTitle>
-              <Shield className="h-4 w-4 text-blue-200"/>
-            </CardHeader>
-            <CardContent>
-              <Image
-                  src={stats.mostBannedHead}
-                  alt={stats.mostBanned}
-                  width={60}
-                  height={60}
-                  className="rounded-full"
-              />
-              <div className="text-2xl font-bold">{stats.mostBanned}</div>
-              <p className="text-xs text-blue-200">{Number(stats.banRate).toFixed(2)}% ban rate across all ranks</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-blue-800 text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Highest Win Rate</CardTitle>
-              <Sword className="h-4 w-4 text-blue-200"/>
-            </CardHeader>
-            <CardContent>
-              <Image
-                  src={stats.mostWinHead}
-                  alt={stats.mostWin}
-                  width={60}
-                  height={60}
-                  className="rounded-full"
-              />
-              <div className="text-2xl font-bold">{stats.mostWin}</div>
-              <p className="text-xs text-blue-200">{Number(stats.winRate).toFixed(2)}% win rate across all ranks</p>
-            </CardContent>
-          </Card>
-        </div>
-    )
   }
 
   return (
@@ -224,14 +115,14 @@ export default function Home() {
             )}
           </TabsContent>
           <TabsContent value="recent-searches">
-            <RecentSearch/>
+            <RecentSearch recentSearches={recentSearches} onHeroSelect={fetchHeroDetails} />
           </TabsContent>
           <TabsContent value="meta-heroes">
-            <MetaHeroes/>
+            <MetaHeroes metaHeroes={metaHeroes} onHeroSelect={fetchHeroDetails} />
           </TabsContent>
         </Tabs>
 
-        <Stats/>
+        <Stats stats={stats} />
 
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Need More Help?</h2>
@@ -243,10 +134,10 @@ export default function Home() {
               Join Community
             </Button>
             <Button variant="outline">
-            Report Bug
-          </Button>
+              Report Bug
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
   )
 }
