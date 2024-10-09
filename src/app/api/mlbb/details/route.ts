@@ -11,8 +11,12 @@ type sub_hero_types = {
   increase_win_rate: string
 }
 
+const baseUrl = process.env.MLBB_API_BASE_URL || "";
+const firstId = process.env.MLBB_FIRST_ID || "/2669606"
+const secondId = process.env.MLBB_SECOND_ID_DETAILS || "/2756569"
+
 async function fetchData(match_type: string, hero_id: string | null, rank: string | null) {
-  const url = 'https://api.gms.moontontech.com/api/gms/source/2669606/2756569';
+  const url = baseUrl + firstId + secondId;
   const payload = {
     pageSize: 20,
     filters: [
