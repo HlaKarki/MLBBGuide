@@ -4,6 +4,7 @@ import React, {useCallback, useEffect, useState} from 'react'
 import { motion } from 'framer-motion'
 import {Stats} from "@/components/search/Stats";
 import {StatsType} from "@/lib/types";
+import StatsTemp from "@/app/(pages)/(home)/Stats";
 
 export default function Home() {
   const [stats, setStats] = useState<StatsType | null>(null)
@@ -36,7 +37,8 @@ export default function Home() {
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.5, delay: 0.4}}
         >
-          <Stats stats={stats}/>
+          {/*<Stats stats={stats}/>*/}
+          <StatsTemp />
         </motion.div>
       </div>
   )
