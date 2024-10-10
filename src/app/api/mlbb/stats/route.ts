@@ -23,6 +23,7 @@ export async function fetchStats(sortField: string, count: number) {
       "main_hero_ban_rate",
       "main_hero_win_rate",
       "main_heroid",
+      "main_hero_appearance_rate"
     ]
   };
 
@@ -40,15 +41,16 @@ export async function fetchStats(sortField: string, count: number) {
 }
 
 export async function GET() {
-  console.log("secondId: ", secondId);
   try {
-    const [banRateData, winRateData] = await Promise.all([
+    const [banRateData, winRateData, pickRateData] = await Promise.all([
       fetchStats("main_hero_ban_rate", 1),
-      fetchStats("main_hero_win_rate", 1)
+      fetchStats("main_hero_win_rate", 1),
+      fetchStats("main_hero_appearance_rate", 1)
     ]);
 
     const mostBannedHero = banRateData.data.records[0];
     const mostWinningHero = winRateData.data.records[0];
+    const mostPickedHero = pickRateData.data.records[0];
 
     return NextResponse.json({
       totalHeroes: banRateData.data.total,
@@ -56,8 +58,11 @@ export async function GET() {
       mostWinHead: mostWinningHero.data.main_hero.data.head,
       mostBanned: mostBannedHero.data.main_hero.data.name,
       mostBannedHead: mostBannedHero.data.main_hero.data.head,
+      mostPicked: mostPickedHero.data.main_hero.data.name,
+      mostPickedHead: mostPickedHero.data.main_hero.data.head,
       banRate: mostBannedHero.data.main_hero_ban_rate,
       winRate: mostWinningHero.data.main_hero_win_rate,
+      pickRate: mostPickedHero.data.main_hero_appearance_rate,
     });
 
   } catch (error) {
