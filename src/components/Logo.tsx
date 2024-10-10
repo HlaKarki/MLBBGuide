@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 export function Logo({className} : { className: string}) {
   return (
-      <a href={"/"}>
+      <Link href={"/"}>
         <svg className={className} width="803" height="585" viewBox="0 0 803 585" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M332 249L362 263.643V372L332 351.61V249Z" fill="url(#paint0_linear_1_2)"/>
           <path d="M332.003 233.712L332.019 251.038L407 314.519L407 296.198L332.003 233.712Z"
@@ -243,6 +245,6 @@ export function Logo({className} : { className: string}) {
             </linearGradient>
           </defs>
         </svg>
-      </a>
+      </Link>
   )
 }
