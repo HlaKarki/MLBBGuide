@@ -76,22 +76,34 @@ export function HeroData({ details, info }: CombinedHeroProps) {
                 if (lane && lane !== "") {
                   return (
                       <span key={index} className="bg-green-600 text-white px-2 py-1 rounded text-sm flex items-center">
-                    <MapPin className="w-4 h-4 mr-1"/>
-                          {lane}
+                        <MapPin className="w-4 h-4 mr-1"/>
+                        {lane}
                     </span>
                   )
                 }
               })}
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-              {info.stats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-2xl font-bold">{stat}</div>
-                    <div className="text-sm text-blue-200">
-                      {['Durability', 'Offense', 'Ability Effects', 'Difficulty'][index]}
+              {
+                Object.keys(info.stats).map((stat, index) => {
+                  return (
+                    <div key={index} className="text-center">
+                      <div className="text-2xl font-bold">{stat}</div>
+                      <div className="text-sm text-blue-200">
+                        {info.stats[stat as keyof typeof info.stats]}
+                      </div>
                     </div>
-                  </div>
-              ))}
+                  )
+                })
+              }
+              {/*{info.stats.map((stat, index) => (*/}
+              {/*    <div key={index} className="text-center">*/}
+              {/*      <div className="text-2xl font-bold">{stat}</div>*/}
+              {/*      <div className="text-sm text-blue-200">*/}
+              {/*        {['Durability', 'Offense', 'Ability Effects', 'Difficulty'][index]}*/}
+              {/*      </div>*/}
+              {/*    </div>*/}
+              {/*))}*/}
             </div>
           </div>
         </div>
