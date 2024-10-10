@@ -90,6 +90,9 @@ export type StatsType = {
   mostWinHead: string,
   mostBanned: string,
   mostBannedHead: string,
+  mostPicked: string,
+  mostPickedHead: string,
   banRate: string,
   winRate: string,
+  pickRate: string
 }
