@@ -6,13 +6,13 @@ import { SearchBar } from "@/components/home/SearchBar"
 import { Loader } from "@/components/Loader"
 import { HeroDetails as HeroDetailsType, HeroInfo, MetaHeroesType, StatsType } from "@/lib/types"
 import { HeroData } from "@/components/home/HeroData"
-import { RankSelector } from "@/components/home/RankSelector"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RecentSearch } from '@/components/home/RecentSearch'
 import { MetaHeroes } from '@/components/home/MetaHeroes'
 import { Stats } from '@/components/home/Stats'
 import { motion } from 'framer-motion'
+import RankSelector from "@/components/home/RankSelector";
 
 export default function Home() {
   const [heroDetails, setHeroDetails] = useState<HeroDetailsType | null>(null)
@@ -23,6 +23,7 @@ export default function Home() {
   const [recentSearches, setRecentSearches] = useState<Array<{id: string | number, name: string}>>([])
   const [metaHeroes, setMetaHeroes] = useState<MetaHeroesType[]>([])
   const [stats, setStats] = useState<StatsType | null>(null)
+  const [selectedHero, setSelectedHero] = useState<{ id: number, name: string } | null>(null)
 
   useEffect(() => {
     // Load recent searches from localStorage
@@ -48,24 +49,26 @@ export default function Home() {
     setStats(stats)
   }
 
-  const fetchHeroDetails = useCallback( async (heroId: number | string) => {
+  const fetchHeroDetails = useCallback(async (heroId: number | string, rank?: number) => {
     setIsLoading(true)
     setError(null)
     try {
       const [heroInfoResponse, heroDetailsResponse] = await Promise.all([
         fetch(`/api/mlbb/heroes?id=${heroId}`).then(res => res.json()),
-        fetch(`/api/mlbb/details?hero_id=${heroId}&rank=${selectedRank}`).then(res => res.json())
+        fetch(`/api/mlbb/details?hero_id=${heroId}&rank=${rank ? rank : selectedRank}`).then(res => res.json())
       ])
 
       if (heroInfoResponse.error || heroDetailsResponse.error) {
         return setError("There is no info for this hero for this rank")
       }
 
+      console.log("rank: ", heroDetailsResponse.counters.rank)
       setHeroInfo(heroInfoResponse)
       setHeroDetails(heroDetailsResponse)
+      setSelectedHero({ id: Number(heroId), name: heroDetailsResponse.counters.name })
 
       // Update recent searches
-      const newSearch = { name: heroDetailsResponse.counters.name, id: heroId, }
+      const newSearch = { name: heroDetailsResponse.counters.name, id: heroId }
       const updatedSearches = [newSearch, ...recentSearches.filter(h => h.id !== heroId)].slice(0, 5)
       setRecentSearches(updatedSearches)
       localStorage.setItem('recentSearches', JSON.stringify(updatedSearches))
@@ -75,7 +78,14 @@ export default function Home() {
     } finally {
       setIsLoading(false)
     }
-  }, [selectedRank])
+  }, [recentSearches, selectedRank])
+
+  const handleRankChange = useCallback((newRank: number) => {
+    setSelectedRank(newRank)
+    if (selectedHero) {
+      fetchHeroDetails(selectedHero.id, newRank).catch(console.error)
+    }
+  }, [selectedHero, fetchHeroDetails])
 
 
   return (
@@ -99,59 +109,69 @@ export default function Home() {
           </div>
 
           <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              initial={{opacity: 0, y: 50}}
+              animate={{opacity: 1, y: 0}}
+              transition={{duration: 0.5, delay: 0.2}}
               className="bg-blue-800 bg-opacity-50 rounded-lg p-8 shadow-2xl mb-12"
           >
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-              <SearchBar onHeroSelect={fetchHeroDetails} />
-              <RankSelector selectedRank={selectedRank} onRankChange={setSelectedRank} />
+              <div className="w-full md:w-2/3">
+                <SearchBar onHeroSelect={fetchHeroDetails} selectedHero={selectedHero}/>
+              </div>
+              <div className="w-full md:w-1/3">
+                <RankSelector selectedRank={selectedRank} onRankChange={handleRankChange}/>
+              </div>
             </div>
 
             <Tabs defaultValue="hero-info" className="space-y-6">
               <TabsList className="grid w-full grid-cols-3 bg-blue-700 bg-opacity-50">
-                <TabsTrigger value="hero-info" className="data-[state=active]:bg-blue-600">Hero Info</TabsTrigger>
-                <TabsTrigger value="recent-searches" className="data-[state=active]:bg-blue-600">Recent Searches</TabsTrigger>
-                <TabsTrigger value="meta-heroes" className="data-[state=active]:bg-blue-600">Meta Heroes</TabsTrigger>
+                <TabsTrigger value="hero-info"
+                             className="data-[state=active]:bg-blue-600 text-gray-400 data-[state=active]:text-white">Hero
+                  Info</TabsTrigger>
+                <TabsTrigger value="recent-searches"
+                             className="data-[state=active]:bg-blue-600 text-gray-400 data-[state=active]:text-white">Recent
+                  Searches</TabsTrigger>
+                <TabsTrigger value="meta-heroes"
+                             className="data-[state=active]:bg-blue-600 text-gray-400 data-[state=active]:text-white">Meta
+                  Heroes</TabsTrigger>
               </TabsList>
               <TabsContent value="hero-info">
-                {isLoading && <Loader className="mx-auto mt-8" />}
+                {isLoading && <Loader className="mx-auto mt-8"/>}
                 {error && (
                     <div className="bg-red-600 text-white p-4 rounded-md mt-4">
                       {error}
                     </div>
                 )}
                 {heroDetails && heroInfo && (
-                    <HeroData details={heroDetails} info={heroInfo} />
+                    <HeroData details={heroDetails} info={heroInfo}/>
                 )}
               </TabsContent>
               <TabsContent value="recent-searches">
-                <RecentSearch recentSearches={recentSearches} onHeroSelect={fetchHeroDetails} />
+                <RecentSearch recentSearches={recentSearches} onHeroSelect={fetchHeroDetails}/>
               </TabsContent>
               <TabsContent value="meta-heroes">
-                <MetaHeroes metaHeroes={metaHeroes} onHeroSelect={fetchHeroDetails} />
+                <MetaHeroes metaHeroes={metaHeroes} onHeroSelect={fetchHeroDetails}/>
               </TabsContent>
             </Tabs>
           </motion.div>
 
           <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              initial={{opacity: 0, y: 50}}
+              animate={{opacity: 1, y: 0}}
+              transition={{duration: 0.5, delay: 0.4}}
           >
-            <Stats stats={stats} />
+            <Stats stats={stats}/>
           </motion.div>
 
           <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
+              initial={{opacity: 0, y: 50}}
+              animate={{opacity: 1, y: 0}}
+              transition={{duration: 0.5, delay: 0.6}}
               className="text-center mt-12"
           >
             <h2 className="text-3xl font-bold mb-6 text-yellow-400">Need More Help?</h2>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button variant="outline" className="bg-blue-700 hover:bg-blue-600 text-white">
+            <Button variant="outline" className="bg-blue-700 hover:bg-blue-600 text-white">
                 View Tutorials
               </Button>
               <Button variant="outline" className="bg-blue-700 hover:bg-blue-600 text-white">
