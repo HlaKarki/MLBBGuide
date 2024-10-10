@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 interface RecentSearchProps {
   recentSearches: Array<{id: string | number, name: string}>;
-  onHeroSelect: (heroId: number | string) => void;
+  onHeroSelect: (heroId: number | string, rank?: number) => void;
 }
 
 export const RecentSearch: React.FC<RecentSearchProps> = ({ recentSearches, onHeroSelect }) => {
