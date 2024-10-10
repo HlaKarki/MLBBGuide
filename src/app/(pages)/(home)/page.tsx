@@ -75,7 +75,7 @@ export default function Home() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [selectedRank])
 
 
   return (
