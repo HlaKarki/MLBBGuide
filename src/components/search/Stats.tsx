@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Sword, Shield } from 'lucide-react';
+import {Users, Sword, Shield, Eye, Ban, BicepsFlexed} from 'lucide-react';
 import { StatsType } from "@/lib/types";
 
 interface StatsProps {
@@ -26,7 +26,7 @@ export const Stats: React.FC<StatsProps> = ({ stats }) => {
         <Card className="bg-blue-800 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Most Banned</CardTitle>
-            <Shield className="h-4 w-4 text-blue-200"/>
+            <Ban className="h-4 w-4 text-blue-200"/>
           </CardHeader>
           <CardContent>
             <Image
@@ -37,13 +37,13 @@ export const Stats: React.FC<StatsProps> = ({ stats }) => {
                 className="rounded-full"
             />
             <div className="text-2xl font-bold">{stats.mostBanned}</div>
-            <p className="text-xs text-blue-200">{Number(stats.banRate).toFixed(2)}% ban rate across all ranks</p>
+            <p className="text-xs text-blue-200">{(100 * Number(stats.banRate)).toFixed(2)}% ban rate across all ranks</p>
           </CardContent>
         </Card>
         <Card className="bg-blue-800 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Highest Win Rate</CardTitle>
-            <Sword className="h-4 w-4 text-blue-200"/>
+            <BicepsFlexed className="h-4 w-4 text-blue-200"/>
           </CardHeader>
           <CardContent>
             <Image
@@ -54,7 +54,24 @@ export const Stats: React.FC<StatsProps> = ({ stats }) => {
                 className="rounded-full"
             />
             <div className="text-2xl font-bold">{stats.mostWin}</div>
-            <p className="text-xs text-blue-200">{Number(stats.winRate).toFixed(2)}% win rate across all ranks</p>
+            <p className="text-xs text-blue-200">{(100 * Number(stats.winRate)).toFixed(2)}% win rate across all ranks</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-blue-800 text-white">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Most Picked Hero</CardTitle>
+            <Eye className="h-4 w-4 text-blue-200"/>
+          </CardHeader>
+          <CardContent>
+            <Image
+                src={stats.mostPickedHead}
+                alt={stats.mostPicked}
+                width={60}
+                height={60}
+                className="rounded-full"
+            />
+            <div className="text-2xl font-bold">{stats.mostPicked}</div>
+            <p className="text-xs text-blue-200">{(100 * Number(stats.pickRate)).toFixed(2)}% pick rate across all ranks</p>
           </CardContent>
         </Card>
       </div>
