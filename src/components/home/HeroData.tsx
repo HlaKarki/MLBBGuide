@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Sword, Shield, Users, TrendingUp, TrendingDown, MapPin, Tag } from 'lucide-react'
 import { HeroDetails as HeroDetailsType, HeroInfo } from "@/lib/types"
+import dataJSON from "@/lib/data/ids.json"
 
 interface CombinedHeroProps {
   details: HeroDetailsType;
@@ -52,7 +53,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
                   <div key={index} className="text-center">
                     <div className="text-2xl font-bold">{stat}</div>
                     <div className="text-sm text-blue-200">
-                      {['Damage', 'Durability', 'Utility', 'Difficulty'][index]}
+                      {['Durability', 'Offense', 'Ability Effects', 'Difficulty'][index]}
                     </div>
                   </div>
               ))}
@@ -101,7 +102,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
                     <li key={index} className="flex items-center justify-between">
                       <div className="flex items-center">
                         <Image src={counter.head} alt={`Hero ${counter.heroid}`} width={30} height={30} className="rounded-full mr-2" />
-                        <span>Hero {counter.heroid}</span>
+                        <span>{getHeroName(counter.heroid)}</span>
                       </div>
                       <div className="flex items-center">
                         <TrendingUp className="w-4 h-4 mr-1" />
@@ -118,7 +119,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
                     <li key={index} className="flex items-center justify-between">
                       <div className="flex items-center">
                         <Image src={counter.head} alt={`Hero ${counter.heroid}`} width={30} height={30} className="rounded-full mr-2" />
-                        <span>Hero {counter.heroid}</span>
+                        <span>{getHeroName(counter.heroid)}</span>
                       </div>
                       <div className="flex items-center">
                         <TrendingDown className="w-4 h-4 mr-1" />
@@ -168,7 +169,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
                     <li key={index} className="flex items-center justify-between">
                       <div className="flex items-center">
                         <Image src={hero.head} alt={`Hero ${hero.heroid}`} width={30} height={30} className="rounded-full mr-2" />
-                        <span>Hero {hero.heroid}</span>
+                        <span>{getHeroName(hero.heroid)}</span>
                       </div>
                       <div className="flex items-center">
                         <TrendingUp className="w-4 h-4 mr-1" />
@@ -185,7 +186,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
                     <li key={index} className="flex items-center justify-between">
                       <div className="flex items-center">
                         <Image src={hero.head} alt={`Hero ${hero.heroid}`} width={30} height={30} className="rounded-full mr-2" />
-                        <span>Hero {hero.heroid}</span>
+                        <span>{getHeroName(hero.heroid)}</span>
                       </div>
                       <div className="flex items-center">
                         <TrendingDown className="w-4 h-4 mr-1" />
@@ -238,4 +239,8 @@ export function HeroData({ details, info }: CombinedHeroProps) {
         </div>
       </div>
   )
+}
+
+function getHeroName(id: number) : string {
+  return dataJSON["heroes"][id - 1]["name"] || "Unknown"
 }
