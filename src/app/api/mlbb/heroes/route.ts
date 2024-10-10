@@ -1,6 +1,7 @@
 // src/app/api/mlbb/heroes/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
+import {HeroInfo} from "@/lib/types";
 
 const baseUrl = process.env.MLBB_API_BASE_URL;
 const firstId = process.env.MLBB_FIRST_ID || "/2669606";
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
     const parsedData = data["data"]["records"][0]["data"]
 
-    const processedData = {
+    const processedData: HeroInfo = {
       name: parsedData.hero.data.name,
       head: parsedData.head,
       head_big: parsedData.head_big,
@@ -71,7 +72,12 @@ export async function GET(request: NextRequest) {
       square_head_big: parsedData.hero.data.squareheadbig,
       createdAt: parsedData.hero._createdAt,
       updatedAt: parsedData.hero._updatedAt,
-      stats: parsedData.hero.data.abilityshow,
+      stats: {
+        Durability: parsedData.hero.data.abilityshow[0] || "0",
+        Offense: parsedData.hero.data.abilityshow[1] || "0",
+        "Ability Effects": parsedData.hero.data.abilityshow[2] || "0",
+        Difficulty: parsedData.hero.data.abilityshow[3] || "0"
+      },
       lane: parsedData.hero.data.roadsortlabel,
       type: parsedData.hero.data.speciality,
       title: parsedData.hero.data.story,
