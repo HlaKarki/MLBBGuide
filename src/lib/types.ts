@@ -34,8 +34,6 @@ export type HeroDetails = {
 
 
 // hero info
-type AbilityShow = string[];
-
 type Relation = {
   heads: string[];
   description: string;
@@ -49,7 +47,12 @@ export type HeroInfo = {
   square_head_big: string;
   createdAt: number;
   updatedAt: number;
-  stats: AbilityShow;
+  stats: {
+    Durability: string,
+    Offense: string,
+    "Ability Effects": string,
+    Difficulty: string,
+  };
   lane: string[];
   type: string[];
   title: string;
@@ -95,4 +98,23 @@ export type StatsType = {
   banRate: string,
   winRate: string,
   pickRate: string
+}
+
+// Stats (Table)
+
+export type StatsTable = {
+  id: string
+  name: string
+  head: string
+  winRate: number
+  banRate: number
+  pickRate: number
+  tags: string[]
+  abilities: {
+    Durability: number
+    Offense: number
+    "Ability Effects": number
+    Difficulty: number
+  }
+  lanes: string[]
 }
