@@ -1,4 +1,13 @@
 import React from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const ranks = [
   { id: 1, name: "Warrior" },
@@ -18,18 +27,25 @@ interface RankSelectorProps {
   onRankChange: (rankId: number) => void
 }
 
-export const RankSelector: React.FC<RankSelectorProps> = ({ selectedRank, onRankChange }) => {
+export default function RankSelector({ selectedRank, onRankChange }: RankSelectorProps) {
   return (
-      <select
-          value={selectedRank}
-          onChange={(e) => onRankChange(Number(e.target.value))}
-          className="bg-blue-800 text-white border border-blue-600 rounded-md p-2"
+      <Select
+          defaultValue={selectedRank.toString()}
+          onValueChange={(value) => onRankChange(Number(value))}
       >
-        {ranks.map((rank) => (
-            <option key={rank.id} value={rank.id}>
-              {rank.name}
-            </option>
-        ))}
-      </select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select a rank" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Rank</SelectLabel>
+            {ranks.map((rank) => (
+                <SelectItem key={rank.id} value={rank.id.toString()}>
+                  {rank.name}
+                </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
   )
 }
