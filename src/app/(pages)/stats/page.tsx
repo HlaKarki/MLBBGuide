@@ -2,13 +2,13 @@
 
 import React, {useCallback, useEffect, useState} from 'react'
 import { motion } from 'framer-motion'
-import {StatsType} from "@/lib/types";
-import StatsTemp from "@/app/(pages)/stats/Stats";
+import {StatsTable } from "@/lib/types";
+import ImprovedStatsTable from "@/app/(pages)/stats/Stats";
 
-export default function Home() {
-  const [stats, setStats] = useState<StatsType | null>(null)
+export default function Statistics() {
+  const [stats, setStats] = useState<StatsTable[] | []>([])
   const fetchStats = useCallback(async  () => {
-    const response = await fetch("/api/mlbb/stats")
+    const response = await fetch("/api/mlbb/stats?hla=1")
     const stats = await response.json()
 
     if (stats.errors) {return}
@@ -28,7 +28,7 @@ export default function Home() {
             transition={{duration: 0.5, delay: 0.4}}
         >
           {/*<Stats stats={stats}/>*/}
-          <StatsTemp />
+          <ImprovedStatsTable stats={stats}/>
         </motion.div>
       </div>
   )
