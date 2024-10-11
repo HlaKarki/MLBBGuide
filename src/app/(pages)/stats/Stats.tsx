@@ -33,68 +33,9 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
-import {Progress} from "@/components/ui/progress";
-import {StatsTable} from "@/lib/types";
-
-
-// Stub data for 5 heroes
-const data: StatsTable[] = [
-  {
-    id: "1",
-    name: "Miya",
-    head: "/placeholder.svg?height=40&width=40",
-    winRate: 52.5,
-    banRate: 1.2,
-    pickRate: 8.7,
-    tags: ["Marksman", "Burst"],
-    abilities: { Durability: 2, Offense: 8, "Ability Effects": 5, Difficulty: 2 },
-    lanes: ["Gold"],
-  },
-  {
-    id: "2",
-    name: "Tigreal",
-    head: "/placeholder.svg?height=40&width=40",
-    winRate: 50.1,
-    banRate: 0.5,
-    pickRate: 5.2,
-    tags: ["Tank", "Crowd Control"],
-    abilities: { Durability: 9, Offense: 3, "Ability Effects": 7, Difficulty: 3 },
-    lanes: ["Roam"],
-  },
-  {
-    id: "3",
-    name: "Fanny",
-    head: "/placeholder.svg?height=40&width=40",
-    winRate: 48.3,
-    banRate: 15.7,
-    pickRate: 3.8,
-    tags: ["Assassin", "Mobility"],
-    abilities: { Durability: 4, Offense: 9, "Ability Effects": 6, Difficulty: 10 },
-    lanes: ["Jungle"],
-  },
-  {
-    id: "4",
-    name: "Nana",
-    head: "/placeholder.svg?height=40&width=40",
-    winRate: 51.8,
-    banRate: 2.3,
-    pickRate: 6.5,
-    tags: ["Mage", "Support"],
-    abilities: { Durability: 3, Offense: 6, "Ability Effects": 8, Difficulty: 4 },
-    lanes: ["Mid", "Roam"],
-  },
-  {
-    id: "5",
-    name: "Chou",
-    head: "/placeholder.svg?height=40&width=40",
-    winRate: 49.7,
-    banRate: 3.1,
-    pickRate: 7.2,
-    tags: ["Fighter", "Crowd Control"],
-    abilities: { Durability: 6, Offense: 7, "Ability Effects": 5, Difficulty: 7 },
-    lanes: ["Exp", "Jungle"],
-  },
-]
+import {Progress} from "@/components/ui/progress"
+import {StatsTable} from "@/lib/types"
+import {useEffect} from "react";
 
 const AbilityBar = ({ value, label }: { value: number; label: string; color?: string }) => (
     <TooltipProvider>
@@ -112,6 +53,8 @@ const AbilityBar = ({ value, label }: { value: number; label: string; color?: st
     </TooltipProvider>
 )
 
+const formatPercentage = (value: number) => (value * 100).toFixed(2) + '%'
+
 export const columns: ColumnDef<StatsTable>[] = [
   {
     accessorKey: "name",
@@ -128,7 +71,7 @@ export const columns: ColumnDef<StatsTable>[] = [
     ),
   },
   {
-    accessorKey: "winRate",
+    accessorKey: "win_rate",
     header: ({ column }) => (
         <Button
             variant="ghost"
@@ -138,10 +81,10 @@ export const columns: ColumnDef<StatsTable>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("winRate")}%</div>,
+    cell: ({ row }) => <div>{formatPercentage(row.getValue("win_rate"))}</div>,
   },
   {
-    accessorKey: "banRate",
+    accessorKey: "ban_rate",
     header: ({ column }) => (
         <Button
             variant="ghost"
@@ -151,10 +94,10 @@ export const columns: ColumnDef<StatsTable>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("banRate")}%</div>,
+    cell: ({ row }) => <div>{formatPercentage(row.getValue("ban_rate"))}</div>,
   },
   {
-    accessorKey: "pickRate",
+    accessorKey: "pick_rate",
     header: ({ column }) => (
         <Button
             variant="ghost"
@@ -164,10 +107,10 @@ export const columns: ColumnDef<StatsTable>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
     ),
-    cell: ({ row }) => <div>{row.getValue("pickRate")}%</div>,
+    cell: ({ row }) => <div>{formatPercentage(row.getValue("pick_rate"))}</div>,
   },
   {
-    accessorKey: "tags",
+    accessorKey: "speciality",
     header: ({ column }) => {
       return (
           <DropdownMenu>
@@ -178,11 +121,11 @@ export const columns: ColumnDef<StatsTable>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {Array.from(new Set(data.flatMap(hero => hero.tags))).map((tag) => (
+              {Array.from(new Set(column.getFacetedUniqueValues())).map((tag) => (
                   <DropdownMenuCheckboxItem
-                      key={tag}
+                      key={tag as string}
                       className="capitalize"
-                      checked={(column.getFilterValue() as string[] | undefined)?.includes(tag) ?? false}
+                      checked={(column.getFilterValue() as string[] | undefined)?.includes(tag as string) ?? false}
                       onCheckedChange={(value) => {
                         const filterValue = (column.getFilterValue() as string[] | undefined) ?? []
                         if (value) {
@@ -192,7 +135,7 @@ export const columns: ColumnDef<StatsTable>[] = [
                         }
                       }}
                   >
-                    {tag}
+                    {tag as string}
                   </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>
@@ -205,7 +148,7 @@ export const columns: ColumnDef<StatsTable>[] = [
     },
     cell: ({ row }) => (
         <div className="flex flex-wrap gap-1">
-          {(row.getValue("tags") as string[]).map((tag) => (
+          {(row.getValue("speciality") as string[]).filter(Boolean).map((tag) => (
               <Badge key={tag} variant="secondary">
                 {tag}
               </Badge>
@@ -228,7 +171,6 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities.Durability}
             label="Durability"
-            color="bg-blue-500"
         />
     ),
   },
@@ -247,7 +189,6 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities.Offense}
             label="Offense"
-            color="bg-red-500"
         />
     ),
   },
@@ -266,7 +207,6 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities["Ability Effects"]}
             label="Ability Effects"
-            color="bg-purple-500"
         />
     ),
   },
@@ -285,19 +225,25 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities.Difficulty}
             label="Difficulty"
-            color="bg-yellow-500"
         />
     ),
   },
 ]
 
-export default function StatsTemp() {
+interface StatsTableProps {
+  stats: StatsTable[]
+}
+
+export default function StatsTableComponent({ stats }: StatsTableProps) {
+  useEffect(() => {
+    console.log("In table component: ", stats)
+  }, [stats]);
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
 
   const table = useReactTable({
-    data,
+    data: stats,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -312,6 +258,12 @@ export default function StatsTemp() {
       columnVisibility,
     },
   })
+
+  // Generate unique speciality tags from the passed stats
+  const uniqueSpecialities = React.useMemo(() =>
+          Array.from(new Set(stats.flatMap(hero => hero.speciality))),
+      [stats]
+  )
 
   return (
       <div className="w-full">
