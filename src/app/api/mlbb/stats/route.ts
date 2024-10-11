@@ -1,46 +1,17 @@
 // src/app/api/mlbb/stats/route.ts
-import { NextResponse } from "next/server";
+import {NextRequest, NextResponse} from "next/server";
+import {fetchStats} from "@/app/api/mlbb/fetches";
 
-const baseUrl = process.env.MLBB_API_BASE_URL || "";
-const firstId = process.env.MLBB_FIRST_ID || "/2669606";
-const secondId = process.env.MLBB_SECOND_ID_META_HEROES || "/2756567";
+export async function GET(request: NextRequest) {
+  const all = Number(request.nextUrl.searchParams.get("hla"))
 
-export async function fetchStats(sortField: string, count: number) {
-  const url = baseUrl + firstId + secondId;
-  const payload = {
-    pageSize: count,
-    filters: [
-      { field: "bigrank", operator: "eq", value: "101" },
-      { field: "match_type", operator: "eq", value: "0" }
-    ],
-    sorts: [
-      { data: { field: sortField, order: "desc" }, type: "sequence" },
-      { data: { field: "main_heroid", order: "desc" }, type: "sequence" }
-    ],
-    pageIndex: 1,
-    fields: [
-      "main_hero",
-      "main_hero_ban_rate",
-      "main_hero_win_rate",
-      "main_heroid",
-      "main_hero_appearance_rate"
-    ]
-  };
+  if (all) {
+    // fetch meta stats
+    // fetch hero lane + type data "/api/mlbb/heroes
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    return NextResponse.json({message: "ok"})
   }
 
-  return await response.json();
-}
-
-export async function GET() {
   try {
     const [banRateData, winRateData, pickRateData] = await Promise.all([
       fetchStats("main_hero_ban_rate", 1),
@@ -70,3 +41,4 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch hero data' }, { status: 500 });
   }
 }
+
