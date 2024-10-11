@@ -47,7 +47,7 @@ export type HeroInfo = {
   square_head_big: string;
   createdAt: number;
   updatedAt: number;
-  stats: {
+  abilities: {
     Durability: string,
     Offense: string,
     "Ability Effects": string,
@@ -106,10 +106,10 @@ export type StatsTable = {
   id: string
   name: string
   head: string
-  winRate: number
-  banRate: number
-  pickRate: number
-  tags: string[]
+  win_rate: number
+  ban_rate: number
+  pick_rate: number
+  speciality: string[]
   abilities: {
     Durability: number
     Offense: number
