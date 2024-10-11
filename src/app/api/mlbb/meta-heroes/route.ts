@@ -1,7 +1,7 @@
 // src/app/api/mlbb/meta-heroes/route.ts
 import {NextRequest, NextResponse} from "next/server";
 import {MetaHeroesQueryType} from "@/lib/types";
-import {fetchStats} from "@/app/api/mlbb/stats/route";
+import {fetchStats} from "@/app/api/mlbb/fetches";
 
 export async function GET(request: NextRequest) {
   const count = Number(request.nextUrl.searchParams.get("count")) || 5
