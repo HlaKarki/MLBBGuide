@@ -1,6 +1,7 @@
 // src/app/api/mlbb/details/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import dataJSON from "@/lib/data/ids.json";
+import {PayloadType} from "@/lib/types";
 
 type sub_hero_types = {
   heroid: string,
@@ -15,18 +16,27 @@ const baseUrl = process.env.MLBB_API_BASE_URL || "";
 const firstId = process.env.MLBB_FIRST_ID || "/2669606"
 const secondId = process.env.MLBB_SECOND_ID_DETAILS || "/2756569"
 
-async function fetchData(match_type: string, hero_id: string | null, rank: string | null) {
+export async function fetchHeroDetails(match_type: string, hero_id: string | null, rank: string | null, pickRate?: boolean) {
   const url = baseUrl + firstId + secondId;
-  const payload = {
-    pageSize: 20,
+  const payload: PayloadType = {
+    pageSize: hero_id ? 1 : 200,
     filters: [
       { field: "match_type", operator: "eq", value: match_type },
-      { field: "main_heroid", operator: "eq", value: hero_id },
+      hero_id ? { field: "main_heroid", operator: "eq", value: hero_id } : {},
       { field: "bigrank", operator: "eq", value: rank || "101" }
     ],
-    sorts: [],
+    sorts: [{data: {field: 'main_heroid', order: 'desc'}, type: 'sequence'}],
     pageIndex: 1
   };
+
+  if (pickRate) {
+    payload["fields"] = [
+      "data.main_hero_appearance_rate",
+      // "data.main_hero.data.head",
+      // "data.main_hero.data.name",
+      // "data.main_heroid",
+    ]
+  }
 
   const response = await fetch(url, {
     method: 'POST',
@@ -53,8 +63,8 @@ export async function GET(request: NextRequest) {
 
   try {
     const [counterResponse, compatibilityResponse] = await Promise.all([
-      fetchData("0", hero_id, rank),
-      fetchData("1", hero_id, rank)
+      fetchHeroDetails("0", hero_id, rank),
+      fetchHeroDetails("1", hero_id, rank)
     ]);
 
     const counters = counterResponse.data.records[0].data
