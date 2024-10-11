@@ -1,12 +1,13 @@
 // src/app/api/mlbb/meta-heroes/route.ts
-import {NextResponse} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import {MetaHeroesQueryType} from "@/lib/types";
 import {fetchStats} from "@/app/api/mlbb/stats/route";
 
-export async function GET() {
-  try {
-    const data =  await fetchStats("main_hero_ban_rate", 5);
+export async function GET(request: NextRequest) {
+  const count = Number(request.nextUrl.searchParams.get("count")) || 5
 
+  try {
+    const data =  await fetchStats("main_hero_ban_rate", count);
     const processedData = data.data.records.map((record: MetaHeroesQueryType) => {
       return {
         ban_rate: record.data.main_hero_ban_rate,
