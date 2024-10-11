@@ -59,7 +59,7 @@ export const processData = (rawData: RawDataType): Record<string, HeroInfo> => {
       square_head_big: heroData.squareheadbig,
       createdAt: _createdAt,
       updatedAt: _updatedAt,
-      stats: {
+      abilities: {
         Durability: heroData.abilityshow[0] || "0",
         Offense: heroData.abilityshow[1] || "0",
         "Ability Effects": heroData.abilityshow[2] || "0",
