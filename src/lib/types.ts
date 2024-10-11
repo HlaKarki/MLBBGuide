@@ -54,7 +54,7 @@ export type HeroInfo = {
     Difficulty: string,
   };
   lane: string[];
-  type: string[];
+  speciality: string[];
   title: string;
   relation: {
     works_well_with: Relation;
@@ -117,4 +117,19 @@ export type StatsTable = {
     Difficulty: number
   }
   lanes: string[]
+}
+
+export type RawDataType = {
+  data: {
+    records: Record<string, { data: any }>
+  }
+};
+
+
+export interface PayloadType {
+  pageSize: number;
+  filters: Array<{field?: string; operator?: string; value?: string}>;
+  sorts: Array<{data: {field: string; order: string}; type: string}>;
+  pageIndex: number;
+  fields?: string[];
 }
