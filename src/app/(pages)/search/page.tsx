@@ -9,7 +9,6 @@ import { motion } from 'framer-motion'
 import {SearchBar} from "@/components/search/SearchBar";
 import RankSelector from "@/components/search/RankSelector";
 import {HeroData} from "@/components/search/HeroData";
-import {Stats} from "@/components/search/Stats";
 
 export default function Home() {
   const [heroDetails, setHeroDetails] = useState<HeroDetailsType | null>(null)
@@ -18,8 +17,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [recentSearches, setRecentSearches] = useState<Array<{id: string | number, name: string}>>([])
-  const [metaHeroes, setMetaHeroes] = useState<MetaHeroesType[]>([])
-  const [stats, setStats] = useState<StatsType | null>(null)
+  // const [metaHeroes, setMetaHeroes] = useState<MetaHeroesType[]>([])
+  // const [stats, setStats] = useState<StatsType | null>(null)
   const [selectedHero, setSelectedHero] = useState<{ id: number, name: string } | null>(null)
 
   useEffect(() => {
@@ -29,22 +28,22 @@ export default function Home() {
       setRecentSearches(JSON.parse(savedSearches))
     }
 
-    fetchMetaHeroesAndStats().catch(console.error)
+    // fetchMetaHeroesAndStats().catch(console.error)
   }, [])
 
-  const fetchMetaHeroesAndStats = async () => {
-    const [metaHeroes, stats] = await Promise.all([
-      fetch('/api/mlbb/meta-heroes').then(res => res.json()),
-      fetch('/api/mlbb/stats').then(res => res.json()),
-    ])
-
-    if (metaHeroes.error || stats.error) {
-      setError("There was an error fetching hero stats and metadata")
-    }
-
-    setMetaHeroes(metaHeroes)
-    setStats(stats)
-  }
+  // const fetchMetaHeroesAndStats = async () => {
+  //   const [metaHeroes, stats] = await Promise.all([
+  //     fetch('/api/mlbb/meta-heroes').then(res => res.json()),
+  //     fetch('/api/mlbb/stats').then(res => res.json()),
+  //   ])
+  //
+  //   if (metaHeroes.error || stats.error) {
+  //     setError("There was an error fetching hero stats and metadata")
+  //   }
+  //
+  //   setMetaHeroes(metaHeroes)
+  //   setStats(stats)
+  // }
 
   const fetchHeroDetails = useCallback(async (heroId: number | string, rank?: number) => {
     setIsLoading(true)
