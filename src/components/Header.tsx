@@ -12,6 +12,7 @@ export default function Header() {
           </div>
           <nav>
             <ul className="flex space-x-4">
+              <li><Link href="/stats" className={""}>Statistics</Link></li>
               <li><Link href="/search" className={""}>Search</Link></li>
               <li><Link href="/rank-helper" className={""}>Rank Helper</Link></li>
             </ul>
