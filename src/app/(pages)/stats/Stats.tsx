@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, Check, ChevronDown, Filter } from "lucide-react"
+import { ArrowUpDown, Check, ChevronDown, Filter, Sparkles } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -65,9 +65,9 @@ const formatPercentage = (value: number) => (value * 100).toFixed(2) + '%'
 const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
   {
     accessorKey: "name",
-    header: "Hero",
+    header: () => <div className={"text-center"}>Hero</div>,
     cell: ({ row }) => (
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-col justify-center items-center space-y-2">
           <img
               src={row.original.head}
               alt={row.getValue("name")}
@@ -88,7 +88,7 @@ const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
     ),
-    cell: ({ row }) => <div>{formatPercentage(row.getValue("win_rate"))}</div>,
+    cell: ({ row }) => <div className={"text-center"}>{formatPercentage(row.getValue("win_rate"))}</div>,
   },
   {
     accessorKey: "ban_rate",
@@ -101,7 +101,7 @@ const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
     ),
-    cell: ({ row }) => <div>{formatPercentage(row.getValue("ban_rate"))}</div>,
+    cell: ({ row }) => <div className={"text-center"}>{formatPercentage(row.getValue("ban_rate"))}</div>,
   },
   {
     accessorKey: "pick_rate",
@@ -114,7 +114,7 @@ const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
     ),
-    cell: ({ row }) => <div>{formatPercentage(row.getValue("pick_rate"))}</div>,
+    cell: ({ row }) => <div className={"text-center"}>{formatPercentage(row.getValue("pick_rate"))}</div>,
   },
   {
     accessorKey: "speciality",
@@ -123,7 +123,7 @@ const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
           <DropdownMenuTrigger asChild>
             <Button variant="ghost">
               Speciality
-              <Filter className="ml-2 h-4 w-4" />
+              <Sparkles className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
