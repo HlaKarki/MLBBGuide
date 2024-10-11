@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import {ArrowUpDown, ChevronDown, Filter} from "lucide-react"
+import { ArrowUpDown, ChevronDown, Filter } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -32,22 +32,28 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip"
-import {Progress} from "@/components/ui/progress"
-import {StatsTable} from "@/lib/types"
-import {useEffect} from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import {StatsTable} from "@/lib/types";
 
-const AbilityBar = ({ value, label }: { value: number; label: string; color?: string }) => (
+const AbilityBar = ({ value, label, color = "bg-blue-500" }: { value: number; label: string; color?: string }) => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-2">
-            <div className="w-20 text-xs font-medium">{label}</div>
-            <Progress value={value * 10} className="h-2" />
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 relative">
+              <div
+                  className={`${color} h-2.5 rounded-full`}
+                  style={{ width: `${value}%` }}
+              >
+              <span className="absolute inset-0 text-xs flex items-center justify-center text-black font-semibold">
+                {value}%
+              </span>
+              </div>
+            </div>
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{label}: {value}/10</p>
+          <p>{label}: {value}/100</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -55,7 +61,7 @@ const AbilityBar = ({ value, label }: { value: number; label: string; color?: st
 
 const formatPercentage = (value: number) => (value * 100).toFixed(2) + '%'
 
-export const columns: ColumnDef<StatsTable>[] = [
+const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
   {
     accessorKey: "name",
     header: "Hero",
@@ -111,37 +117,35 @@ export const columns: ColumnDef<StatsTable>[] = [
   },
   {
     accessorKey: "speciality",
-    header: ({ column }) => {
-      return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost">
-                Tags
-                <Filter className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {Array.from(new Set(column.getFacetedUniqueValues())).map((tag) => (
-                  <DropdownMenuCheckboxItem
-                      key={tag as string}
-                      className="capitalize"
-                      checked={(column.getFilterValue() as string[] | undefined)?.includes(tag as string) ?? false}
-                      onCheckedChange={(value) => {
-                        const filterValue = (column.getFilterValue() as string[] | undefined) ?? []
-                        if (value) {
-                          column.setFilterValue([...filterValue, tag])
-                        } else {
-                          column.setFilterValue(filterValue.filter((v) => v !== tag))
-                        }
-                      }}
-                  >
-                    {tag as string}
-                  </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-      )
-    },
+    header: ({ column }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost">
+              Speciality
+              <Filter className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {Array.from(new Set(stats.flatMap(hero => hero.speciality))).map((tag) => (
+                <DropdownMenuCheckboxItem
+                    key={tag}
+                    className="capitalize"
+                    checked={(column.getFilterValue() as string[] | undefined)?.includes(tag) ?? false}
+                    onCheckedChange={(value) => {
+                      const filterValue = (column.getFilterValue() as string[] | undefined) ?? []
+                      if (value) {
+                        column.setFilterValue([...filterValue, tag])
+                      } else {
+                        column.setFilterValue(filterValue.filter((v) => v !== tag))
+                      }
+                    }}
+                >
+                  {tag}
+                </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+    ),
     filterFn: (row, id, value: string[] | undefined) => {
       const rowTags = row.getValue(id) as string[]
       return !value || value.length === 0 || value.some(v => rowTags.includes(v))
@@ -171,6 +175,7 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities.Durability}
             label="Durability"
+            color="bg-green-500"
         />
     ),
   },
@@ -189,6 +194,7 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities.Offense}
             label="Offense"
+            color="bg-red-500"
         />
     ),
   },
@@ -207,6 +213,7 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities["Ability Effects"]}
             label="Ability Effects"
+            color="bg-purple-500"
         />
     ),
   },
@@ -225,7 +232,53 @@ export const columns: ColumnDef<StatsTable>[] = [
         <AbilityBar
             value={row.original.abilities.Difficulty}
             label="Difficulty"
+            color="bg-yellow-500"
         />
+    ),
+  },
+  {
+    accessorKey: "lanes",
+    header: ({ column }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost">
+              Lanes
+              <Filter className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {Array.from(new Set(stats.flatMap(hero => hero.lanes))).map((lane) => (
+                <DropdownMenuCheckboxItem
+                    key={lane}
+                    className="capitalize"
+                    checked={(column.getFilterValue() as string[] | undefined)?.includes(lane) ?? false}
+                    onCheckedChange={(value) => {
+                      const filterValue = (column.getFilterValue() as string[] | undefined) ?? []
+                      if (value) {
+                        column.setFilterValue([...filterValue, lane])
+                      } else {
+                        column.setFilterValue(filterValue.filter((v) => v !== lane))
+                      }
+                    }}
+                >
+                  {lane}
+                </DropdownMenuCheckboxItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+    ),
+    filterFn: (row, id, value: string[] | undefined) => {
+      const rowLanes = row.getValue(id) as string[]
+      return !value || value.length === 0 || value.some(v => rowLanes.includes(v))
+    },
+    cell: ({ row }) => (
+        <div className="flex flex-wrap gap-1">
+          {row.original.lanes.map((lane) => (
+              <Badge key={lane} variant="outline">
+                {lane}
+              </Badge>
+          ))}
+        </div>
     ),
   },
 ]
@@ -234,17 +287,15 @@ interface StatsTableProps {
   stats: StatsTable[]
 }
 
-export default function StatsTableComponent({ stats }: StatsTableProps) {
-  useEffect(() => {
-    console.log("In table component: ", stats)
-  }, [stats]);
+export default function Component({ stats }: StatsTableProps = { stats: [] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [rowsPerPage, setRowsPerPage] = React.useState(50)
 
   const table = useReactTable({
     data: stats,
-    columns,
+    columns: columns(stats),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -259,15 +310,13 @@ export default function StatsTableComponent({ stats }: StatsTableProps) {
     },
   })
 
-  // Generate unique speciality tags from the passed stats
-  const uniqueSpecialities = React.useMemo(() =>
-          Array.from(new Set(stats.flatMap(hero => hero.speciality))),
-      [stats]
-  )
+  React.useEffect(() => {
+    table.setPageSize(rowsPerPage)
+  }, [rowsPerPage, table])
 
   return (
       <div className="w-full">
-        <div className="flex items-center py-4">
+        <div className="flex items-center justify-between py-4">
           <Input
               placeholder="Filter heroes..."
               value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -276,32 +325,45 @@ export default function StatsTableComponent({ stats }: StatsTableProps) {
               }
               className="max-w-sm"
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                        <DropdownMenuCheckboxItem
-                            key={column.id}
-                            className="capitalize"
-                            checked={column.getIsVisible()}
-                            onCheckedChange={(value) =>
-                                column.toggleVisibility(!!value)
-                            }
-                        >
-                          {column.id}
-                        </DropdownMenuCheckboxItem>
-                    )
-                  })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  Columns <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                    .getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => {
+                      return (
+                          <DropdownMenuCheckboxItem
+                              key={column.id}
+                              className="capitalize"
+                              checked={column.getIsVisible()}
+                              onCheckedChange={(value) =>
+                                  column.toggleVisibility(value)
+                              }
+                          >
+                            {column.id}
+                          </DropdownMenuCheckboxItem>
+                      )
+                    })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <select
+                value={rowsPerPage}
+                onChange={(e) => setRowsPerPage(Number(e.target.value))}
+                className="border rounded p-1"
+            >
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="rounded-md border">
           <Table>
@@ -347,23 +409,30 @@ export default function StatsTableComponent({ stats }: StatsTableProps) {
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+        <div className="flex items-center justify-between space-x-2 py-4">
+          <div>
+            Showing {table.getState().pagination.pageIndex * rowsPerPage + 1} to{" "}
+            {Math.min((table.getState().pagination.pageIndex + 1) * rowsPerPage, table.getFilteredRowModel().rows.length)}{" "}
+            of {table.getFilteredRowModel().rows.length} entries
+          </div>
+          <div className="space-x-2">
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
   )
