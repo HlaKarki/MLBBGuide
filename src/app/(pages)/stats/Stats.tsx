@@ -13,13 +13,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, Filter } from "lucide-react"
+import { ArrowUpDown, Check, ChevronDown, Filter } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -274,7 +275,7 @@ const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
     cell: ({ row }) => (
         <div className="flex flex-wrap gap-1">
           {row.original.lanes.map((lane) => (
-              <Badge key={lane} variant="outline">
+              <Badge key={lane} variant="secondary">
                 {lane}
               </Badge>
           ))}
@@ -328,7 +329,7 @@ export default function Component({ stats }: StatsTableProps = { stats: [] }) {
           <div className="flex items-center space-x-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" className={"text-black"}>
                   Columns <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -352,17 +353,31 @@ export default function Component({ stats }: StatsTableProps = { stats: [] }) {
                     })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <select
-                value={rowsPerPage}
-                onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                className="border rounded p-1"
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    Show {pageSize}
-                  </option>
-              ))}
-            </select>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className={"text-black"}>
+                  Show {rowsPerPage} <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {[10, 20, 30, 40, 50, 100, 150].map((pageSize) => (
+                    <DropdownMenuItem
+                        key={pageSize}
+                        onClick={() => setRowsPerPage(pageSize)}
+                        className={rowsPerPage === pageSize ? "bg-accent " : ""}
+                    >
+                      <div className={"flex w-full justify-between"}>
+                        <span>Show {pageSize}</span>
+                        <span>
+                          {
+                            rowsPerPage === pageSize && <Check className={"h-4 w-4"}/>
+                          }
+                        </span>
+                      </div>
+                    </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <div className="rounded-md border">
