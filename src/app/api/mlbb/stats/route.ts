@@ -125,11 +125,11 @@ function combineData(
       ban_rate: meta.ban_rate,
       pick_rate: pickRate[index],
       speciality: detail.speciality,
-      stats: {
-        Durability: parseInt(detail.stats.Durability),
-        Offense: parseInt(detail.stats.Offense),
-        "Ability Effects": parseInt(detail.stats["Ability Effects"]),
-        Difficulty: parseInt(detail.stats.Difficulty)
+      abilities: {
+        Durability: parseInt(detail.abilities.Durability),
+        Offense: parseInt(detail.abilities.Offense),
+        "Ability Effects": parseInt(detail.abilities["Ability Effects"]),
+        Difficulty: parseInt(detail.abilities.Difficulty)
       },
       lanes: detail.lane.filter((lane: string) => lane !== "")
     };
