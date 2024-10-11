@@ -60,7 +60,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
           <div>
             <h2 className="text-3xl font-bold mb-2">{info.title}</h2>
             <div className="flex flex-wrap gap-2 mb-4">
-              {info.type.map((type, index) => {
+              {info.speciality.map((type, index) => {
                 if (type && type !== "") {
                   return (
                       <span key={index} className="bg-blue-600 text-white px-2 py-1 rounded text-sm flex items-center">
@@ -85,12 +85,12 @@ export function HeroData({ details, info }: CombinedHeroProps) {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
               {
-                Object.keys(info.stats).map((stat, index) => {
+                Object.keys(info.abilities).map((stat, index) => {
                   return (
                     <div key={index} className="text-center">
                       <div className="text-2xl font-bold">{stat}</div>
                       <div className="text-sm text-blue-200">
-                        {info.stats[stat as keyof typeof info.stats]}
+                        {info.abilities[stat as keyof typeof info.abilities]}
                       </div>
                     </div>
                   )
