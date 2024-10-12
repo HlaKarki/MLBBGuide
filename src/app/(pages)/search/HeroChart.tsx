@@ -1,25 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import {useState, useEffect, useCallback} from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import dataJSON from "@/lib/data/ids.json"
 import {Minus, TrendingDown, TrendingUp} from "lucide-react";
+import {DataPoint, HeroGraphData} from "@/lib/types";
 
-interface DataPoint {
-  date: string
-  win_rate: number
-}
-
-interface HeroData {
-  _createdAt: number
-  _updatedAt: number
-  data: {
-    bigrank: string
-    main_heroid: number
-    win_rate: DataPoint[]
-  }
-}
 
 const heroes = dataJSON.heroes
 
@@ -58,17 +45,13 @@ const CustomTooltip = ({ active, payload, label, data }: any) => {
   return null;
 };
 
-export default function HeroWinRateChart() {
-  const [data, setData] = useState<DataPoint[]>([])
+export default function HeroWinRateChart({graphData} : {graphData: HeroGraphData}) {
+  const [data, setData] = useState<Partial<DataPoint>[]>([])
   const [heroName, setHeroName] = useState<string>('')
 
-  useEffect(() => {
-    const fetchData = async () => {
+    const processData =  useCallback(() => {
       try {
-        const response = await fetch('/api/mlbb/graph?id=1&period=30')
-        const heroData: HeroData = await response.json()
-
-        const processedData = heroData.data.win_rate
+        const processedData = graphData.data.win_rate
             .map(item => ({
               date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
               win_rate: Number((item.win_rate * 100).toFixed(2))
@@ -77,18 +60,19 @@ export default function HeroWinRateChart() {
 
         setData(processedData)
 
-        const hero = heroes.find(h => h.id === heroData.data.main_heroid)
-        setHeroName(hero ? hero.name : `Hero ${heroData.data.main_heroid}`)
+        const hero = heroes.find(h => h.id === graphData.data.main_heroid)
+        setHeroName(hero ? hero.name : `Hero ${graphData.data.main_heroid}`)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
-    }
+  }, [graphData])
 
-    fetchData()
-  }, [])
+  useEffect(() => {
+    processData()
+  }, [graphData, processData])
 
-  const minRate = Math.floor(Math.min(...data.map(d => d.win_rate)) - 0.05)
-  const maxRate = Math.ceil(Math.max(...data.map(d => d.win_rate)) + 0.05)
+  const minRate = Math.floor(Math.min(...data.map(d => d.win_rate || 0)) - 0.01)
+  const maxRate = Math.ceil(Math.max(...data.map(d => d.win_rate || 0)) + 0.01)
 
   return (
       <Card className="w-full bg-gradient-to-br from-blue-900 to-blue-700">
