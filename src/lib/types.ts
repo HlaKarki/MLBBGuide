@@ -133,3 +133,20 @@ export interface PayloadType {
   pageIndex: number;
   fields?: string[];
 }
+
+export interface HeroGraphData {
+  _createdAt: number
+  _updatedAt: number
+  data: {
+    bigrank: string
+    main_heroid: number
+    win_rate: DataPoint[]
+  }
+}
+
+export interface DataPoint {
+  date: string
+  win_rate: number
+  ban_rate: number
+  app_rate: number
+}
