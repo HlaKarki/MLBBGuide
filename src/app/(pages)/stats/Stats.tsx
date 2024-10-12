@@ -34,7 +34,8 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import {StatsTable} from "@/lib/types";
+import {Skeleton} from "@/components/ui/skeleton";
+import {StatsTableType} from "@/lib/types";
 
 const AbilityBar = ({ value, label, color = "bg-blue-500" }: { value: number; label: string; color?: string }) => (
     <TooltipProvider>
@@ -62,7 +63,7 @@ const AbilityBar = ({ value, label, color = "bg-blue-500" }: { value: number; la
 
 const formatPercentage = (value: number) => (value * 100).toFixed(2) + '%'
 
-const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
+const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
   {
     accessorKey: "name",
     header: () => <div className={"text-center"}>Hero</div>,
@@ -285,18 +286,20 @@ const columns = (stats: StatsTable[]): ColumnDef<StatsTable>[] => [
 ]
 
 interface StatsTableProps {
-  stats: StatsTable[]
+  stats: StatsTableType[] | undefined,
+  isLoading: boolean,
+  error: Error | null
 }
 
-export default function Component({ stats }: StatsTableProps = { stats: [] }) {
+export default function StatsTable({ stats, isLoading, error }: StatsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowsPerPage, setRowsPerPage] = React.useState(50)
 
   const table = useReactTable({
-    data: stats,
-    columns: columns(stats),
+    data: stats || [],
+    columns: stats ? columns(stats) : [],
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -311,9 +314,65 @@ export default function Component({ stats }: StatsTableProps = { stats: [] }) {
     },
   })
 
+
   React.useEffect(() => {
     table.setPageSize(rowsPerPage)
   }, [rowsPerPage, table])
+
+  const rows = table.getRowModel().rows
+
+  if (isLoading) {
+    return (
+        <div className="w-full space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-10 w-[250px]" /> {/* Search input skeleton */}
+            <div className="flex space-x-2">
+              <Skeleton className="h-10 w-[100px]" /> {/* Columns button skeleton */}
+              <Skeleton className="h-10 w-[100px]" /> {/* Show rows button skeleton */}
+            </div>
+          </div>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {Array(9).fill(0).map((_, index) => (
+                      <TableHead key={index}>
+                        <Skeleton className="h-8 w-full" />
+                      </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array(10).fill(0).map((_, rowIndex) => (
+                    <TableRow key={rowIndex}>
+                      {Array(9).fill(0).map((_, cellIndex) => (
+                          <TableCell key={cellIndex}>
+                            <Skeleton className="h-10 w-full" />
+                          </TableCell>
+                      ))}
+                    </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-5 w-[250px]" /> {/* Pagination info skeleton */}
+            <div className="flex space-x-2">
+              <Skeleton className="h-8 w-[80px]" /> {/* Previous button skeleton */}
+              <Skeleton className="h-8 w-[80px]" /> {/* Next button skeleton */}
+            </div>
+          </div>
+        </div>
+    )
+  }
+
+  if (error) {
+    return <div className="text-red-500">Error: {error.message}</div>
+  }
+
+  if (!stats) {
+    return <div>No data available</div>
+  }
 
   return (
       <div className="w-full">
@@ -401,8 +460,8 @@ export default function Component({ stats }: StatsTableProps = { stats: [] }) {
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
+              {rows?.length ? (
+                  rows.map((row) => (
                       <TableRow
                           key={row.id}
                           data-state={row.getIsSelected() && "selected"}
