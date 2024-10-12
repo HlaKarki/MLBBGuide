@@ -23,18 +23,6 @@ interface HeroData {
 
 const heroes = dataJSON.heroes
 
-const calculateMovingAverage = (data: DataPoint[], windowSize: number) => {
-  return data.map((point, index, array) => {
-    const start = Math.max(0, index - windowSize + 1)
-    const window = array.slice(start, index + 1)
-    const sum = window.reduce((acc, curr) => acc + curr.win_rate, 0)
-    return {
-      ...point,
-      movingAverage: sum / window.length
-    }
-  })
-}
-
 const CustomTooltip = ({ active, payload, label, data }: any) => {
   if (active && payload && payload.length) {
     const currentIndex = data.findIndex((item: DataPoint) => item.date === label);
@@ -87,8 +75,7 @@ export default function HeroWinRateChart() {
             }))
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
-        const dataWithMovingAverage = calculateMovingAverage(processedData, 7)
-        setData(dataWithMovingAverage)
+        setData(processedData)
 
         const hero = heroes.find(h => h.id === heroData.data.main_heroid)
         setHeroName(hero ? hero.name : `Hero ${heroData.data.main_heroid}`)
