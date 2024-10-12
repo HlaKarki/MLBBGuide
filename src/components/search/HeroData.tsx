@@ -257,5 +257,5 @@ export function HeroData({ details, info }: CombinedHeroProps) {
 }
 
 function getHeroName(id: number) : string {
-  return dataJSON["heroes"][id - 1]["name"] || "Unknown"
+  return dataJSON["heroes"] && dataJSON["heroes"][id - 1] && dataJSON.heroes[id-1]["name"] || "N/A"
 }
