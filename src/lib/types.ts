@@ -102,7 +102,7 @@ export type StatsType = {
 
 // Stats (Table)
 
-export type StatsTable = {
+export type StatsTableType = {
   id: string
   name: string
   head: string
