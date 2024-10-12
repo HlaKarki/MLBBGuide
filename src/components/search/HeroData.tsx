@@ -96,14 +96,6 @@ export function HeroData({ details, info }: CombinedHeroProps) {
                   )
                 })
               }
-              {/*{info.stats.map((stat, index) => (*/}
-              {/*    <div key={index} className="text-center">*/}
-              {/*      <div className="text-2xl font-bold">{stat}</div>*/}
-              {/*      <div className="text-sm text-blue-200">*/}
-              {/*        {['Durability', 'Offense', 'Ability Effects', 'Difficulty'][index]}*/}
-              {/*      </div>*/}
-              {/*    </div>*/}
-              {/*))}*/}
             </div>
           </div>
         </div>
