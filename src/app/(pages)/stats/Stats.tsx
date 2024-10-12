@@ -42,15 +42,12 @@ const AbilityBar = ({ value, label, color = "bg-blue-500" }: { value: number; la
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="flex flex-col items-center gap-2">
-            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 relative">
+            <div className="w-full bg-gray-700 rounded-full h-2.5 relative overflow-hidden">
               <div
-                  className={`${color} h-2.5 rounded-full`}
+                  className={`${color} h-2.5 rounded-full transition-all duration-300 ease-in-out`}
                   style={{ width: `${value}%` }}
-              >
-              <span className="absolute inset-0 text-xs flex items-center justify-center text-black font-semibold">
-                {value}%
-              </span>
-              </div>
+              />
+              {value}
             </div>
           </div>
         </TooltipTrigger>
@@ -323,12 +320,12 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
 
   if (isLoading) {
     return (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-4 animate-pulse">
           <div className="flex items-center justify-between">
-            <Skeleton className="h-10 w-[250px]" /> {/* Search input skeleton */}
+            <Skeleton className="h-10 w-[250px]"/> {/* Search input skeleton */}
             <div className="flex space-x-2">
-              <Skeleton className="h-10 w-[100px]" /> {/* Columns button skeleton */}
-              <Skeleton className="h-10 w-[100px]" /> {/* Show rows button skeleton */}
+              <Skeleton className="h-10 w-[100px]"/> {/* Columns button skeleton */}
+              <Skeleton className="h-10 w-[100px]"/> {/* Show rows button skeleton */}
             </div>
           </div>
           <div className="rounded-md border">
@@ -337,7 +334,7 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
                 <TableRow>
                   {Array(9).fill(0).map((_, index) => (
                       <TableHead key={index}>
-                        <Skeleton className="h-8 w-full" />
+                        <Skeleton className="h-8 w-full"/>
                       </TableHead>
                   ))}
                 </TableRow>
@@ -347,7 +344,7 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
                     <TableRow key={rowIndex}>
                       {Array(9).fill(0).map((_, cellIndex) => (
                           <TableCell key={cellIndex}>
-                            <Skeleton className="h-10 w-full" />
+                            <Skeleton className="h-10 w-full"/>
                           </TableCell>
                       ))}
                     </TableRow>
@@ -356,10 +353,10 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
             </Table>
           </div>
           <div className="flex items-center justify-between">
-            <Skeleton className="h-5 w-[250px]" /> {/* Pagination info skeleton */}
+            <Skeleton className="h-5 w-[250px]"/> {/* Pagination info skeleton */}
             <div className="flex space-x-2">
-              <Skeleton className="h-8 w-[80px]" /> {/* Previous button skeleton */}
-              <Skeleton className="h-8 w-[80px]" /> {/* Next button skeleton */}
+              <Skeleton className="h-8 w-[80px]"/> {/* Previous button skeleton */}
+              <Skeleton className="h-8 w-[80px]"/> {/* Next button skeleton */}
             </div>
           </div>
         </div>
@@ -367,16 +364,24 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
   }
 
   if (error) {
-    return <div className="text-red-500">Error: {error.message}</div>
+    return (
+        <div className="text-red-500 bg-red-100 border border-red-400 rounded-md p-4 my-4">
+          Error: {error.message}
+        </div>
+    )
   }
 
   if (!stats) {
-    return <div>No data available</div>
+    return (
+        <div className="text-gray-500 bg-gray-100 border border-gray-400 rounded-md p-4 my-4">
+          No data available
+        </div>
+    )
   }
 
   return (
-      <div className="w-full">
-        <div className="flex items-center justify-between py-4">
+      <div className="w-full space-y-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
           <Input
               placeholder="Filter heroes..."
               value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -388,11 +393,11 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
           <div className="flex items-center space-x-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className={"text-black"}>
+                <Button variant="outline" className="bg-gray-700 text-gray-100 hover:bg-gray-600">
                   Columns <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-gray-800 text-gray-100">
                 {table
                     .getAllColumns()
                     .filter((column) => column.getCanHide())
@@ -414,24 +419,22 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
             </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className={"text-black"}>
+                <Button variant="outline" className="bg-gray-700 text-gray-100 hover:bg-gray-600">
                   Show {rowsPerPage} <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-gray-800 text-gray-100">
                 {[10, 20, 30, 40, 50, 100, 150].map((pageSize) => (
                     <DropdownMenuItem
                         key={pageSize}
                         onClick={() => setRowsPerPage(pageSize)}
-                        className={rowsPerPage === pageSize ? "bg-accent " : ""}
+                        className={rowsPerPage === pageSize ? "bg-gray-700" : ""}
                     >
-                      <div className={"flex w-full justify-between"}>
+                      <div className="flex w-full justify-between">
                         <span>Show {pageSize}</span>
                         <span>
-                          {
-                            rowsPerPage === pageSize && <Check className={"h-4 w-4"}/>
-                          }
-                        </span>
+                      {rowsPerPage === pageSize && <Check className="h-4 w-4" />}
+                    </span>
                       </div>
                     </DropdownMenuItem>
                 ))}
@@ -439,14 +442,14 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
             </DropdownMenu>
           </div>
         </div>
-        <div className="rounded-md border">
-          <Table>
+        <div className="rounded-md border border-gray-700 overflow-hidden">
+          <Table className="bg-gray-800 text-gray-100">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className="hover:bg-gray-700">
                     {headerGroup.headers.map((header) => {
                       return (
-                          <TableHead key={header.id}>
+                          <TableHead key={header.id} className="text-gray-300">
                             {header.isPlaceholder
                                 ? null
                                 : flexRender(
@@ -465,6 +468,7 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
                       <TableRow
                           key={row.id}
                           data-state={row.getIsSelected() && "selected"}
+                          className="hover:bg-gray-700"
                       >
                         {row.getVisibleCells().map((cell) => (
                             <TableCell key={cell.id}>
@@ -483,8 +487,8 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-between space-x-2 py-4">
-          <div>
+        <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-2 py-4">
+          <div className="text-sm text-gray-400">
             Showing {table.getState().pagination.pageIndex * rowsPerPage + 1} to{" "}
             {Math.min((table.getState().pagination.pageIndex + 1) * rowsPerPage, table.getFilteredRowModel().rows.length)}{" "}
             of {table.getFilteredRowModel().rows.length} entries
@@ -495,6 +499,7 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
                 size="sm"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
+                className="bg-gray-700 text-gray-100 hover:bg-gray-600"
             >
               Previous
             </Button>
@@ -503,6 +508,7 @@ export default function StatsTable({ stats, isLoading, error }: StatsTableProps)
                 size="sm"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
+                className="bg-gray-700 text-gray-100 hover:bg-gray-600"
             >
               Next
             </Button>
