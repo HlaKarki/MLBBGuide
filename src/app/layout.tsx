@@ -3,6 +3,7 @@ import "./styling/globals.css";
 import {Footer} from "@/components/Footer";
 import Header from "@/components/Header";
 import React from "react";
+import QueryClientProvider from "@/app/providers";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,9 +20,11 @@ export default function RootLayout({
       <body
         className={`antialiased min-h-screen flex flex-col justify-between`}
       >
-        <Header />
-        <main className={"flex-grow"}>{children}</main>
-        <Footer />
+      <QueryClientProvider >
+          <Header />
+          <main className={"flex-grow"}>{children}</main>
+          <Footer />
+      </QueryClientProvider>
       </body>
     </html>
   );
