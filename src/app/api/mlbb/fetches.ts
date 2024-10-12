@@ -1,8 +1,10 @@
 import {HeroInfo, RawDataType} from "@/lib/types";
 
 const baseUrl = process.env.MLBB_API_BASE_URL || "";
-const firstId = process.env.MLBB_FIRST_ID || "/2669606";
-const meta_heroes = process.env.MLBB_SECOND_ID_META_HEROES || "/2756567";
+const firstId = process.env.MLBB_FIRST_ID;
+const meta_heroes = process.env.MLBB_SECOND_ID_META_HEROES;
+const graph_7 = process.env.MLBB_SECOND_ID_GRAPH_7;
+const graph_30 = process.env.MLBB_SECOND_ID_GRAPH_30;
 
 export async function fetchStats(sortField: string, count: number) {
   const url = baseUrl + firstId + meta_heroes;
@@ -25,6 +27,51 @@ export async function fetchStats(sortField: string, count: number) {
       "main_hero_appearance_rate"
     ]
   };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+export async function fetchGraph(heroId: string, period: number, rank?: string) {
+  const url = baseUrl + firstId + (period === 30 ? graph_30 : graph_7);
+  const payload = {
+    pageSize: 1,
+    filters: [
+      {
+        "field": "main_heroid",
+        "operator": "eq",
+        "value": heroId
+      },
+      {
+        "field": "bigrank",
+        "operator": "eq",
+        "value": rank || 7
+      },
+      {
+        "field": "match_type",
+        "operator": "eq",
+        "value": "1"
+      }
+    ],
+    sorts: [],
+    fields: [
+        "_createdAt",
+        "_updatedAt",
+        "data.bigrank",
+        "data.main_heroid",
+        "data.win_rate"
+    ],
+    pageIndex: 1
+  }
 
   const response = await fetch(url, {
     method: 'POST',
