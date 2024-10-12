@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import dataJSON from "@/lib/data/ids.json"
+import {Minus, TrendingDown, TrendingUp} from "lucide-react";
 
-// Define the structure of our data
 interface DataPoint {
   date: string
   win_rate: number
-  ban_rate: number
-  app_rate: number
 }
 
 interface HeroData {
@@ -23,36 +21,75 @@ interface HeroData {
   }
 }
 
-interface Hero {
-  id: number
-  name: string
+const heroes = dataJSON.heroes
+
+const calculateMovingAverage = (data: DataPoint[], windowSize: number) => {
+  return data.map((point, index, array) => {
+    const start = Math.max(0, index - windowSize + 1)
+    const window = array.slice(start, index + 1)
+    const sum = window.reduce((acc, curr) => acc + curr.win_rate, 0)
+    return {
+      ...point,
+      movingAverage: sum / window.length
+    }
+  })
 }
 
-const heroes: Hero[] = dataJSON["heroes"]
+const CustomTooltip = ({ active, payload, label, data }: any) => {
+  if (active && payload && payload.length) {
+    const currentIndex = data.findIndex((item: DataPoint) => item.date === label);
+    const previousDayData = currentIndex > 0 ? data[currentIndex - 1] : null;
 
-export default function HeroGraph() {
+    const currentWinRate = payload[0].value;
+    const previousWinRate = previousDayData ? previousDayData.win_rate : null;
+
+    let changeText = "N/A";
+    let changeClass = "";
+
+    let change = 0
+    if (previousWinRate !== null) {
+      change = currentWinRate - previousWinRate;
+      changeText = `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+      changeClass = change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-blue-300";
+    }
+
+    return (
+        <div className="bg-blue-900 p-4 rounded shadow-lg border border-blue-500">
+          <p className="text-blue-200">{`${label}`}</p>
+          <p className="font-bold text-blue-100">{`Win Rate: ${currentWinRate.toFixed(2)}%`}</p>
+          <p className={`${changeClass} font-semibold flex items-center`}>
+            {
+              change > 0 ? <TrendingUp className="w-4 h-4 mr-2"/> :
+              change < 0 ? <TrendingDown className="w-4 h-4 mr-2"/> : <Minus className="w-4 h-4 mr-2"/>
+            }
+            <span>{changeText}</span>
+          </p>
+        </div>
+    );
+  }
+  return null;
+};
+
+export default function HeroWinRateChart() {
   const [data, setData] = useState<DataPoint[]>([])
   const [heroName, setHeroName] = useState<string>('')
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/mlbb/graph?id=30&period=30')
+        const response = await fetch('/api/mlbb/graph?id=1&period=30')
         const heroData: HeroData = await response.json()
 
-        // Process and sort the data
         const processedData = heroData.data.win_rate
             .map(item => ({
-              date: item.date,
-              win_rate: Number((item.win_rate * 100).toFixed(2)),
-              ban_rate: Number((item.ban_rate * 100).toFixed(2)),
-              app_rate: Number((item.app_rate * 100).toFixed(2))
+              date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+              win_rate: Number((item.win_rate * 100).toFixed(2))
             }))
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
-        setData(processedData)
+        const dataWithMovingAverage = calculateMovingAverage(processedData, 7)
+        setData(dataWithMovingAverage)
 
-        // Find hero name
         const hero = heroes.find(h => h.id === heroData.data.main_heroid)
         setHeroName(hero ? hero.name : `Hero ${heroData.data.main_heroid}`)
       } catch (error) {
@@ -63,23 +100,41 @@ export default function HeroGraph() {
     fetchData()
   }, [])
 
+  const minRate = Math.floor(Math.min(...data.map(d => d.win_rate)) - 0.05)
+  const maxRate = Math.ceil(Math.max(...data.map(d => d.win_rate)) + 0.05)
+
   return (
-      <Card className="w-full">
+      <Card className="w-full bg-gradient-to-br from-blue-900 to-blue-700">
         <CardHeader>
-          <CardTitle>{heroName} Statistics Over Time</CardTitle>
+          <CardTitle className="text-2xl font-bold text-blue-100">{heroName} Win Rate Trend</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[400px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="win_rate" stroke="#8884d8" name="Win Rate (%)" />
-                <Line type="monotone" dataKey="ban_rate" stroke="#82ca9d" name="Ban Rate (%)" />
-                <Line type="monotone" dataKey="app_rate" stroke="#ffc658" name="Appearance Rate (%)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" />
+                <XAxis
+                    dataKey="date"
+                    stroke="#a0aec0"
+                    tick={{ fill: '#a0aec0' }}
+                    tickLine={{ stroke: '#a0aec0' }}
+                />
+                <YAxis
+                    domain={[minRate, maxRate]}
+                    stroke="#a0aec0"
+                    tick={{ fill: '#a0aec0' }}
+                    tickLine={{ stroke: '#a0aec0' }}
+                    tickFormatter={(value) => `${value}%`}
+                />
+                <Tooltip content={<CustomTooltip data={data}/>} />
+                <Line
+                    type="monotone"
+                    dataKey="win_rate"
+                    stroke="#48bb78"
+                    strokeWidth={2}
+                    dot={{ r: 4, fill: '#48bb78', stroke: '#fff', strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: '#48bb78', stroke: '#fff', strokeWidth: 2 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
