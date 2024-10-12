@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { SearchBar } from "@/components/search/SearchBar";
 import RankSelector from "@/components/search/RankSelector";
 import { HeroData } from "@/components/search/HeroData";
+import HeroGraph from "@/app/(pages)/search/HeroChart";
 
 const fetchHeroInfo = async (heroId: number | string) => {
   const response = await fetch(`/api/mlbb/heroes?id=${heroId}`);
@@ -129,6 +130,7 @@ export default function Component() {
             </div>
           </motion.div>
         </motion.div>
+        <HeroGraph />
       </div>
   );
 }
