@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader } from "@/components/Loader";
-import { HeroDetails as HeroDetailsType, HeroInfo } from "@/lib/types";
+import {HeroDetails as HeroDetailsType, HeroGraphData, HeroInfo} from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from 'framer-motion';
@@ -23,6 +23,12 @@ const fetchHeroDetails = async (heroId: number | string, rank: number) => {
   if (!response.ok) throw new Error('Failed to fetch hero details');
   return response.json();
 };
+
+const fetchGraphData = async (heroId: number | string, rank: number) => {
+  const response = await fetch(`/api/mlbb/graph?id=${heroId}&period=${30}&rank=${rank}`);
+  if (!response.ok) throw new Error('Failed to fetch hero graph');
+  return response.json();
+}
 
 export default function Component() {
   const [selectedRank, setSelectedRank] = useState<number>(7); // Default to Mythic
@@ -50,6 +56,12 @@ export default function Component() {
     enabled: !!selectedHero,
   });
 
+  const graphDataQuery = useQuery<HeroGraphData, Error>({
+    queryKey: ['heroGraph', selectedHero?.id, selectedRank],
+    queryFn: () => fetchGraphData(selectedHero?.id || '', selectedRank),
+    enabled: !!selectedHero
+  })
+
   const handleHeroSelect = useCallback((heroId: number | string) => {
     setSelectedHero({ id: Number(heroId), name: '' });
 
@@ -63,12 +75,12 @@ export default function Component() {
   const handleRankChange = useCallback((newRank: number) => {
     setSelectedRank(newRank);
     if (selectedHero) {
-      queryClient.invalidateQueries({ queryKey: ['heroDetails', selectedHero.id] });
+      queryClient.invalidateQueries({ queryKey: ['heroDetails', selectedHero.id] }).catch(error => console.error(error));
     }
   }, [selectedHero, queryClient]);
 
-  const isLoading = heroInfoQuery.isLoading || heroDetailsQuery.isLoading;
-  const error = heroInfoQuery.error || heroDetailsQuery.error;
+  const isLoading = heroInfoQuery.isLoading || heroDetailsQuery.isLoading || graphDataQuery.isLoading;
+  const error = heroInfoQuery.error || heroDetailsQuery.error || graphDataQuery.error;
 
   return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-white">
@@ -116,6 +128,10 @@ export default function Component() {
             </Tabs>
           </motion.div>
 
+          {
+            graphDataQuery.data && <HeroGraph graphData={graphDataQuery.data} />
+          }
+
           <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -130,7 +146,6 @@ export default function Component() {
             </div>
           </motion.div>
         </motion.div>
-        <HeroGraph />
       </div>
   );
 }
