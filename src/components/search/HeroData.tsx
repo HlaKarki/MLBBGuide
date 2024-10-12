@@ -113,7 +113,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
               </TabsList>
               <TabsContent value="best-against">
                 <div className="p-4 bg-background rounded-b-lg border border-t-0">
-                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                  <h3 className="text-lg font-semibold mb-2 flex items-center text-black">
                     <TrendingUp className="mr-2"/> {counters.name} counters these heroes very well
                   </h3>
                   <ul className="space-y-2">
@@ -135,7 +135,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
               </TabsContent>
               <TabsContent value="worst-against">
                 <div className="p-4 bg-background rounded-b-lg border border-t-0">
-                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                  <h3 className="text-lg font-semibold mb-2 flex items-center text-black">
                     <TrendingDown className="mr-2"/> {counters.name} is most countered by these heroes
                   </h3>
                   <ul className="space-y-2">
@@ -168,7 +168,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
               </TabsList>
               <TabsContent value="best-with">
                 <div className="p-4 bg-background rounded-b-lg border border-t-0">
-                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                  <h3 className="text-lg font-semibold mb-2 flex items-center text-black">
                     <TrendingUp className="mr-2"/> {counters.name} works best with these heroes
                   </h3>
                   <ul className="space-y-2">
@@ -190,7 +190,7 @@ export function HeroData({ details, info }: CombinedHeroProps) {
               </TabsContent>
               <TabsContent value="worst-with">
                 <div className="p-4 bg-background rounded-b-lg border border-t-0">
-                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                  <h3 className="text-lg font-semibold mb-2 flex items-center text-black">
                     <TrendingDown className="mr-2"/> {counters.name} does not work well with these heroes
                   </h3>
                   <ul className="space-y-2">
@@ -257,5 +257,10 @@ export function HeroData({ details, info }: CombinedHeroProps) {
 }
 
 function getHeroName(id: number) : string {
+  if (dataJSON["heroes"] && dataJSON["heroes"][id - 1]) {
+    console.log("Yes: ", id)
+  } else {
+    console.log("N/A: ", id)
+  }
   return dataJSON["heroes"] && dataJSON["heroes"][id - 1] && dataJSON.heroes[id-1]["name"] || "N/A"
 }
