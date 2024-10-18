@@ -1,9 +1,7 @@
 // src/app/api/mlbb/stats/route.ts
 import {NextRequest, NextResponse} from "next/server";
-import {fetchStats, processData} from "@/app/api/mlbb/fetches";
-import {fetchHeroInfoData} from "@/app/api/mlbb/heroes/route";
+import {fetchHeroDetails, fetchHeroInfoData, fetchStats, processData} from "@/app/api/mlbb/fetches";
 import {MetaHeroesQueryType} from "@/lib/types";
-import {fetchHeroDetails} from "@/app/api/mlbb/details/route";
 
 export async function GET(request: NextRequest) {
   const all = Number(request.nextUrl.searchParams.get("hla"))
