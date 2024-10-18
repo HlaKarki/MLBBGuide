@@ -19,7 +19,7 @@ const fetchHeroInfo = async (heroId: number | string) => {
 };
 
 const fetchHeroDetails = async (heroId: number | string, rank: number) => {
-  const response = await fetch(`/api/mlbb/details?hero_id=${heroId}&rank=${rank}`);
+  const response = await fetch(`/api/mlbb/details?id=${heroId}&rank=${rank}`);
   if (!response.ok) throw new Error('Failed to fetch hero details');
   return response.json();
 };
