@@ -1,12 +1,87 @@
-import {HeroInfo, RawDataType} from "@/lib/types";
+import {HeroInfo, PayloadType, RawDataType} from "@/lib/types";
+import {NextResponse} from "next/server";
 
 const baseUrl = process.env.MLBB_API_BASE_URL || "";
 const firstId = process.env.MLBB_FIRST_ID;
 const meta_heroes = process.env.MLBB_SECOND_ID_META_HEROES;
+const heroes = process.env.MLBB_SECOND_ID_HEROES;
+const details = process.env.MLBB_SECOND_ID_DETAILS;
 const graph_7 = process.env.MLBB_SECOND_ID_GRAPH_7;
 const graph_30 = process.env.MLBB_SECOND_ID_GRAPH_30;
 
-export async function fetchStats(sortField: string, count: number) {
+export const fetchHeroInfoData = async (heroId? : string | null) => {
+  try {
+    const url = `${baseUrl}${firstId}${heroes}`;
+    const requestBody = {
+      pageSize: 200,
+      filters: heroId ? [{field: 'hero_id', operator: 'eq', value: parseInt(heroId)}] : [],
+      sorts: [{data: {field: 'hero_id', order: 'desc'}, type: 'sequence'}],
+      pageIndex: 1,
+      object: [],
+      fields: [
+        "data.hero._createdAt", "data.hero._updatedAt", "data.hero.data.name",
+        "data.head", "data.head_big", "data.hero.data.story", "data.hero.data.head_big",
+        "data.hero.data.squarehead", "data.hero.data.squareheadbig",
+        "data.hero.data.roadsortlabel", "data.hero.data.speciality",
+        "data.hero.data.abilityshow", "data.relation"
+      ]
+    };
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      return NextResponse.json({error: "Failed to fetch hero data"}, {status: response.status});
+    }
+    return await response.json();
+  }
+  catch (error) {
+    console.error('Error fetching hero data:', error);
+    return NextResponse.json({ error: 'Failed to fetch hero data' }, { status: 500 });
+  }
+}
+
+export async function fetchHeroDetails(match_type: string, hero_id: string | null, rank: string | null, pickRate?: boolean) {
+  const url = baseUrl + firstId + details;
+  const payload: PayloadType = {
+    pageSize: hero_id ? 1 : 200,
+    filters: [
+      { field: "match_type", operator: "eq", value: match_type },
+      hero_id ? { field: "main_heroid", operator: "eq", value: hero_id } : {},
+      { field: "bigrank", operator: "eq", value: rank || "101" }
+    ],
+    sorts: [{data: {field: 'main_heroid', order: 'desc'}, type: 'sequence'}],
+    pageIndex: 1
+  };
+
+  if (pickRate) {
+    payload["fields"] = [
+      "data.main_hero_appearance_rate",
+      // "data.main_hero.data.head",
+      // "data.main_hero.data.name",
+      // "data.main_heroid",
+    ]
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+export async function fetchStats(sortField: string, count: number, hero_id?: number) {
   const url = baseUrl + firstId + meta_heroes;
   const payload = {
     pageSize: count,
