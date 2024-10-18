@@ -4,7 +4,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { StatsTableType } from "@/lib/types"
 import { useQuery } from '@tanstack/react-query'
-import StatsTable from "@/app/(pages)/stats/Stats"
+import StatsTable from "@/components/stats/Stats"
 
 export default function Statistics() {
   const { data: stats, isLoading, error } = useQuery<StatsTableType[], Error>({
