@@ -19,8 +19,7 @@ import {
 import dataJSON from '@/lib/data/ids.json';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { log } from 'console';
+import { AbilityBar } from '@/components/AbilityBar';
 
 interface CombinedHeroProps {
   details: HeroDetailsType;
@@ -190,7 +189,7 @@ export default function HeroData({
                 <div className="text-lg font-semibold text-indigo-300">
                   {stat}
                 </div>
-                <Progress value={Number(value) * 10} className="h-2 w-full" />
+                <AbilityBar value={Number(value)} label={stat} />
                 <div className="text-2xl font-bold">{value}</div>
               </div>
             ))}
