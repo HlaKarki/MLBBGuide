@@ -7,6 +7,7 @@ import {
   HeroDetails as HeroDetailsType,
   HeroGraphData,
   HeroInfo,
+  MetaHeroesType,
 } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,6 +38,12 @@ const fetchGraphData = async (heroId: number | string, rank: number) => {
   return response.json();
 };
 
+const fetchMetaStats = async (heroId: number | string) => {
+  const response = await fetch(`/api/mlbb/meta-heroes?id=${heroId}`);
+  if (!response.ok) throw new Error('Failed to fetch meta stats');
+  return response.json();
+};
+
 export default function SearchPage() {
   const queryClient = useQueryClient();
 
@@ -57,9 +64,9 @@ export default function SearchPage() {
     }
 
     const name = window.location.hash.substring(1);
-    if (!name) return
+    if (!name) return;
     const heroId = getHeroId(name);
-    if (!heroId) return
+    if (!heroId) return;
     setSelectedHero({ id: heroId, name: name });
   }, []);
 
@@ -116,6 +123,12 @@ export default function SearchPage() {
   const graphDataQuery = useQuery<HeroGraphData, Error>({
     queryKey: ['heroGraph', selectedHero?.id, selectedRank],
     queryFn: () => fetchGraphData(selectedHero?.id || '', selectedRank),
+    enabled: !!selectedHero,
+  });
+
+  const heroMetaStats = useQuery<MetaHeroesType[], Error>({
+    queryKey: ['metaStats', selectedHero?.id],
+    queryFn: () => fetchMetaStats(selectedHero?.id || ''),
     enabled: !!selectedHero,
   });
 
@@ -180,12 +193,15 @@ export default function SearchPage() {
                   {error.message}
                 </div>
               )}
-              {heroDetailsQuery.data && heroInfoQuery.data && (
-                <HeroData
-                  details={heroDetailsQuery.data}
-                  info={heroInfoQuery.data}
-                />
-              )}
+              {heroDetailsQuery.data &&
+                heroInfoQuery.data &&
+                heroMetaStats.data && (
+                  <HeroData
+                    details={heroDetailsQuery.data}
+                    info={heroInfoQuery.data}
+                    metaStats={heroMetaStats.data[0]}
+                  />
+                )}
             </TabsContent>
           </Tabs>
         </motion.div>
