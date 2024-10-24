@@ -32,7 +32,6 @@ export type HeroDetails = {
   compatibilities: CompatibilitiesData;
 };
 
-
 // hero info
 type Relation = {
   heads: string[];
@@ -48,10 +47,10 @@ export type HeroInfo = {
   createdAt: number;
   updatedAt: number;
   abilities: {
-    Durability: string,
-    Offense: string,
-    "Ability Effects": string,
-    Difficulty: string,
+    Durability: string;
+    Offense: string;
+    'Ability Effects': string;
+    Difficulty: string;
   };
   lane: string[];
   speciality: string[];
@@ -63,90 +62,90 @@ export type HeroInfo = {
   };
 };
 
-
 // meta heroes
 export type MetaHeroesQueryType = {
   data: {
-    main_hero_ban_rate: string,
-    main_hero_win_rate: string,
-    main_heroid: string,
+    main_hero_ban_rate: string;
+    main_hero_win_rate: string;
+    main_hero_appearance_rate: string;
+    main_heroid: string;
     main_hero: {
       data: {
-        head: string,
-        name: string,
-      }
-    }
-  }
-}
+        head: string;
+        name: string;
+      };
+    };
+  };
+};
 
 export type MetaHeroesType = {
-  ban_rate: string,
-  win_rate: string,
-  heroid: string,
-  head: string,
-  name: string,
-}
+  ban_rate: string;
+  win_rate: string;
+  pick_rate: string;
+  heroid: string;
+  head: string;
+  name: string;
+};
 
 export type StatsType = {
-  totalHeroes: string,
-  mostWin: string,
-  mostWinHead: string,
-  mostBanned: string,
-  mostBannedHead: string,
-  mostPicked: string,
-  mostPickedHead: string,
-  banRate: string,
-  winRate: string,
-  pickRate: string
-}
+  totalHeroes: string;
+  mostWin: string;
+  mostWinHead: string;
+  mostBanned: string;
+  mostBannedHead: string;
+  mostPicked: string;
+  mostPickedHead: string;
+  banRate: string;
+  winRate: string;
+  pickRate: string;
+};
 
 // Stats (Table)
 
 export type StatsTableType = {
-  id: string
-  name: string
-  head: string
-  win_rate: number
-  ban_rate: number
-  pick_rate: number
-  speciality: string[]
+  id: string;
+  name: string;
+  head: string;
+  win_rate: number;
+  ban_rate: number;
+  pick_rate: number;
+  speciality: string[];
   abilities: {
-    Durability: number
-    Offense: number
-    "Ability Effects": number
-    Difficulty: number
-  }
-  lanes: string[]
-}
+    Durability: number;
+    Offense: number;
+    'Ability Effects': number;
+    Difficulty: number;
+  };
+  lanes: string[];
+};
 
 export type RawDataType = {
   data: {
-    records: Record<string, { data: any }>
-  }
+    records: Record<string, { data: any }>;
+  };
 };
-
 
 export interface PayloadType {
   pageSize: number;
-  filters: Array<{field?: string; operator?: string; value?: string}>;
-  sorts: Array<{data: {field: string; order: string}; type: string}>;
+  filters: Array<{ field?: string; operator?: string; value?: string }>;
+  sorts: Array<{ data: { field: string; order: string }; type: string }>;
   pageIndex: number;
   fields?: string[];
 }
 
 export interface HeroGraphData {
-  _createdAt: number
-  _updatedAt: number
+  _createdAt: number;
+  _updatedAt: number;
   data: {
-    bigrank: string
-    main_heroid: number
-    win_rate: DataPoint[]
-  }
+    bigrank: string;
+    main_heroid: number;
+    win_rate: DataPoint[];
+  };
 }
 
 export interface DataPoint {
-  date: string
-  win_rate: number
-  ban_rate: number
-  app_rate: number
+  date: string;
+  win_rate: number;
+  ban_rate: number;
+  app_rate: number;
 }
