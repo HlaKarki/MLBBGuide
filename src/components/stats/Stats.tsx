@@ -65,14 +65,16 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
     accessorKey: "name",
     header: () => <div className={"text-center"}>Hero</div>,
     cell: ({ row }) => (
-        <div className="flex flex-col justify-center items-center space-y-2">
+        <a
+          href={"/search#" + row.getValue("name")}
+          className="flex flex-col justify-center items-center space-y-2">
           <img
               src={row.original.head}
               alt={row.getValue("name")}
               className="h-10 w-10 rounded-full"
           />
           <span>{row.getValue("name")}</span>
-        </div>
+        </a>
     ),
   },
   {
