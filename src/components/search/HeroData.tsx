@@ -30,8 +30,8 @@ export default function HeroData({ details, info }: CombinedHeroProps) {
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
             <Stat label="Rank" value={counters.rank} icon={<Info className="h-4 w-4" />} />
-            <Stat label="Appearance" value={`${(counters.appearance_rate * 100).toFixed(1)}%`} icon={<Users className="h-4 w-4" />} />
-            <Stat label="Win Rate" value={`${(counters.win_rate * 100).toFixed(1)}%`} icon={<TrendingUp className="h-4 w-4" />} />
+            <Stat label="Appearance" value={`${(compatibilities.appearance_rate * 100).toFixed(1)}%`} icon={<Users className="h-4 w-4" />} />
+            <Stat label="Win Rate" value={`${(compatibilities.win_rate * 100).toFixed(1)}%`} icon={<TrendingUp className="h-4 w-4" />} />
           </div>
         </CardContent>
       </Card>
