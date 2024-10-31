@@ -10,7 +10,6 @@ import {
   MetaHeroesType,
 } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 import { SearchBar } from '@/components/search/SearchBar';
 import RankSelector from '@/components/search/RankSelector';
@@ -177,33 +176,23 @@ export default function SearchPage() {
             </div>
           </div>
 
-          <Tabs defaultValue="hero-info" className="space-y-6">
-            <TabsList className="w-full bg-gray-700 bg-opacity-50">
-              <TabsTrigger
-                value="hero-info"
-                className="data-[state=active]:bg-gray-600 text-gray-400 data-[state=active]:text-white"
-              >
-                Hero Info
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="hero-info">
-              {isLoading && <Loader className="mx-auto mt-8" />}
-              {error && (
-                <div className="bg-red-600 text-white p-4 rounded-md mt-4">
-                  {error.message}
-                </div>
+          <div>
+            {isLoading && <Loader className="mx-auto mt-8" />}
+            {error && (
+              <div className="bg-red-600 text-white p-4 rounded-md mt-4">
+                {error.message}
+              </div>
+            )}
+            {heroDetailsQuery.data &&
+              heroInfoQuery.data &&
+              heroMetaStats.data && (
+                <HeroData
+                  details={heroDetailsQuery.data}
+                  info={heroInfoQuery.data}
+                  metaStats={heroMetaStats.data[0]}
+                />
               )}
-              {heroDetailsQuery.data &&
-                heroInfoQuery.data &&
-                heroMetaStats.data && (
-                  <HeroData
-                    details={heroDetailsQuery.data}
-                    info={heroInfoQuery.data}
-                    metaStats={heroMetaStats.data[0]}
-                  />
-                )}
-            </TabsContent>
-          </Tabs>
+          </div>
         </motion.div>
 
         {graphDataQuery.data && <HeroGraph graphData={graphDataQuery.data} />}
