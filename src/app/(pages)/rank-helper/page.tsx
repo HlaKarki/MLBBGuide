@@ -1,7 +1,7 @@
 export default function RankHelper() {
   return (
-      <div>
-        <h1>Rank helper</h1>
-      </div>
-  )
+    <div className={'text-white'}>
+      <h1>Rank helper</h1>
+    </div>
+  );
 }

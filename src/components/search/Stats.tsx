@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {Users, Sword, Shield, Eye, Ban, BicepsFlexed} from 'lucide-react';
+import {Users, Eye, Ban, BicepsFlexed} from 'lucide-react';
 import { StatsType } from "@/lib/types";
 
 interface StatsProps {

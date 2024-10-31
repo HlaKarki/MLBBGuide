@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function fetchStatsTemp() {
+async function fetchStatsTemp() {
   const baseUrl = process.env.MLBB_API_BASE_URL || "";
   const firstId = process.env.MLBB_FIRST_ID || "/2669606";
   const meta_heroes = process.env.MLBB_SECOND_ID_META_HEROES || "/2756567";
