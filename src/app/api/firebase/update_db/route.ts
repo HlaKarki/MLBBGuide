@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db/firebase-admin';
-
-const baseUrl = process.env.NEXT_BASE_URL;
+import { fetchMLBBData } from '@/app/api/mlbb/final/route';
 
 export async function GET() {
   try {
-    const response = await fetch(baseUrl + 'api/mlbb/final/');
-    const { data } = await response.json();
+    const data = await fetchMLBBData();
 
     // Create a batch write
     const batch = db.batch();
