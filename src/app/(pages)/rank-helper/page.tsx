@@ -6,8 +6,6 @@ import { db } from '@/lib/db/firebase';
 import { signIn } from '@/lib/db/sign-in';
 
 export default function RankHelper() {
-  const [data, setData] = useState<any>([]);
-
   const enterRoom = useCallback(async () => {
     try {
       await signIn()
@@ -16,14 +14,21 @@ export default function RankHelper() {
 
       if (docSnap.exists()) {
         console.log("fetched: ", docSnap.data());
-        setData(docSnap.data());
       }
     } catch (error) {
       console.error(error);
     }
   }, []);
 
+
+
   useEffect(() => {
+    const testFetch = async () => {
+      const response =  await fetch('/api/firebase/test/')
+      return await response.json()
+    }
+
+    testFetch().then((res) => console.log("apiFetched: ", res)).catch(console.error);
     enterRoom().catch(console.error);
   }, []);
 
