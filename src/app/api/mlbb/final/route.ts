@@ -1,13 +1,59 @@
 import { NextResponse } from 'next/server';
 
-const baseUrl = process.env.MLBB_API_BASE_URL || '';
-const firstId = process.env.MLBB_FIRST_ID;
-const heroes = process.env.MLBB_SECOND_ID_HEROES;
-const details = process.env.MLBB_SECOND_ID_DETAILS;
-const meta = process.env.MLBB_SECOND_ID_META_HEROES;
+type HeroData = {
+  name: string;
+  hero_id: string;
+  role: string[];
+  speciality: string[];
+  images: {
+    head: string;
+    head_big: string;
+    square: string;
+    square_big: string;
+  };
+  tagline: string;
+  abilities: {
+    Durability: string;
+    Offense: string;
+    'Ability Effects': string;
+    Difficulty: string;
+  };
+  effective: {
+    image: string;
+    hero_id: string;
+    increase_win_rate: string;
+  }[];
+  ineffective: {
+    image: string;
+    hero_id: string;
+    increase_win_rate: string;
+  }[];
+  compatible: {
+    image: string;
+    hero_id: string;
+    increase_win_rate: string;
+  }[];
+  incompatible: {
+    image: string;
+    hero_id: string;
+    increase_win_rate: string;
+  }[];
+  win_rate: string;
+  ban_rate: string;
+  pick_rate: string;
+};
 
-export async function GET() {
+export async function fetchMLBBData(): Promise<HeroData[]> {
+  const baseUrl = process.env.MLBB_API_BASE_URL || '';
+  const firstId = process.env.MLBB_FIRST_ID;
+  const heroes = process.env.MLBB_SECOND_ID_HEROES;
+  const details = process.env.MLBB_SECOND_ID_DETAILS;
+  const meta = process.env.MLBB_SECOND_ID_META_HEROES;
+
   const urlHeroData = baseUrl + firstId + heroes;
+  const urlHeroDetails = baseUrl + firstId + details;
+  const urlHeroMeta = baseUrl + firstId + meta;
+
   const requestBodyHeroData = {
     pageSize: 200,
     sorts: [
@@ -34,7 +80,6 @@ export async function GET() {
     ],
   };
 
-  const urlHeroDetails = baseUrl + firstId + details;
   const requestBodyCounters = {
     pageSize: 200,
     filters: [
@@ -55,13 +100,11 @@ export async function GET() {
       "data.main_hero_ban_rate",
       "data.main_hero_win_rate",
       "data.main_heroid",
-
       "data.sub_hero.hero",
       "data.sub_hero.heroid",
       "data.sub_hero.hero_win_rate",
       "data.sub_hero.hero_appearance_rate",
       "data.sub_hero.increase_win_rate",
-
       "data.sub_hero_last.hero",
       "data.sub_hero_last.heroid",
       "data.sub_hero_last.hero_appearance_rate",
@@ -69,44 +112,16 @@ export async function GET() {
       "data.sub_hero_last.increase_win_rate"
     ],
     pageIndex: 1
-  }
+  };
+
   const requestBodyCompatibles = {
-    pageSize: 200,
+    ...requestBodyCounters,
     filters: [
       {field: "match_type", operator: "eq", value: 1},
       {field: "bigrank", operator: "eq", value: "101"}
     ],
-    sorts: [
-      {
-        data: {
-          field: 'main_heroid',
-          order: 'desc',
-        },
-        type: 'sequence',
-      },
-    ],
-    fields: [
-      "data.main_hero_appearance_rate",
-      "data.main_hero_ban_rate",
-      "data.main_hero_win_rate",
-      "data.main_heroid",
+  };
 
-      "data.sub_hero.hero",
-      "data.sub_hero.heroid",
-      "data.sub_hero.hero_win_rate",
-      "data.sub_hero.hero_appearance_rate",
-      "data.sub_hero.increase_win_rate",
-
-      "data.sub_hero_last.hero",
-      "data.sub_hero_last.heroid",
-      "data.sub_hero_last.hero_appearance_rate",
-      "data.sub_hero_last.hero_win_rate",
-      "data.sub_hero_last.increase_win_rate"
-    ],
-    pageIndex: 1
-  }
-
-  const urlHeroMeta = baseUrl + firstId + meta;
   const requestBodyMeta = {
     pageSize: 200,
     filters: [
@@ -123,44 +138,57 @@ export async function GET() {
       "main_hero_appearance_rate",
       "main_heroid"
     ]
-  }
+  };
 
+  const [heroData, counters, compatible, metaStats] = await Promise.all([
+    fetch(urlHeroData, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBodyHeroData),
+    }).then(response => response.json()),
+    fetch(urlHeroDetails, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBodyCounters),
+    }).then(response => response.json()),
+    fetch(urlHeroDetails, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBodyCompatibles),
+    }).then(response => response.json()),
+    fetch(urlHeroMeta, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBodyMeta),
+    }).then(response => response.json()),
+  ]);
+
+  const processedHeroData = processHeroData(heroData);
+  const processedHeroCounters = processCounters(counters);
+  const processedHeroCompatible = processCompatibles(compatible);
+  const processedHeroMeta = processMeta(metaStats);
+
+  return combineData(
+    processedHeroData,
+    processedHeroCounters,
+    processedHeroCompatible,
+    processedHeroMeta
+  );
+}
+
+export async function GET() {
   try {
-    const [heroData, counters, compatible, metaStats] = await Promise.all([
-      await fetch(urlHeroData, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBodyHeroData),
-      }).then(response => response.json()),
-      await fetch(urlHeroDetails, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBodyCounters),
-      }).then(response => response.json()),
-      await fetch(urlHeroDetails, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBodyCompatibles),
-      }).then(response => response.json()),
-      await fetch(urlHeroMeta, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBodyMeta),
-      }).then(response => response.json()),
-    ])
-
-    const processedHeroData = processHeroData(heroData);
-    const processedHeroCounters = processCounters(counters)
-    const processedHeroCompatible = processCompatibles(compatible)
-    const processedHeroMeta = processMeta(metaStats)
-
-    const combinedData = combineData(processedHeroData, processedHeroCounters, processedHeroCompatible, processedHeroMeta);
-
+    const response = await fetchMLBBData()
     return NextResponse.json({
-      data: combinedData
-    });
-  } catch (error) {
-    return NextResponse.json({ status: 404 });
+      data: response,
+      success: true,
+    })
+  } catch(error) {
+    NextResponse.json({
+      success: false,
+      message: "Failed to fetch final data"
+      }
+    )
   }
 }
 
