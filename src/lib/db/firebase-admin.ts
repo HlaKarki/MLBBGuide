@@ -2,7 +2,7 @@
 import admin from "firebase-admin";
 import { getApps } from "firebase-admin/app";
 
-// if (!getApps().length) {
+if (!getApps().length) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert({
@@ -14,7 +14,7 @@ import { getApps } from "firebase-admin/app";
   } catch (error) {
     console.log('Firebase admin initialization error', error);
   }
-// }
+}
 
 const db = admin.firestore();
 
