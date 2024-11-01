@@ -13,5 +13,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error signing in:', error);
+    return NextResponse.json({
+      error: 'Failed to fetch hero data',
+    })
   }
 }
