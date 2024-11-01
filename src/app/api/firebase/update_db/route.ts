@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db/firebase-admin';
-import { fetchMLBBData } from '@/app/api/mlbb/final/route';
+import { fetchMLBBData } from '@/lib/fetches';
 
 export async function GET() {
   try {
