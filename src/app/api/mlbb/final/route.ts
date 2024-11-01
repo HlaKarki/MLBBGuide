@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { fetchMLBBData } from '@/lib/fetches';
+import { fetchGraph, fetchMLBBData } from '@/lib/fetches';
 
 export async function GET() {
   try {
     const response = await fetchMLBBData()
+
     return NextResponse.json({
       data: response,
       success: true,
