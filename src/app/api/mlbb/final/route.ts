@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchGraph, fetchMLBBData } from '@/lib/fetches';
+import { fetchMLBBData } from '@/lib/fetches';
 
 export async function GET() {
   try {
