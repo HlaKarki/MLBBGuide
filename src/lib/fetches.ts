@@ -16,29 +16,31 @@ type HeroData = {
     'Ability Effects': string;
     Difficulty: string;
   };
-  effective: {
-    image: string;
-    hero_id: string;
-    increase_win_rate: string;
+  effective?: CounterHero[];
+  ineffective?: CounterHero[];
+  compatible?: CounterHero[];
+  incompatible?: CounterHero[];
+  win_rate?: string;
+  ban_rate?: string;
+  pick_rate?: string;
+  graph?: GraphData;
+};
+
+type CounterHero = {
+  image: string;
+  hero_id: string;
+  increase_win_rate: string;
+};
+
+type GraphData = {
+  _createdAt: number;
+  _updatedAt: number;
+  win_rate: {
+    app_rate: number;
+    ban_rate: number;
+    win_rate: number;
+    date: string;
   }[];
-  ineffective: {
-    image: string;
-    hero_id: string;
-    increase_win_rate: string;
-  }[];
-  compatible: {
-    image: string;
-    hero_id: string;
-    increase_win_rate: string;
-  }[];
-  incompatible: {
-    image: string;
-    hero_id: string;
-    increase_win_rate: string;
-  }[];
-  win_rate: string;
-  ban_rate: string;
-  pick_rate: string;
 };
 
 export async function fetchMLBBData(): Promise<HeroData[]> {
@@ -47,10 +49,12 @@ export async function fetchMLBBData(): Promise<HeroData[]> {
   const heroes = process.env.MLBB_SECOND_ID_HEROES;
   const details = process.env.MLBB_SECOND_ID_DETAILS;
   const meta = process.env.MLBB_SECOND_ID_META_HEROES;
+  const graph = process.env.MLBB_SECOND_ID_GRAPH_30;
 
   const urlHeroData = baseUrl + firstId + heroes;
   const urlHeroDetails = baseUrl + firstId + details;
   const urlHeroMeta = baseUrl + firstId + meta;
+  const urlHeroGraph = baseUrl + firstId + graph;
 
   const requestBodyHeroData = {
     pageSize: 200,
@@ -81,8 +85,8 @@ export async function fetchMLBBData(): Promise<HeroData[]> {
   const requestBodyCounters = {
     pageSize: 200,
     filters: [
-      {field: "match_type", operator: "eq", value: 0},
-      {field: "bigrank", operator: "eq", value: "101"}
+      { field: 'match_type', operator: 'eq', value: 0 },
+      { field: 'bigrank', operator: 'eq', value: '101' },
     ],
     sorts: [
       {
@@ -94,304 +98,335 @@ export async function fetchMLBBData(): Promise<HeroData[]> {
       },
     ],
     fields: [
-      "data.main_hero_appearance_rate",
-      "data.main_hero_ban_rate",
-      "data.main_hero_win_rate",
-      "data.main_heroid",
-      "data.sub_hero.hero",
-      "data.sub_hero.heroid",
-      "data.sub_hero.hero_win_rate",
-      "data.sub_hero.hero_appearance_rate",
-      "data.sub_hero.increase_win_rate",
-      "data.sub_hero_last.hero",
-      "data.sub_hero_last.heroid",
-      "data.sub_hero_last.hero_appearance_rate",
-      "data.sub_hero_last.hero_win_rate",
-      "data.sub_hero_last.increase_win_rate"
+      'data.main_hero_appearance_rate',
+      'data.main_hero_ban_rate',
+      'data.main_hero_win_rate',
+      'data.main_heroid',
+      'data.sub_hero.hero',
+      'data.sub_hero.heroid',
+      'data.sub_hero.hero_win_rate',
+      'data.sub_hero.hero_appearance_rate',
+      'data.sub_hero.increase_win_rate',
+      'data.sub_hero_last.hero',
+      'data.sub_hero_last.heroid',
+      'data.sub_hero_last.hero_appearance_rate',
+      'data.sub_hero_last.hero_win_rate',
+      'data.sub_hero_last.increase_win_rate',
     ],
-    pageIndex: 1
+    pageIndex: 1,
   };
 
   const requestBodyCompatibles = {
     ...requestBodyCounters,
     filters: [
-      {field: "match_type", operator: "eq", value: 1},
-      {field: "bigrank", operator: "eq", value: "101"}
+      { field: 'match_type', operator: 'eq', value: 1 },
+      { field: 'bigrank', operator: 'eq', value: '101' },
     ],
   };
 
   const requestBodyMeta = {
     pageSize: 200,
     filters: [
-      { "field": "bigrank", "operator": "eq", "value": "101" },
-      { "field": "match_type", "operator": "eq", "value": "0" },
+      { field: 'bigrank', operator: 'eq', value: '101' },
+      { field: 'match_type', operator: 'eq', value: '0' },
     ],
     sorts: [
-      { "data": { "field": "main_heroid", "order": "desc" }, "type": "sequence" }
+      { data: { field: 'main_heroid', order: 'desc' }, type: 'sequence' },
     ],
     pageIndex: 1,
     fields: [
-      "main_hero_ban_rate",
-      "main_hero_win_rate",
-      "main_hero_appearance_rate",
-      "main_heroid"
-    ]
+      'main_hero_ban_rate',
+      'main_hero_win_rate',
+      'main_hero_appearance_rate',
+      'main_heroid',
+    ],
   };
 
-  const [heroData, counters, compatible, metaStats] = await Promise.all([
-    fetch(urlHeroData, {
+  const requestBodyGraph = {
+    pageSize: 200,
+    filters: [
+      {
+        field: 'bigrank',
+        operator: 'eq',
+        value: '101',
+      },
+      {
+        field: 'match_type',
+        operator: 'eq',
+        value: '1',
+      },
+    ],
+    sorts: [
+      { data: { field: 'main_heroid', order: 'desc' }, type: 'sequence' },
+    ],
+    fields: [
+      '_createdAt',
+      '_updatedAt',
+      'data.bigrank',
+      'data.main_heroid',
+      'data.win_rate',
+    ],
+    pageIndex: 1,
+  };
+
+  // Helper function for POST requests
+  async function postData(url: string, data: any) {
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBodyHeroData),
-    }).then(response => response.json()),
-    fetch(urlHeroDetails, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBodyCounters),
-    }).then(response => response.json()),
-    fetch(urlHeroDetails, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBodyCompatibles),
-    }).then(response => response.json()),
-    fetch(urlHeroMeta, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(requestBodyMeta),
-    }).then(response => response.json()),
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  }
+
+  // Fetch all data in parallel
+  const [
+    heroDataResponse,
+    countersResponse,
+    compatiblesResponse,
+    metaResponse,
+    graphResponse,
+  ] = await Promise.all([
+    postData(urlHeroData, requestBodyHeroData),
+    postData(urlHeroDetails, requestBodyCounters),
+    postData(urlHeroDetails, requestBodyCompatibles),
+    postData(urlHeroMeta, requestBodyMeta),
+    postData(urlHeroGraph, requestBodyGraph),
   ]);
 
-  const processedHeroData = processHeroData(heroData);
-  const processedHeroCounters = processCounters(counters);
-  const processedHeroCompatible = processCompatibles(compatible);
-  const processedHeroMeta = processMeta(metaStats);
+  // Process and combine data
+  const processedHeroData = processHeroData(heroDataResponse);
+  const processedHeroCounters = processCounters(countersResponse);
+  const processedHeroCompatibles = processCompatibles(compatiblesResponse);
+  const processedHeroMeta = processMeta(metaResponse);
+  const processedHeroGraph = processGraph(graphResponse);
 
   return combineData(
     processedHeroData,
     processedHeroCounters,
-    processedHeroCompatible,
-    processedHeroMeta
+    processedHeroCompatibles,
+    processedHeroMeta,
+    processedHeroGraph
   );
 }
 
-type queryHeroData = {
+// Define interfaces for API responses
+interface HeroDataAPIResponse {
   data: {
-    hero_id: string;
-    head: string;
-    head_big: string;
-    hero: {
+    records: {
       data: {
-        name: string;
-        squarehead: string;
-        squareheadbig: string;
-        speciality: string[];
-        abilityshow: string[];
-        roadsortlabel: string[];
-        story: string;
+        hero_id: string;
+        head: string;
+        head_big: string;
+        hero: {
+          data: {
+            name: string;
+            squarehead: string;
+            squareheadbig: string;
+            speciality: string[];
+            abilityshow: string[];
+            roadsortlabel: string[];
+            story: string;
+          };
+        };
       };
-    };
+    }[];
   };
-};
+}
 
-function processHeroData(data: {
+interface CounterDataAPIResponse {
   data: {
-    records: queryHeroData[];
+    records: {
+      data: {
+        main_heroid: string;
+        sub_hero: {
+          hero: {
+            data: {
+              head: string;
+            };
+          };
+          heroid: string;
+          increase_win_rate: string;
+        }[];
+        sub_hero_last: {
+          hero: {
+            data: {
+              head: string;
+            };
+          };
+          heroid: string;
+          increase_win_rate: string;
+        }[];
+      };
+    }[];
   };
-}) {
-  const truncate = data.data.records;
-  return truncate.map(heroData => {
-    return {
-      name: heroData.data.hero.data.name,
-      hero_id: heroData.data.hero_id,
-      role: heroData.data.hero.data.roadsortlabel,
-      speciality: heroData.data.hero.data.speciality,
+}
+
+interface MetaDataAPIResponse {
+  data: {
+    records: {
+      data: {
+        main_heroid: string;
+        main_hero_win_rate: string;
+        main_hero_ban_rate: string;
+        main_hero_appearance_rate: string;
+      };
+    }[];
+  };
+}
+
+interface GraphDataAPIResponse {
+  data: {
+    records: {
+      _createdAt: number;
+      _updatedAt: number;
+      data: {
+        bigrank: string;
+        main_heroid: string;
+        win_rate: {
+          app_rate: number;
+          ban_rate: number;
+          win_rate: number;
+          date: string;
+        }[];
+      };
+    }[];
+  };
+}
+
+// Processing functions
+function processHeroData(
+  data: HeroDataAPIResponse
+): Map<string, Partial<HeroData>> {
+  const heroMap = new Map<string, Partial<HeroData>>();
+  data.data.records.forEach((heroRecord) => {
+    const heroData = heroRecord.data;
+    const hero_id = heroData.hero_id;
+    heroMap.set(hero_id, {
+      name: heroData.hero.data.name,
+      hero_id: hero_id,
+      role: heroData.hero.data.roadsortlabel,
+      speciality: heroData.hero.data.speciality,
       images: {
-        head: heroData.data.head,
-        head_big: heroData.data.head_big,
-        square: heroData.data.hero.data.squarehead,
-        square_big: heroData.data.hero.data.squareheadbig,
+        head: heroData.head,
+        head_big: heroData.head_big,
+        square: heroData.hero.data.squarehead,
+        square_big: heroData.hero.data.squareheadbig,
       },
-      tagline: heroData.data.hero.data.story,
+      tagline: heroData.hero.data.story,
       abilities: {
-        Durability: heroData.data.hero.data.abilityshow[0],
-        Offense: heroData.data.hero.data.abilityshow[1],
-        'Ability Effects': heroData.data.hero.data.abilityshow[2],
-        Difficulty: heroData.data.hero.data.abilityshow[3],
+        Durability: heroData.hero.data.abilityshow[0],
+        Offense: heroData.hero.data.abilityshow[1],
+        'Ability Effects': heroData.hero.data.abilityshow[2],
+        Difficulty: heroData.hero.data.abilityshow[3],
       },
-    };
+    });
   });
+  return heroMap;
 }
 
-type queryCounterData = {
-  data: {
-    main_heroid: string;
-    sub_hero: [
-      {
-        hero: {
-          data: {
-            head: string;
-          }
-        };
-        heroid: string;
-        increase_win_rate: string
-      }
-    ],
-    sub_hero_last: [
-      {
-        hero: {
-          data: {
-            head: string;
-          }
-        };
-        heroid: string;
-        increase_win_rate: string
-      }
-    ]
-  };
-};
-
-function processCounters(data: {
-  data: {
-    records: queryCounterData[];
-  }
-}) {
-  const truncate = data.data.records;
-  return truncate.map(counter => {
-    return {
-      // hero_id: counter.data.main_heroid,
-      effective: counter.data.sub_hero.map((data) => {
-        return {
-          image: data.hero.data.head,
-          hero_id: data.heroid,
-          increase_win_rate: data.increase_win_rate,
-        }
-      }),
-      ineffective: counter.data.sub_hero_last.map((data) => {
-        return {
-          image: data.hero.data.head,
-          hero_id: data.heroid,
-          increase_win_rate: data.increase_win_rate,
-        }
-      }),
-    }
-  })
+function processCounters(
+  data: CounterDataAPIResponse
+): Map<string, Partial<HeroData>> {
+  const counterMap = new Map<string, Partial<HeroData>>();
+  data.data.records.forEach((counterRecord) => {
+    const counterData = counterRecord.data;
+    const hero_id = counterData.main_heroid;
+    counterMap.set(hero_id, {
+      effective: counterData.sub_hero.map((item) => ({
+        image: item.hero.data.head,
+        hero_id: item.heroid,
+        increase_win_rate: item.increase_win_rate,
+      })),
+      ineffective: counterData.sub_hero_last.map((item) => ({
+        image: item.hero.data.head,
+        hero_id: item.heroid,
+        increase_win_rate: item.increase_win_rate,
+      })),
+    });
+  });
+  return counterMap;
 }
 
-function processCompatibles(data: {
-  data: {
-    records: queryCounterData[];
-  }
-}) {
-  const truncate = data.data.records;
-  return truncate.map(counter => {
-    return {
-      // hero_id: counter.data.main_heroid,
-      compatible: counter.data.sub_hero.map((data) => {
-        return {
-          image: data.hero.data.head,
-          hero_id: data.heroid,
-          increase_win_rate: data.increase_win_rate,
-        }
-      }),
-      incompatible: counter.data.sub_hero_last.map((data) => {
-        return {
-          image: data.hero.data.head,
-          hero_id: data.heroid,
-          increase_win_rate: data.increase_win_rate,
-        }
-      }),
-    }
-  })
+function processCompatibles(
+  data: CounterDataAPIResponse
+): Map<string, Partial<HeroData>> {
+  const compatibleMap = new Map<string, Partial<HeroData>>();
+  data.data.records.forEach((record) => {
+    const dataItem = record.data;
+    const hero_id = dataItem.main_heroid;
+    compatibleMap.set(hero_id, {
+      compatible: dataItem.sub_hero.map((item) => ({
+        image: item.hero.data.head,
+        hero_id: item.heroid,
+        increase_win_rate: item.increase_win_rate,
+      })),
+      incompatible: dataItem.sub_hero_last.map((item) => ({
+        image: item.hero.data.head,
+        hero_id: item.heroid,
+        increase_win_rate: item.increase_win_rate,
+      })),
+    });
+  });
+  return compatibleMap;
 }
 
-type queryMetaData = {
-  data: {
-    main_hero_win_rate: string;
-    main_hero_ban_rate: string;
-    main_hero_appearance_rate: string;
-    main_heroid: string;
-  }
+function processMeta(
+  data: MetaDataAPIResponse
+): Map<string, Partial<HeroData>> {
+  const metaMap = new Map<string, Partial<HeroData>>();
+  data.data.records.forEach((record) => {
+    const dataItem = record.data;
+    const hero_id = dataItem.main_heroid;
+    metaMap.set(hero_id, {
+      win_rate: dataItem.main_hero_win_rate,
+      ban_rate: dataItem.main_hero_ban_rate,
+      pick_rate: dataItem.main_hero_appearance_rate,
+    });
+  });
+  return metaMap;
 }
 
-function processMeta(data: {
-  data: {
-    records: queryMetaData[]
-  }
-}) {
-  const truncate = data.data.records;
-  return truncate.map(meta => {
-    return {
-      // hero_id: meta.data.main_heroid,
-      win_rate: meta.data.main_hero_win_rate,
-      ban_rate: meta.data.main_hero_ban_rate,
-      pick_rate: meta.data.main_hero_appearance_rate,
-    }
-  })
+function processGraph(
+  data: GraphDataAPIResponse
+): Map<string, Partial<HeroData>> {
+  const graphMap = new Map<string, Partial<HeroData>>();
+  data.data.records.forEach((record) => {
+    const hero_id = record.data.main_heroid;
+    graphMap.set(hero_id, {
+      graph: {
+        _createdAt: record._createdAt,
+        _updatedAt: record._updatedAt,
+        win_rate: record.data.win_rate,
+      },
+    });
+  });
+  return graphMap;
 }
 
-type heroDataType = {
-  name: string,
-  hero_id: string,
-  role: string[],
-  speciality: string[],
-  images: {
-    head: string,
-    head_big: string,
-    square: string,
-    square_big: string,
-  },
-  tagline: string,
-  abilities: {
-    Durability: string,
-    Offense: string,
-    'Ability Effects': string,
-    Difficulty: string,
-  },
-};
+// Combine all data into HeroData objects
+function combineData(
+  heroDataMap: Map<string, Partial<HeroData>>,
+  countersMap: Map<string, Partial<HeroData>>,
+  compatiblesMap: Map<string, Partial<HeroData>>,
+  metaMap: Map<string, Partial<HeroData>>,
+  graphMap: Map<string, Partial<HeroData>>
+): HeroData[] {
+  const combinedData: HeroData[] = [];
 
-type countersDataType = {
-  hero_id?: string,
-  effective: {
-    image: string,
-    hero_id: string,
-    increase_win_rate: string,
-  }[],
-  ineffective: {
-    image: string,
-    hero_id: string,
-    increase_win_rate: string,
-  }[]
-}
+  heroDataMap.forEach((heroData, hero_id) => {
+    combinedData.push({
+      ...heroData,
+      ...(countersMap.get(hero_id) || {}),
+      ...(compatiblesMap.get(hero_id) || {}),
+      ...(metaMap.get(hero_id) || {}),
+      ...(graphMap.get(hero_id) || {}),
+      hero_id: hero_id,
+    } as HeroData);
+  });
 
-type compatiblesDataType = {
-  hero_id?: string,
-  compatible: {
-    image: string,
-    hero_id: string,
-    increase_win_rate: string,
-  }[],
-  incompatible: {
-    image: string,
-    hero_id: string,
-    increase_win_rate: string,
-  }[]
-}
-
-type metaDataType = {
-  hero_id?: string,
-  win_rate: string,
-  ban_rate: string,
-  pick_rate: string,
-}
-
-
-function combineData(heroData: heroDataType[], counters: countersDataType[], compatibles: compatiblesDataType[], meta: metaDataType[]) {
-  return heroData.map((data, index) => {
-    return {
-      ...data,
-      ...counters[index],
-      ...compatibles[index],
-      ...meta[index],
-    }
-  })
+  return combinedData;
 }
