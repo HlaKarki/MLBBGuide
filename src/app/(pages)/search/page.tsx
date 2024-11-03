@@ -15,7 +15,7 @@ import { SearchBar } from '@/components/search/SearchBar';
 import RankSelector from '@/components/search/RankSelector';
 import HeroGraph from '@/components/search/HeroChart';
 import HeroData from '@/components/search/HeroData';
-import { getHeroId, getHeroName } from '@/lib/utils';
+import { getHeroId, getHeroName, getHeroNameURL } from '@/lib/utils';
 
 const fetchHeroInfo = async (heroId: number | string) => {
   const response = await fetch(`/api/mlbb/heroes?id=${heroId}`);
@@ -72,7 +72,7 @@ export default function SearchPage() {
   // Update URL whenever the selected hero changes
   useEffect(() => {
     if (selectedHero) {
-      window.location.hash = `#${getHeroName(selectedHero.id)}`;
+      window.location.hash = `#${getHeroNameURL(selectedHero.id)}`;
     }
   }, [selectedHero]);
 
