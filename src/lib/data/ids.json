@@ -528,5 +528,12 @@
     "8": "Mythical Honor",
     "9": "Mythical Glory",
     "101": "All"
+  },
+  "roles": {
+    "Exp Lane": "Fighter",
+    "Mid Lane": "Mage",
+    "Gold Lane": "Marksman",
+    "Jungle": "Jungle",
+    "Roam": "Roam"
   }
 }
