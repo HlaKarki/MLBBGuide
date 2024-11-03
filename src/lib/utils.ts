@@ -14,6 +14,10 @@ export function getHeroNameURL(id: string | number): string {
   return jsonData.heroes.find(hero => hero.id === Number(id))?.name.replace(/\s+/g, '-') || "unknown";
 }
 
+export function replaceHyphenInHeroName(name: string): string {
+  return name.replace(/-+/g, ' ')
+}
+
 export function getHeroId(name: string) : number | undefined {
   return jsonData.heroes.find(hero => hero.name === (name.replace(/\-+/g, ' ')))?.id || undefined
 }
