@@ -1,49 +1,6 @@
-type HeroData = {
-  name: string;
-  hero_id: string;
-  role: string[];
-  speciality: string[];
-  images: {
-    head: string;
-    head_big: string;
-    square: string;
-    square_big: string;
-  };
-  tagline: string;
-  abilities: {
-    Durability: string;
-    Offense: string;
-    'Ability Effects': string;
-    Difficulty: string;
-  };
-  effective?: CounterHero[];
-  ineffective?: CounterHero[];
-  compatible?: CounterHero[];
-  incompatible?: CounterHero[];
-  win_rate?: string;
-  ban_rate?: string;
-  pick_rate?: string;
-  graph?: GraphData;
-};
+import { FinalHeroDataType } from '@/lib/types';
 
-type CounterHero = {
-  image: string;
-  hero_id: string;
-  increase_win_rate: string;
-};
-
-type GraphData = {
-  _createdAt: number;
-  _updatedAt: number;
-  win_rate: {
-    app_rate: number;
-    ban_rate: number;
-    win_rate: number;
-    date: string;
-  }[];
-};
-
-export async function fetchMLBBData(): Promise<HeroData[]> {
+export async function fetchMLBBData(): Promise<FinalHeroDataType[]> {
   const baseUrl = process.env.MLBB_API_BASE_URL || '';
   const firstId = process.env.MLBB_FIRST_ID;
   const heroes = process.env.MLBB_SECOND_ID_HEROES;
@@ -300,8 +257,8 @@ interface GraphDataAPIResponse {
 // Processing functions
 function processHeroData(
   data: HeroDataAPIResponse
-): Map<string, Partial<HeroData>> {
-  const heroMap = new Map<string, Partial<HeroData>>();
+): Map<string, Partial<FinalHeroDataType>> {
+  const heroMap = new Map<string, Partial<FinalHeroDataType>>();
   data.data.records.forEach((heroRecord) => {
     const heroData = heroRecord.data;
     const hero_id = heroData.hero_id;
@@ -330,8 +287,8 @@ function processHeroData(
 
 function processCounters(
   data: CounterDataAPIResponse
-): Map<string, Partial<HeroData>> {
-  const counterMap = new Map<string, Partial<HeroData>>();
+): Map<string, Partial<FinalHeroDataType>> {
+  const counterMap = new Map<string, Partial<FinalHeroDataType>>();
   data.data.records.forEach((counterRecord) => {
     const counterData = counterRecord.data;
     const hero_id = counterData.main_heroid;
@@ -353,8 +310,8 @@ function processCounters(
 
 function processCompatibles(
   data: CounterDataAPIResponse
-): Map<string, Partial<HeroData>> {
-  const compatibleMap = new Map<string, Partial<HeroData>>();
+): Map<string, Partial<FinalHeroDataType>> {
+  const compatibleMap = new Map<string, Partial<FinalHeroDataType>>();
   data.data.records.forEach((record) => {
     const dataItem = record.data;
     const hero_id = dataItem.main_heroid;
@@ -376,8 +333,8 @@ function processCompatibles(
 
 function processMeta(
   data: MetaDataAPIResponse
-): Map<string, Partial<HeroData>> {
-  const metaMap = new Map<string, Partial<HeroData>>();
+): Map<string, Partial<FinalHeroDataType>> {
+  const metaMap = new Map<string, Partial<FinalHeroDataType>>();
   data.data.records.forEach((record) => {
     const dataItem = record.data;
     const hero_id = dataItem.main_heroid;
@@ -392,8 +349,8 @@ function processMeta(
 
 function processGraph(
   data: GraphDataAPIResponse
-): Map<string, Partial<HeroData>> {
-  const graphMap = new Map<string, Partial<HeroData>>();
+): Map<string, Partial<FinalHeroDataType>> {
+  const graphMap = new Map<string, Partial<FinalHeroDataType>>();
   data.data.records.forEach((record) => {
     const hero_id = record.data.main_heroid;
     graphMap.set(hero_id, {
@@ -409,13 +366,13 @@ function processGraph(
 
 // Combine all data into HeroData objects
 function combineData(
-  heroDataMap: Map<string, Partial<HeroData>>,
-  countersMap: Map<string, Partial<HeroData>>,
-  compatiblesMap: Map<string, Partial<HeroData>>,
-  metaMap: Map<string, Partial<HeroData>>,
-  graphMap: Map<string, Partial<HeroData>>
-): HeroData[] {
-  const combinedData: HeroData[] = [];
+  heroDataMap: Map<string, Partial<FinalHeroDataType>>,
+  countersMap: Map<string, Partial<FinalHeroDataType>>,
+  compatiblesMap: Map<string, Partial<FinalHeroDataType>>,
+  metaMap: Map<string, Partial<FinalHeroDataType>>,
+  graphMap: Map<string, Partial<FinalHeroDataType>>
+): FinalHeroDataType[] {
+  const combinedData: FinalHeroDataType[] = [];
 
   heroDataMap.forEach((heroData, hero_id) => {
     combinedData.push({
@@ -425,7 +382,7 @@ function combineData(
       ...(metaMap.get(hero_id) || {}),
       ...(graphMap.get(hero_id) || {}),
       hero_id: hero_id,
-    } as HeroData);
+    } as FinalHeroDataType);
   });
 
   return combinedData;
