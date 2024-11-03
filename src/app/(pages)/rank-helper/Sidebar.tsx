@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 
-export function RankedSidebar() {
+export function RankedSidebar({onChange}: {onChange: (obj: { lane: string; }) => void}) {
   return (
     <div className={"w-full min-h-screen"}>
       <Card className={"h-full"}>
@@ -14,11 +14,11 @@ export function RankedSidebar() {
           </section>
           <section>
             <h3 className={'text-neutral-400'}>Hero Type</h3>
-            <RankedButton label={'Jungle'} />
-            <RankedButton label={'Mid Lane'} />
-            <RankedButton label={'Gold Lane'} />
-            <RankedButton label={'Exp Lane'} />
-            <RankedButton label={'Roam'} />
+            <Button className={'w-full'} variant={'ghost'} onClick={() => onChange({lane: "Jungle"})}>Jungle</Button>
+            <Button className={'w-full'} variant={'ghost'} onClick={() => onChange({lane: "Mid Lane"})}>Mid Lane</Button>
+            <Button className={'w-full'} variant={'ghost'} onClick={() => onChange({lane: "Gold Lane"})}>Gold Lane</Button>
+            <Button className={'w-full'} variant={'ghost'} onClick={() => onChange({lane: "Exp Lane"})}>Exp Lane</Button>
+            <Button className={'w-full'} variant={'ghost'} onClick={() => onChange({lane: "Roam"})}>Roam</Button>
           </section>
         </CardContent>
       </Card>
