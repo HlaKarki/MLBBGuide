@@ -149,3 +149,49 @@ export interface DataPoint {
   ban_rate: number;
   app_rate: number;
 }
+
+
+export type FinalHeroDataType = {
+  name: string;
+  hero_id: string;
+  role: string[];
+  speciality: string[];
+  images: {
+    head: string;
+    head_big: string;
+    square: string;
+    square_big: string;
+  };
+  tagline: string;
+  abilities: {
+    Durability: string;
+    Offense: string;
+    'Ability Effects': string;
+    Difficulty: string;
+  };
+  effective?: CounterHero[];
+  ineffective?: CounterHero[];
+  compatible?: CounterHero[];
+  incompatible?: CounterHero[];
+  win_rate?: string;
+  ban_rate?: string;
+  pick_rate?: string;
+  graph?: GraphData;
+};
+
+type CounterHero = {
+  image: string;
+  hero_id: string;
+  increase_win_rate: string;
+};
+
+type GraphData = {
+  _createdAt: number;
+  _updatedAt: number;
+  win_rate: {
+    app_rate: number;
+    ban_rate: number;
+    win_rate: number;
+    date: string;
+  }[];
+};
