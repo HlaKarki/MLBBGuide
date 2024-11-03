@@ -3,7 +3,7 @@ import "./styling/globals.css";
 import {Footer} from "@/components/Footer";
 import Header from "@/components/Header";
 import React from "react";
-import QueryClientProvider from "@/app/providers";
+import QueryClientProvider, { ThemeProvider } from '@/app/providers';
 
 // analytic
 import { Analytics } from "@vercel/analytics/react";
@@ -26,12 +26,21 @@ export default function RootLayout({
       <body
         className={`antialiased min-h-screen flex flex-col justify-between`}
       >
-      <QueryClientProvider >
+      <QueryClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
           <Header />
-          <main className={"flex-grow"}>{children}</main>
+          <main className={"flex-grow"}>
+            {children}
+          </main>
           <Analytics />
           <SpeedInsights />
           <Footer />
+        </ThemeProvider>
       </QueryClientProvider>
       </body>
     </html>
