@@ -1,10 +1,21 @@
+// /api/firebase/add_user/route.ts
 import { db } from '@/lib/db/firebase-admin';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuth } from '@clerk/nextjs/server';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
   try {
+    // Verify authentication
+    const auth = getAuth(request);
+    if (!auth.userId) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     // Add the new user to Firestore
     await db.collection('users').doc(body.clerk_id).set(
       {
