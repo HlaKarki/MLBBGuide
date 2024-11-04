@@ -195,3 +195,15 @@ type GraphData = {
     date: string;
   }[];
 };
+
+
+// clerk
+export type UserDataType = {
+  clerk_id: string;
+  username: string;
+  email: string;
+  games: {
+    name: string;
+    createdAt: Date;
+  }[]
+}
