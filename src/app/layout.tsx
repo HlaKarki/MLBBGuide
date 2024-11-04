@@ -3,7 +3,7 @@ import './styling/globals.css';
 import { Footer } from '@/components/Footer';
 import Header from '@/components/Header';
 import React from 'react';
-import QueryClientProvider, { ThemeProvider } from '@/app/providers';
+import QueryClientProvider, { GameProviderLayout, ThemeProvider } from '@/app/providers';
 
 // analytic
 import { Analytics } from '@vercel/analytics/react';
@@ -35,11 +35,13 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <Header />
-              <main className={'flex-grow'}>{children}</main>
-              <Analytics />
-              <SpeedInsights />
-              <Footer />
+              <GameProviderLayout>
+                <Header />
+                <main className={'flex-grow'}>{children}</main>
+                <Analytics />
+                <SpeedInsights />
+                <Footer />
+              </GameProviderLayout>
             </ThemeProvider>
           </QueryClientProvider>
         </body>
