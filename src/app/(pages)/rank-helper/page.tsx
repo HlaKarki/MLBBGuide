@@ -19,16 +19,7 @@ export default function RankHelper() {
   return (
     <div>
       <h1>Rank Helper</h1>
-      { isSignedIn ? (
-        <div>
-          {<Games userData={userData?.user}/>}
-        </div>
-      ) : (
-        <div>
-          Not Signed In
-        </div>
-      )
-      }
+      <Games userData={userData?.user}/>
     </div>
   )
 }
