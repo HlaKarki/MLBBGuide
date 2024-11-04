@@ -1,5 +1,6 @@
 import { collection, DocumentData, getDocs, query, where } from '@firebase/firestore';
 import { db } from '@/lib/db/firebase';
+import { UserDataType } from '@/lib/types';
 
 export async function checkUser(user: any){
   const usersRef = collection(db, "users")
@@ -16,6 +17,7 @@ export async function checkUser(user: any){
         clerk_id: user.id,
         username: user.username,
         email: user.primaryEmailAddress.emailAddress,
+        games: []
       };
 
       const response = await fetch('/api/firebase/add_user', {
@@ -32,7 +34,7 @@ export async function checkUser(user: any){
       return { success: true, user: newUser };
     }
 
-    const foundUser: DocumentData = querySnapshot.docs[0].data();
+    const foundUser = querySnapshot.docs[0].data() as UserDataType;
     return { success: true, user: foundUser }
 
   } catch (error) {
