@@ -85,12 +85,12 @@ export default function GameId() {
               <Button variant={heroFilter === "Support" ? "default" : "ghost"}>Support</Button>
             </div>
           </div>
-          <div className={"flex gap-4 flex-wrap"}>
+          <div className={"flex gap-x-8 flex-wrap"}>
             {heroData && heroData.data.map((hero: FinalHeroDataType) => {
               return (
-                <div key={hero.name} className={"flex flex-col truncate max-w-[50px]"}>
+                <div key={hero.name} className={"flex flex-col items-center truncate w-[50px]"}>
                   <img className={"rounded-full w-10 h-10"} src={hero.images.head} alt={hero.name} />
-                  <h4>{hero.name}</h4>
+                  <h4 className={"flex mx-auto"}>{hero.name}</h4>
                 </div>
               )
             })
