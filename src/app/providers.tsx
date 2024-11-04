@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider as TanstackQueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
+import { GameProvider } from '@/app/gameContext';
 
 export default function QueryClientProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())
@@ -34,4 +35,12 @@ export function ThemeProvider({
   }
 
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+}
+
+
+export function GameProviderLayout({
+                                     children,
+                                   }: {children: React.ReactNode}) {
+
+  return <GameProvider>{children}</GameProvider>;
 }
