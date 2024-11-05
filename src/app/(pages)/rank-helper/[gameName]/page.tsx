@@ -156,46 +156,44 @@ export default function GameId() {
 
         {/* Hero Poll*/}
         <div className={'col-span-4'}>
-          <div className={'flex items-center'}>
-            <div className={'flex overflow-x-auto'}>
+          <div className={'flex justify-evenly items-center overflow-x-auto'}>
               <Button
                 onClick={() => setHeroFilter('Suggestion')}
                 variant={heroFilter === 'Suggestion' ? 'default' : 'ghost'}
               >
                 <Sparkles />
-                Suggestion
+                <p className={"text-[12px]"}>Suggestion</p>
               </Button>
               <Button
                 onClick={() => setHeroFilter('Roam')}
                 variant={heroFilter === 'Roam' ? 'default' : 'ghost'}
               >
-                Roam
+                <p className={"text-[12px]"}>Roam</p>
               </Button>
               <Button
                 onClick={() => setHeroFilter('Exp Lane')}
                 variant={heroFilter === 'Exp Lane' ? 'default' : 'ghost'}
               >
-                Exp Lane
+                <p className={"text-[12px]"}>Exp Lane</p>
               </Button>
               <Button
                 onClick={() => setHeroFilter('Jungle')}
                 variant={heroFilter === 'Jungle' ? 'default' : 'ghost'}
               >
-                Jungle
+                <p className={"text-[12px]"}>Jungle</p>
               </Button>
               <Button
                 onClick={() => setHeroFilter('Mid Lane')}
                 variant={heroFilter === 'Mid Lane' ? 'default' : 'ghost'}
               >
-                Mid Lane
+                <p className={"text-[12px]"}>Mid Lane</p>
               </Button>
               <Button
                 onClick={() => setHeroFilter('Gold Lane')}
                 variant={heroFilter === 'Gold Lane' ? 'default' : 'ghost'}
               >
-                Gold Lane
+                <p className={"text-[12px]"}>Gold Lane</p>
               </Button>
-            </div>
           </div>
           <div className={'h-[350px]'}>
             <div
