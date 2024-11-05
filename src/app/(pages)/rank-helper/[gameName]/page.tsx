@@ -105,6 +105,15 @@ export default function GameId() {
     });
   };
 
+  const Backdrop = ({role}:{ role: rolesType['team'][0] }) => (
+    <div
+      className={
+        cursor === role.cursor
+          ? 'absolute inset-0 bg-gradient-to-b from-transparent to-blue-700/30 animate-pulse-slow'
+          : ''
+      }
+    ></div>
+  )
   return (
     <div className={''}>
       {/* Game Custom Information */}
@@ -113,7 +122,7 @@ export default function GameId() {
       <section className={'grid grid-cols-6 gap-4'}>
         {/* Team Selections */}
         <Card className="flex justify-start col-span-1 border-0">
-          <CardContent className="p-4">
+        <CardContent className="p-4">
             <h2 className="text-sm font-semibold mb-4">Team Picks</h2>
             <div className="grid grid-cols-1 gap-0">
               {roles.team.map(role => (
@@ -141,13 +150,7 @@ export default function GameId() {
                     </h3>
                     <p className="text-[9px] text-neutral-300">{role.label}</p>
                   </div>
-                  <div
-                    className={
-                      cursor === role.cursor
-                        ? 'absolute inset-0 bg-blue-700 opacity-20'
-                        : ''
-                    }
-                  ></div>
+                  <Backdrop role={role} />
                 </div>
               ))}
             </div>
@@ -261,13 +264,7 @@ export default function GameId() {
                     </h3>
                     <p className="text-[9px] text-neutral-300">{role.label}</p>
                   </div>
-                  <div
-                    className={
-                      cursor === role.cursor
-                        ? 'absolute inset-0 bg-blue-700 opacity-20'
-                        : ''
-                    }
-                  ></div>
+                  <Backdrop role={role} />
                 </div>
               ))}
             </div>
