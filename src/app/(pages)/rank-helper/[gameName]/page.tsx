@@ -4,7 +4,7 @@ import { useGame } from '@/app/gameContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowRightLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FinalHeroDataType } from '@/lib/types';
 
@@ -26,10 +26,12 @@ export default function GameId() {
     enabled: !!state.laneType
   })
 
-  console.log({
-    gameType: state.gameType,
-    laneType: state.laneType
-  });
+  const filteredHeroes = useMemo(() => {
+    if (!heroData || !heroData.data) return [];
+    const heroes = heroData.data as FinalHeroDataType[];
+    return heroFilter === 'All' ? heroes : heroes.filter(hero => hero.role.includes(heroFilter));
+  }, [heroData, heroFilter]);
+
 
   const roles = {
     "team": [
@@ -74,19 +76,17 @@ export default function GameId() {
         <div className={"col-span-4 border-2 border-red-700"}>
           <h3>Hero Selection</h3>
           <div className={"flex items-center"}>
-            <ArrowRightLeft />
             <div className={"flex overflow-x-auto"}>
-              <Button variant={heroFilter === "All" ? "default" : "ghost"}>All</Button>
-              <Button variant={heroFilter === "Tank" ? "default" : "ghost"}>Tank</Button>
-              <Button variant={heroFilter === "Fighter" ? "default" : "ghost"}>Fighter</Button>
-              <Button variant={heroFilter === "Assassin" ? "default" : "ghost"}>Assassin</Button>
-              <Button variant={heroFilter === "Mage" ? "default" : "ghost"}>Mage</Button>
-              <Button variant={heroFilter === "Marksman" ? "default" : "ghost"}>Marksman</Button>
-              <Button variant={heroFilter === "Support" ? "default" : "ghost"}>Support</Button>
+              <Button onClick={() => setHeroFilter("All")} variant={heroFilter === "All" ? "default" : "ghost"}>All</Button>
+              <Button onClick={() => setHeroFilter("Roam")} variant={heroFilter === "Roam" ? "default" : "ghost"}>Roam</Button>
+              <Button onClick={() => setHeroFilter("Exp Lane")} variant={heroFilter === "Exp Lane" ? "default" : "ghost"}>Exp Lane</Button>
+              <Button onClick={() => setHeroFilter("Jungle")} variant={heroFilter === "Jungle" ? "default" : "ghost"}>Jungle</Button>
+              <Button onClick={() => setHeroFilter("Mid Lane")} variant={heroFilter === "Mid Lane" ? "default" : "ghost"}>Mid Lane</Button>
+              <Button onClick={() => setHeroFilter("Gold Lane")} variant={heroFilter === "Gold Lane" ? "default" : "ghost"}>Gold Lane</Button>
             </div>
           </div>
           <div className={"flex gap-x-8 flex-wrap"}>
-            {heroData && heroData.data.map((hero: FinalHeroDataType) => {
+            {heroData && filteredHeroes && filteredHeroes.map((hero: FinalHeroDataType) => {
               return (
                 <div key={hero.name} className={"flex flex-col items-center truncate w-[50px]"}>
                   <img className={"rounded-full w-10 h-10"} src={hero.images.head} alt={hero.name} />
