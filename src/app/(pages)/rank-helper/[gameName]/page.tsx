@@ -7,13 +7,16 @@ import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FinalHeroDataType } from '@/lib/types';
 import { Sparkles } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
-const HERO_HEAD_SIZE: string = "40px"
+const HERO_HEAD_SIZE: string = '40px';
 
 export default function GameId() {
   const { state } = useGame();
   const router = useRouter();
   const [heroFilter, setHeroFilter] = useState<string>('Suggestion');
+  const [cursor, setCursor] = useState<number>(1);
 
   if (!state.laneType || !state.gameType) {
     router.push('/rank-helper');
@@ -38,23 +41,25 @@ export default function GameId() {
     const heroes = heroData.data as FinalHeroDataType[];
     return heroFilter === 'Suggestion'
       ? heroes
-      : heroes.filter(hero => hero.role.includes(heroFilter)).sort((a, b) => Number(a.hero_id) - Number(b.hero_id));
+      : heroes
+          .filter(hero => hero.role.includes(heroFilter))
+          .sort((a, b) => Number(a.hero_id) - Number(b.hero_id));
   }, [heroData, heroFilter]);
 
   const roles = {
     team: [
-      { label: 'Jungle', hero_name: '', head: '' },
-      { label: 'Mid Lane', hero_name: '', head: '' },
-      { label: 'Gold Lane', hero_name: '', head: '' },
-      { label: 'Exp Lane', hero_name: '', head: '' },
-      { label: 'Roam', hero_name: '', head: '' },
+      { label: 'Jungle', hero_name: '', head: '', cursor: 1 },
+      { label: 'Mid Lane', hero_name: '', head: '', cursor: 2 },
+      { label: 'Gold Lane', hero_name: '', head: '', cursor: 3 },
+      { label: 'Exp Lane', hero_name: '', head: '', cursor: 4 },
+      { label: 'Roam', hero_name: '', head: '', cursor: 5 },
     ],
     enemy: [
-      { label: 'Jungle', hero_name: '', head: '' },
-      { label: 'Mid Lane', hero_name: '', head: '' },
-      { label: 'Gold Lane', hero_name: '', head: '' },
-      { label: 'Exp Lane', hero_name: '', head: '' },
-      { label: 'Roam', hero_name: '', head: '' },
+      { label: 'Jungle', hero_name: '', head: '', cursor: 6 },
+      { label: 'Mid Lane', hero_name: '', head: '', cursor: 7 },
+      { label: 'Gold Lane', hero_name: '', head: '', cursor: 8 },
+      { label: 'Exp Lane', hero_name: '', head: '', cursor: 9 },
+      { label: 'Roam', hero_name: '', head: '', cursor: 10 },
     ],
   };
 
@@ -70,11 +75,21 @@ export default function GameId() {
           <div className={'flex flex-col gap-4'}>
             {roles.team.map(role => {
               return (
-                <div key={role.label}>
-                  <img src={role.head} />
-                  <h4>{role.hero_name}</h4>
-                  <h3>{role.label}</h3>
-                </div>
+                <Card
+                  key={role.label}
+                  className={cn('h-[50px]', {
+                    'bg-blue-400/60': cursor === role.cursor,
+                  })}
+                  onClick={() => setCursor(role.cursor)}
+                >
+                  <CardTitle>{role.hero_name}</CardTitle>
+                  <CardContent>
+                    <img src={role.head} />
+                  </CardContent>
+                  <CardFooter>
+                    <h3>{role.label}</h3>
+                  </CardFooter>
+                </Card>
               );
             })}
           </div>
@@ -124,28 +139,39 @@ export default function GameId() {
               </Button>
             </div>
           </div>
-          <div className={"h-[300px]"}>
-            <div className={'px-2 py-4 flex gap-x-[15px] flex-wrap max-h-[300px] overflow-y-auto'}>
+          <div className={'h-[300px]'}>
+            <div
+              className={
+                'px-2 py-4 flex gap-x-[15px] flex-wrap max-h-[300px] overflow-y-auto'
+              }
+            >
               {heroData &&
                 filteredHeroes &&
                 filteredHeroes.map((hero: FinalHeroDataType) => {
                   return (
                     <div
                       key={hero.name}
-                      className={'flex flex-col justify-start items-center truncate w-[50px] mb-[5px]'}
+                      className={
+                        'flex flex-col justify-start items-center truncate w-[50px] mb-[5px]'
+                      }
                     >
                       <img
                         className={`rounded-full w-[${HERO_HEAD_SIZE}] h-[${HERO_HEAD_SIZE}]`}
                         src={hero.images.head}
                         alt={hero.name}
                       />
-                      <h4 className={'text-[0.6rem] flex mx-auto text-neutral-400'}>{hero.name}</h4>
+                      <h4
+                        className={
+                          'text-[0.6rem] flex mx-auto text-neutral-400'
+                        }
+                      >
+                        {hero.name}
+                      </h4>
                     </div>
                   );
                 })}
             </div>
           </div>
-
         </div>
 
         {/* Enemy Selections */}
@@ -154,11 +180,21 @@ export default function GameId() {
           <div className={'flex flex-col gap-4'}>
             {roles.enemy.map(role => {
               return (
-                <div key={role.label}>
-                  <img src={role.head} />
-                  <h4>{role.hero_name}</h4>
-                  <h3>{role.label}</h3>
-                </div>
+                <Card
+                  key={role.label}
+                  className={cn('h-[50px]', {
+                    'bg-blue-400/60': cursor === role.cursor,
+                  })}
+                  onClick={() => setCursor(role.cursor)}
+                >
+                  <CardTitle>{role.hero_name}</CardTitle>
+                  <CardContent>
+                    <img src={role.head} />
+                  </CardContent>
+                  <CardFooter>
+                    <h3>{role.label}</h3>
+                  </CardFooter>
+                </Card>
               );
             })}
           </div>
