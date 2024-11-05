@@ -9,14 +9,46 @@ import { FinalHeroDataType } from '@/lib/types';
 import { Sparkles } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 const HERO_HEAD_SIZE: string = '40px';
+
+type rolesType = {
+  team: {
+    label: string;
+    hero_name: string;
+    head: string;
+    cursor: number;
+  }[];
+  enemy: {
+    label: string;
+    hero_name: string;
+    head: string;
+    cursor: number;
+  }[];
+};
 
 export default function GameId() {
   const { state } = useGame();
   const router = useRouter();
   const [heroFilter, setHeroFilter] = useState<string>('Suggestion');
   const [cursor, setCursor] = useState<number>(1);
+  const [roles, setRoles] = useState<rolesType>({
+    team: [
+      { label: 'Jungle', hero_name: '', head: '', cursor: 1 },
+      { label: 'Mid Lane', hero_name: '', head: '', cursor: 2 },
+      { label: 'Gold Lane', hero_name: '', head: '', cursor: 3 },
+      { label: 'Exp Lane', hero_name: '', head: '', cursor: 4 },
+      { label: 'Roam', hero_name: '', head: '', cursor: 5 },
+    ],
+    enemy: [
+      { label: 'Jungle', hero_name: '', head: '', cursor: 6 },
+      { label: 'Mid Lane', hero_name: '', head: '', cursor: 7 },
+      { label: 'Gold Lane', hero_name: '', head: '', cursor: 8 },
+      { label: 'Exp Lane', hero_name: '', head: '', cursor: 9 },
+      { label: 'Roam', hero_name: '', head: '', cursor: 10 },
+    ],
+  });
 
   if (!state.laneType || !state.gameType) {
     router.push('/rank-helper');
@@ -46,21 +78,31 @@ export default function GameId() {
           .sort((a, b) => Number(a.hero_id) - Number(b.hero_id));
   }, [heroData, heroFilter]);
 
-  const roles = {
-    team: [
-      { label: 'Jungle', hero_name: '', head: '', cursor: 1 },
-      { label: 'Mid Lane', hero_name: '', head: '', cursor: 2 },
-      { label: 'Gold Lane', hero_name: '', head: '', cursor: 3 },
-      { label: 'Exp Lane', hero_name: '', head: '', cursor: 4 },
-      { label: 'Roam', hero_name: '', head: '', cursor: 5 },
-    ],
-    enemy: [
-      { label: 'Jungle', hero_name: '', head: '', cursor: 6 },
-      { label: 'Mid Lane', hero_name: '', head: '', cursor: 7 },
-      { label: 'Gold Lane', hero_name: '', head: '', cursor: 8 },
-      { label: 'Exp Lane', hero_name: '', head: '', cursor: 9 },
-      { label: 'Roam', hero_name: '', head: '', cursor: 10 },
-    ],
+  const handleRoleSelect = (hero: FinalHeroDataType) => {
+    setRoles(prevState => {
+      // Check if the current cursor corresponds to the `team` or `enemy` array
+      if (cursor <= 5) {
+        // Update the `team` array
+        return {
+          ...prevState,
+          team: prevState.team.map(role =>
+            role.cursor === cursor
+              ? { ...role, hero_name: hero.name, head: hero.images.square }
+              : role
+          ),
+        };
+      } else {
+        // Update the `enemy` array
+        return {
+          ...prevState,
+          enemy: prevState.enemy.map(role =>
+            role.cursor === cursor
+              ? { ...role, hero_name: hero.name, head: hero.images.square }
+              : role
+          ),
+        };
+      }
+    });
   };
 
   return (
@@ -70,34 +112,50 @@ export default function GameId() {
       {/* Game Replica Section */}
       <section className={'grid grid-cols-6 gap-4'}>
         {/* Team Selections */}
-        <div className={'col-span-1'}>
-          <h3 className={'mb-5'}>Team Picks</h3>
-          <div className={'flex flex-col gap-4'}>
-            {roles.team.map(role => {
-              return (
-                <Card
+        <Card className="flex justify-start col-span-1 border-0">
+          <CardContent className="p-4">
+            <h2 className="text-sm font-semibold mb-4">Team Picks</h2>
+            <div className="grid grid-cols-1 gap-0">
+              {roles.team.map(role => (
+                <div
                   key={role.label}
-                  className={cn('h-[50px]', {
-                    'bg-blue-400/60': cursor === role.cursor,
-                  })}
+                  className={cn(
+                    'relative overflow-hidden rounded-lg -border cursor-pointer transition-all duration-200 hover:shadow-md',
+                    cursor === role.cursor
+                      ? 'border-primary-ring-2-ring-primary'
+                      : 'border-neutral-200 dark:border-neutral-800'
+                  )}
                   onClick={() => setCursor(role.cursor)}
                 >
-                  <CardTitle>{role.hero_name}</CardTitle>
-                  <CardContent>
-                    <img src={role.head} />
-                  </CardContent>
-                  <CardFooter>
-                    <h3>{role.label}</h3>
-                  </CardFooter>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+                  <div className="h-[70px] w-full aspect-square relative">
+                    <Image
+                      src={role.head || '/unselected.webp'}
+                      alt={`${role.hero_name || 'Unselected'} avatar`}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
+                    <h3 className="text-[10px] font-semibold text-white truncate">
+                      {role.hero_name || 'Select Hero'}
+                    </h3>
+                    <p className="text-[9px] text-neutral-300">{role.label}</p>
+                  </div>
+                  <div
+                    className={
+                      cursor === role.cursor
+                        ? 'absolute inset-0 bg-blue-700 opacity-20'
+                        : ''
+                    }
+                  ></div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Hero Poll*/}
         <div className={'col-span-4'}>
-          <h3>Hero Selection</h3>
           <div className={'flex items-center'}>
             <div className={'flex overflow-x-auto'}>
               <Button
@@ -139,21 +197,22 @@ export default function GameId() {
               </Button>
             </div>
           </div>
-          <div className={'h-[300px]'}>
+          <div className={'h-[350px]'}>
             <div
               className={
-                'px-2 py-4 flex gap-x-[15px] flex-wrap max-h-[300px] overflow-y-auto'
+                'mx-2 my-4 flex gap-x-[15px] flex-wrap max-h-[350px] overflow-y-auto'
               }
             >
               {heroData &&
                 filteredHeroes &&
                 filteredHeroes.map((hero: FinalHeroDataType) => {
                   return (
-                    <div
+                    <button
                       key={hero.name}
                       className={
                         'flex flex-col justify-start items-center truncate w-[50px] mb-[5px]'
                       }
+                      onClick={() => handleRoleSelect(hero)}
                     >
                       <img
                         className={`rounded-full w-[${HERO_HEAD_SIZE}] h-[${HERO_HEAD_SIZE}]`}
@@ -167,7 +226,7 @@ export default function GameId() {
                       >
                         {hero.name}
                       </h4>
-                    </div>
+                    </button>
                   );
                 })}
             </div>
@@ -175,30 +234,47 @@ export default function GameId() {
         </div>
 
         {/* Enemy Selections */}
-        <div className={'col-span-1'}>
-          <h3 className={'mb-5'}>Enemy Picks</h3>
-          <div className={'flex flex-col gap-4'}>
-            {roles.enemy.map(role => {
-              return (
-                <Card
+        <Card className="flex justify-end col-span-1 border-0">
+          <CardContent className="p-4">
+            <h2 className="text-sm font-semibold mb-4">Enemy Picks</h2>
+            <div className="grid grid-cols-1 gap-0">
+              {roles.enemy.map(role => (
+                <div
                   key={role.label}
-                  className={cn('h-[50px]', {
-                    'bg-blue-400/60': cursor === role.cursor,
-                  })}
+                  className={cn(
+                    'relative overflow-hidden rounded-lg -border cursor-pointer transition-all duration-200 hover:shadow-md',
+                    cursor === role.cursor
+                      ? 'border-primary-ring-2-ring-primary'
+                      : 'border-neutral-200 dark:border-neutral-800'
+                  )}
                   onClick={() => setCursor(role.cursor)}
                 >
-                  <CardTitle>{role.hero_name}</CardTitle>
-                  <CardContent>
-                    <img src={role.head} />
-                  </CardContent>
-                  <CardFooter>
-                    <h3>{role.label}</h3>
-                  </CardFooter>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+                  <div className="h-[70px] w-full aspect-square relative">
+                    <Image
+                      src={role.head || '/unselected.webp'}
+                      alt={`${role.hero_name || 'Unselected'} avatar`}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
+                    <h3 className="text-[10px] font-semibold text-white truncate">
+                      {role.hero_name || 'Select Hero'}
+                    </h3>
+                    <p className="text-[9px] text-neutral-300">{role.label}</p>
+                  </div>
+                  <div
+                    className={
+                      cursor === role.cursor
+                        ? 'absolute inset-0 bg-blue-700 opacity-20'
+                        : ''
+                    }
+                  ></div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
