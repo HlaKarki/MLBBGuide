@@ -12,11 +12,13 @@ import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { DndProvider, DragSourceMonitor, DropTargetMonitor, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { suggestHeroes } from '@/app/(pages)/rank-helper/recommendations';
 
 const HERO_HEAD_SIZE: string = '40px'
 
 type RoleType = {
   label: string
+  hero_id: string
   hero_name: string
   head: string
   cursor: number
@@ -123,18 +125,18 @@ export default function GameId() {
   const [selectedCursor, setSelectedCursor] = useState<number | null>(null)
   const [roles, setRoles] = useState<RolesType>({
     team: [
-      { label: 'Jungle', hero_name: '', head: '', cursor: 1 },
-      { label: 'Mid Lane', hero_name: '', head: '', cursor: 2 },
-      { label: 'Gold Lane', hero_name: '', head: '', cursor: 3 },
-      { label: 'Exp Lane', hero_name: '', head: '', cursor: 4 },
-      { label: 'Roam', hero_name: '', head: '', cursor: 5 },
+      { label: 'Jungle', hero_id: '', hero_name: '', head: '', cursor: 1 },
+      { label: 'Mid Lane', hero_id: '', hero_name: '', head: '', cursor: 2 },
+      { label: 'Gold Lane', hero_id: '', hero_name: '', head: '', cursor: 3 },
+      { label: 'Exp Lane', hero_id: '', hero_name: '', head: '', cursor: 4 },
+      { label: 'Roam', hero_id: '', hero_name: '', head: '', cursor: 5 },
     ],
     enemy: [
-      { label: 'Jungle', hero_name: '', head: '', cursor: 6 },
-      { label: 'Mid Lane', hero_name: '', head: '', cursor: 7 },
-      { label: 'Gold Lane', hero_name: '', head: '', cursor: 8 },
-      { label: 'Exp Lane', hero_name: '', head: '', cursor: 9 },
-      { label: 'Roam', hero_name: '', head: '', cursor: 10 },
+      { label: 'Jungle', hero_id: '', hero_name: '', head: '', cursor: 6 },
+      { label: 'Mid Lane', hero_id: '', hero_name: '', head: '', cursor: 7 },
+      { label: 'Gold Lane', hero_id: '', hero_name: '', head: '', cursor: 8 },
+      { label: 'Exp Lane', hero_id: '', hero_name: '', head: '', cursor: 9 },
+      { label: 'Roam', hero_id: '', hero_name: '', head: '', cursor: 10 },
     ],
   })
 
@@ -151,11 +153,23 @@ export default function GameId() {
     enabled: !!state.laneType,
   })
 
+  const suggestedHeroes = useMemo(() => {
+    if (!heroData || !heroData.data) return []
+    const heroes = heroData.data as FinalHeroDataType[]
+    const teamHeroIds = roles.team.map((role) => role.hero_id).filter(hero_id => hero_id !== '');
+    const enemyHeroIds = roles.enemy.map((role) => role.hero_id).filter(hero_id => hero_id !== '');
+
+    console.log("passing in: ", {teamHeroIds, enemyHeroIds});
+    const suggestions = suggestHeroes(teamHeroIds, enemyHeroIds, [], heroes)
+    console.log("suggested!: ", suggestions);
+    return suggestions.map(suggestion => suggestion.hero)
+  }, [heroData, heroFilter, roles])
+
   const filteredHeroes = useMemo(() => {
     if (!heroData || !heroData.data) return []
     const heroes = heroData.data as FinalHeroDataType[]
     return heroFilter === 'Suggestion'
-      ? heroes
+      ? suggestedHeroes
       : heroes
         .filter(hero => hero.role.includes(heroFilter))
         .sort((a, b) => Number(a.hero_id) - Number(b.hero_id))
@@ -168,7 +182,7 @@ export default function GameId() {
           ...prevState,
           team: prevState.team.map(role =>
             role.cursor === cursor
-              ? { ...role, hero_name: hero.name, head: hero.images.square }
+              ? { ...role, hero_id: hero.hero_id, hero_name: hero.name, head: hero.images.square }
               : role
           ),
         }
@@ -177,7 +191,7 @@ export default function GameId() {
           ...prevState,
           enemy: prevState.enemy.map(role =>
             role.cursor === cursor
-              ? { ...role, hero_name: hero.name, head: hero.images.square }
+              ? { ...role, hero_id: hero.hero_id, hero_name: hero.name, head: hero.images.square }
               : role
           ),
         }
