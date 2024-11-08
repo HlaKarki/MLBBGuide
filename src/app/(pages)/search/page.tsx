@@ -13,9 +13,14 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { SearchBar } from '@/components/search/SearchBar';
 import RankSelector from '@/components/search/RankSelector';
-import HeroGraph from '@/components/search/HeroChart';
+import HeroGraph from '@/components/search/HeroGraph';
 import HeroData from '@/components/search/HeroData';
-import { getHeroId, getHeroName, getHeroNameURL, replaceHyphenInHeroName } from '@/lib/utils';
+import {
+  getHeroId,
+  getHeroName,
+  getHeroNameURL,
+  replaceHyphenInHeroName,
+} from '@/lib/utils';
 
 const fetchHeroInfo = async (heroId: number | string) => {
   const response = await fetch(`/api/mlbb/heroes?id=${heroId}`);
