@@ -18,7 +18,6 @@ import {
   Check,
   ChevronDown,
   Filter,
-  Sparkles,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -69,6 +68,9 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className={
+          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
+        }
       >
         Win Rate
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -86,6 +88,9 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className={
+          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
+        }
       >
         Ban Rate
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -103,6 +108,9 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className={
+          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
+        }
       >
         Pick Rate
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -116,42 +124,49 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
   },
   {
     accessorKey: 'speciality',
-    header: ({ column }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
-            Speciality
-            <Sparkles className="ml-2 h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {Array.from(new Set(stats.flatMap(hero => hero.speciality))).map(
-            tag => (
-              <DropdownMenuCheckboxItem
-                key={tag}
-                className="capitalize"
-                checked={
-                  (column.getFilterValue() as string[] | undefined)?.includes(
-                    tag
-                  ) ?? false
-                }
-                onCheckedChange={value => {
-                  const filterValue =
-                    (column.getFilterValue() as string[] | undefined) ?? [];
-                  if (value) {
-                    column.setFilterValue([...filterValue, tag]);
-                  } else {
-                    column.setFilterValue(filterValue.filter(v => v !== tag));
+    header: ({ column }) => {
+      const filterValue = column.getFilterValue() as string[] | undefined;
+      const isFiltered = filterValue && filterValue.length > 0;
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className={isFiltered ? 'bg-primary text-primary-foreground' : ''}
+            >
+              Speciality
+              <Filter className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {Array.from(new Set(stats.flatMap(hero => hero.speciality))).map(
+              tag => (
+                <DropdownMenuCheckboxItem
+                  key={tag}
+                  className="capitalize"
+                  checked={
+                    (column.getFilterValue() as string[] | undefined)?.includes(
+                      tag
+                    ) ?? false
                   }
-                }}
-              >
-                {tag}
-              </DropdownMenuCheckboxItem>
-            )
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+                  onCheckedChange={value => {
+                    const filterValue =
+                      (column.getFilterValue() as string[] | undefined) ?? [];
+                    if (value) {
+                      column.setFilterValue([...filterValue, tag]);
+                    } else {
+                      column.setFilterValue(filterValue.filter(v => v !== tag));
+                    }
+                  }}
+                >
+                  {tag}
+                </DropdownMenuCheckboxItem>
+              )
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
     filterFn: (row, id, value: string[] | undefined) => {
       const rowTags = row.getValue(id) as string[];
       return (
@@ -174,6 +189,9 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className={
+          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
+        }
       >
         Durability
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -193,6 +211,9 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className={
+          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
+        }
       >
         Offense
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -212,6 +233,9 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className={
+          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
+        }
       >
         Ability Effects
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -231,6 +255,9 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className={
+          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
+        }
       >
         Difficulty
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -246,40 +273,52 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
   },
   {
     accessorKey: 'lanes',
-    header: ({ column }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
-            Lanes
-            <Filter className="ml-2 h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {Array.from(new Set(stats.flatMap(hero => hero.lanes))).map(lane => (
-            <DropdownMenuCheckboxItem
-              key={lane}
-              className="capitalize"
-              checked={
-                (column.getFilterValue() as string[] | undefined)?.includes(
-                  lane
-                ) ?? false
-              }
-              onCheckedChange={value => {
-                const filterValue =
-                  (column.getFilterValue() as string[] | undefined) ?? [];
-                if (value) {
-                  column.setFilterValue([...filterValue, lane]);
-                } else {
-                  column.setFilterValue(filterValue.filter(v => v !== lane));
-                }
-              }}
-            >
-              {lane}
-            </DropdownMenuCheckboxItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    header: ({ column }) => {
+      const filterValue = column.getFilterValue() as string[] | undefined;
+      const isFiltered = filterValue && filterValue.length > 0;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            asChild
+            className={isFiltered ? 'bg-primary text-primary-foreground' : ''}
+          >
+            <Button variant="ghost">
+              Lanes
+              <Filter className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {Array.from(new Set(stats.flatMap(hero => hero.lanes))).map(
+              lane => (
+                <DropdownMenuCheckboxItem
+                  key={lane}
+                  className="capitalize"
+                  checked={
+                    (column.getFilterValue() as string[] | undefined)?.includes(
+                      lane
+                    ) ?? false
+                  }
+                  onCheckedChange={value => {
+                    const filterValue =
+                      (column.getFilterValue() as string[] | undefined) ?? [];
+                    if (value) {
+                      column.setFilterValue([...filterValue, lane]);
+                    } else {
+                      column.setFilterValue(
+                        filterValue.filter(v => v !== lane)
+                      );
+                    }
+                  }}
+                >
+                  {lane}
+                </DropdownMenuCheckboxItem>
+              )
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
     filterFn: (row, id, value: string[] | undefined) => {
       const rowLanes = row.getValue(id) as string[];
       return (
