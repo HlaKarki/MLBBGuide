@@ -4,11 +4,11 @@ import { FinalHeroDataType } from '@/lib/types';
 const WEIGHTS = {
   COUNTER: 3,
   SYNERGY: 2,
-  ROLE_BALANCE: 2.5,
+  LANE_BALANCE: 2.5,
   SPECIALTY_BALANCE: 1,
   WIN_RATE: 1.5,
   PICK_RATE: 1,
-  BAN_RATE: 0.5
+  BAN_RATE: 0.5,
 } as const;
 
 interface HeroScore {
@@ -35,26 +35,29 @@ export function suggestHeroes(
     allHeroes.find(h => h.hero_id === heroId);
 
   // Get current team composition
-  const teamHeroes = teamPicks.map(id => getHeroById(id)).filter(Boolean) as FinalHeroDataType[];
+  const teamHeroes = teamPicks
+    .map(id => getHeroById(id))
+    .filter(Boolean) as FinalHeroDataType[];
 
   // Determine team's current roles and specialties
-  const teamRoles = new Set<string>();
+  const teamLanes = new Set<string>();
   const teamSpecialties = new Set<string>();
 
   teamHeroes.forEach(hero => {
-    hero.role.forEach(role => teamRoles.add(role));
+    hero.role.forEach(role => teamLanes.add(role));
     hero.speciality.forEach(spec => teamSpecialties.add(spec));
   });
 
   // Determine missing roles
-  const allRoles = ['Roam', 'Exp Lane', 'Jungle', 'Mid Lane', 'Gold Lane'];
-  const missingRoles = allRoles.filter(role => !teamRoles.has(role));
+  const allLanes = ['Roam', 'Exp Lane', 'Jungle', 'Mid Lane', 'Gold Lane'];
+  const missingLanes = allLanes.filter(role => !teamLanes.has(role));
 
   // Filter available heroes
-  let availableHeroes = allHeroes.filter(hero =>
-    !teamPicks.includes(hero.hero_id) &&
-    !enemyPicks.includes(hero.hero_id) &&
-    !bannedHeroes.includes(hero.hero_id)
+  let availableHeroes = allHeroes.filter(
+    hero =>
+      !teamPicks.includes(hero.hero_id) &&
+      !enemyPicks.includes(hero.hero_id) &&
+      !bannedHeroes.includes(hero.hero_id)
   );
 
   // Filter heroes based on requiredRole or missing roles
@@ -65,7 +68,7 @@ export function suggestHeroes(
   } else {
     // Automatically filter heroes to those suitable for missing roles
     availableHeroes = availableHeroes.filter(hero =>
-      hero.role.some(role => missingRoles.includes(role))
+      hero.role.some(role => missingLanes.includes(role))
     );
   }
 
@@ -79,8 +82,8 @@ export function suggestHeroes(
     let performanceScore = 0;
 
     // Check for hard counters (ineffective against)
-    const isHardCountered = hero.ineffective?.some(
-      counter => enemyPicks.includes(counter.hero_id)
+    const isHardCountered = hero.ineffective?.some(counter =>
+      enemyPicks.includes(counter.hero_id)
     );
 
     if (isHardCountered) {
@@ -92,8 +95,8 @@ export function suggestHeroes(
           synergyScore: 0,
           roleScore: 0,
           specialtyScore: 0,
-          performanceScore: 0
-        }
+          performanceScore: 0,
+        },
       };
     }
 
@@ -102,7 +105,8 @@ export function suggestHeroes(
       const counterCount = enemyPicks.filter(enemyId =>
         hero.effective?.some(counter => counter.hero_id === enemyId)
       ).length;
-      counterScore = (counterCount / Math.max(enemyPicks.length, 1)) * WEIGHTS.COUNTER;
+      counterScore =
+        (counterCount / Math.max(enemyPicks.length, 1)) * WEIGHTS.COUNTER;
     }
 
     // Synergy score
@@ -110,16 +114,19 @@ export function suggestHeroes(
       const synergyCount = teamPicks.filter(teamId =>
         hero.compatible?.some(sync => sync.hero_id === teamId)
       ).length;
-      synergyScore = (synergyCount / Math.max(teamPicks.length, 1)) * WEIGHTS.SYNERGY;
+      synergyScore =
+        (synergyCount / Math.max(teamPicks.length, 1)) * WEIGHTS.SYNERGY;
     }
 
     // Role balance score
     if (requiredRole) {
-      roleScore = WEIGHTS.ROLE_BALANCE;
+      roleScore = WEIGHTS.LANE_BALANCE;
     } else {
       // If the hero fills one of the missing roles, assign roleScore
-      const fillsMissingRole = hero.role.some(role => missingRoles.includes(role));
-      roleScore = fillsMissingRole ? WEIGHTS.ROLE_BALANCE : 0;
+      const fillsMissingRole = hero.role.some(role =>
+        missingLanes.includes(role)
+      );
+      roleScore = fillsMissingRole ? WEIGHTS.LANE_BALANCE : 0;
     }
 
     // Specialty balance score
@@ -127,9 +134,9 @@ export function suggestHeroes(
     const missingSpecialties = requiredSpecialties.filter(
       spec => !teamSpecialties.has(spec)
     );
-    specialtyScore = hero.speciality.filter(
-      spec => missingSpecialties.includes(spec)
-    ).length * WEIGHTS.SPECIALTY_BALANCE;
+    specialtyScore =
+      hero.speciality.filter(spec => missingSpecialties.includes(spec)).length *
+      WEIGHTS.SPECIALTY_BALANCE;
 
     // Performance score based on win rate, pick rate, and ban rate
     if (hero.win_rate && hero.pick_rate) {
@@ -138,13 +145,18 @@ export function suggestHeroes(
       const banRate = hero.ban_rate ? parseFloat(hero.ban_rate) / 100 : 0;
 
       performanceScore =
-        (winRate * WEIGHTS.WIN_RATE) +
-        (pickRate * WEIGHTS.PICK_RATE) +
-        (banRate * WEIGHTS.BAN_RATE);
+        winRate * WEIGHTS.WIN_RATE +
+        pickRate * WEIGHTS.PICK_RATE +
+        banRate * WEIGHTS.BAN_RATE;
     }
 
     // Calculate final score
-    const finalScore = counterScore + synergyScore + roleScore + specialtyScore + performanceScore;
+    const finalScore =
+      counterScore +
+      synergyScore +
+      roleScore +
+      specialtyScore +
+      performanceScore;
 
     return {
       hero,
@@ -154,8 +166,8 @@ export function suggestHeroes(
         synergyScore,
         roleScore,
         specialtyScore,
-        performanceScore
-      }
+        performanceScore,
+      },
     };
   });
 
@@ -170,21 +182,23 @@ export function explainHeroSuggestion(heroScore: HeroScore): string {
   const { hero, breakdowns } = heroScore;
 
   return `${hero.name} Suggestion Analysis:
-• Counter potential: ${(breakdowns.counterScore / WEIGHTS.COUNTER * 100).toFixed(1)}%
-• Team synergy: ${(breakdowns.synergyScore / WEIGHTS.SYNERGY * 100).toFixed(1)}%
-• Role fit: ${(breakdowns.roleScore / WEIGHTS.ROLE_BALANCE * 100).toFixed(1)}%
-• Specialty contribution: ${(breakdowns.specialtyScore / WEIGHTS.SPECIALTY_BALANCE * 100).toFixed(1)}%
-• Current meta performance: ${(breakdowns.performanceScore / (WEIGHTS.WIN_RATE + WEIGHTS.PICK_RATE + WEIGHTS.BAN_RATE) * 100).toFixed(1)}%`;
+• Counter potential: ${((breakdowns.counterScore / WEIGHTS.COUNTER) * 100).toFixed(1)}%
+• Team synergy: ${((breakdowns.synergyScore / WEIGHTS.SYNERGY) * 100).toFixed(1)}%
+• Role fit: ${((breakdowns.roleScore / WEIGHTS.LANE_BALANCE) * 100).toFixed(1)}%
+• Specialty contribution: ${((breakdowns.specialtyScore / WEIGHTS.SPECIALTY_BALANCE) * 100).toFixed(1)}%
+• Current meta performance: ${((breakdowns.performanceScore / (WEIGHTS.WIN_RATE + WEIGHTS.PICK_RATE + WEIGHTS.BAN_RATE)) * 100).toFixed(1)}%`;
 }
 
-
 // const fetchHeroData = async () => {
-//   const response = await fetch('http://localhost:3000/api/mlbb/final')
+//   const response = await fetch('http://localhost:3000/api/mlbb/final');
 //   const data = await response.json();
-//   return data.data
-// }
+//   return data.data;
+// };
 //
 // fetchHeroData().then(heroes => {
-//   console.log(suggestHeroes(["36", "60", "77", "6"], [], [], heroes));
-// })
-
+//   const suggestions = suggestHeroes(['36', '60', '77', '6'], [], [], heroes);
+//   // console.log(suggestions);
+//   const reason = explainHeroSuggestion(suggestions[0]);
+//   // console.log({hero: suggestions[0].hero.name, reason});
+//   console.log(reason);
+// });
