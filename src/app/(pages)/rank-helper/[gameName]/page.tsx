@@ -85,8 +85,11 @@ const HeroItem = ({
       onClick={() => onSelect(hero)}
     >
       <img
-        className={cn('rounded-full h-[50px]', {
+        className={cn('brightness- rounded-full h-[50px]', {
           'ring-2 ring-orange-300': roles.team.find(selection => {
+            return selection.hero_id === hero.hero_id
+          }),
+          'ring-2 ring-red-500': roles.enemy.find(selection => {
             return selection.hero_id === hero.hero_id
           })
         })}
@@ -139,8 +142,8 @@ const RoleSlot = ({
         'relative overflow-hidden rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md',
         {
           'border-primary ring-2 ring-primary': isOver,
-          'border-l-4 border-l-blue-500': isSelected && !isEnemy,
-          'border-r-4 border-r-blue-500': isSelected && isEnemy,
+          'border-l-4 border-l-orange-300': isSelected && !isEnemy,
+          'border-r-4 border-r-red-500': isSelected && isEnemy,
           'brightness-100': role.head,
           'brightness-150': isSelected && !role.head,
         }
@@ -245,16 +248,12 @@ export default function GameId() {
       }
     });
     if (cursor < 10) {
-      const newCursor = cursor + 1;
-      setSelectedCursor(newCursor);
-
       // Determine if the cursor relates to team or enemy, then find the correct label
-      const rolesList = newCursor <= 5 ? roles.team : roles.enemy;
-      const label = rolesList.find(role => role.cursor === newCursor)?.label || heroFilter;
+      const rolesList = cursor <= 5 ? roles.team : roles.enemy;
+      const label = rolesList.find(role => role.cursor === cursor)?.label || heroFilter;
 
-      setHeroFilter(label);
-    } else {
       setSelectedCursor(cursor);
+      setHeroFilter(label);
     }
   };
 
