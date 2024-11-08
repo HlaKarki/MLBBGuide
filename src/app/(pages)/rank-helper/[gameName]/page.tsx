@@ -3,7 +3,7 @@
 import { useGame } from '@/app/gameContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FinalHeroDataType } from '@/lib/types';
 import { RotateCcw, Sparkles } from 'lucide-react';
@@ -173,11 +173,8 @@ export default function GameId() {
 
   const {
     data: heroData,
-    isLoading,
-    isError,
-    error,
   } = useQuery({
-    queryKey: ['newgame', state.gameType, state.laneType],
+    queryKey: ['new-game', state.gameType, state.laneType],
     queryFn: async () => {
       const response = await fetch('/api/mlbb/final');
       return response.json();
@@ -209,7 +206,7 @@ export default function GameId() {
       : heroes
           .filter(hero => hero.role.includes(heroFilter))
           .sort((a, b) => Number(a.hero_id) - Number(b.hero_id));
-  }, [heroData, heroFilter]);
+  }, [heroData, heroFilter, roles]);
 
   const handleRoleSelect = (hero: FinalHeroDataType, cursor: number) => {
     setRoles(prevState => {
@@ -220,6 +217,7 @@ export default function GameId() {
             role.cursor === cursor
               ? {
                   ...role,
+                  // label: hero.role[0], TODO: Tinker what to do here
                   hero_id: hero.hero_id,
                   hero_name: hero.name,
                   head: hero.images.square,
