@@ -35,6 +35,23 @@ type RolesType = {
   enemy: RoleType[];
 };
 
+const INITIAL_ROLE_STATE = {
+  team: [
+    { label: 'Roam', hero_id: '', hero_name: '', head: '', cursor: 1 },
+    { label: 'Exp Lane', hero_id: '', hero_name: '', head: '', cursor: 2 },
+    { label: 'Mid Lane', hero_id: '', hero_name: '', head: '', cursor: 3 },
+    { label: 'Gold Lane', hero_id: '', hero_name: '', head: '', cursor: 4 },
+    { label: 'Jungle', hero_id: '', hero_name: '', head: '', cursor: 5 },
+  ],
+  enemy: [
+    { label: 'Roam', hero_id: '', hero_name: '', head: '', cursor: 6 },
+    { label: 'Exp Lane', hero_id: '', hero_name: '', head: '', cursor: 7 },
+    { label: 'Mid Lane', hero_id: '', hero_name: '', head: '', cursor: 8 },
+    { label: 'Gold Lane', hero_id: '', hero_name: '', head: '', cursor: 9 },
+    { label: 'Jungle', hero_id: '', hero_name: '', head: '', cursor: 10 },
+  ],
+};
+
 const HeroItem = ({
   hero,
   onSelect,
@@ -143,27 +160,10 @@ const RoleSlot = ({
   );
 };
 
-const INITIAL_ROLE_STATE = {
-  team: [
-    { label: 'Jungle', hero_id: '', hero_name: '', head: '', cursor: 1 },
-    { label: 'Mid Lane', hero_id: '', hero_name: '', head: '', cursor: 2 },
-    { label: 'Gold Lane', hero_id: '', hero_name: '', head: '', cursor: 3 },
-    { label: 'Exp Lane', hero_id: '', hero_name: '', head: '', cursor: 4 },
-    { label: 'Roam', hero_id: '', hero_name: '', head: '', cursor: 5 },
-  ],
-  enemy: [
-    { label: 'Jungle', hero_id: '', hero_name: '', head: '', cursor: 6 },
-    { label: 'Mid Lane', hero_id: '', hero_name: '', head: '', cursor: 7 },
-    { label: 'Gold Lane', hero_id: '', hero_name: '', head: '', cursor: 8 },
-    { label: 'Exp Lane', hero_id: '', hero_name: '', head: '', cursor: 9 },
-    { label: 'Roam', hero_id: '', hero_name: '', head: '', cursor: 10 },
-  ],
-};
-
 export default function GameId() {
   const { state } = useGame();
   const router = useRouter();
-  const [heroFilter, setHeroFilter] = useState<string>('Suggestion');
+  const [heroFilter, setHeroFilter] = useState<string>('Roam');
   const [selectedCursor, setSelectedCursor] = useState<number>(1);
   const [roles, setRoles] = useState<RolesType>(INITIAL_ROLE_STATE);
 
@@ -171,9 +171,7 @@ export default function GameId() {
     router.push('/rank-helper');
   }
 
-  const {
-    data: heroData,
-  } = useQuery({
+  const { data: heroData } = useQuery({
     queryKey: ['new-game', state.gameType, state.laneType],
     queryFn: async () => {
       const response = await fetch('/api/mlbb/final');
@@ -300,15 +298,15 @@ export default function GameId() {
             </CardContent>
           </Card>
 
-          <div className={'col-span-4'}>
+          <div className={'mt-16 col-span-4'}>
             <div className={'flex justify-evenly items-center overflow-x-auto'}>
               {[
                 'Suggestion',
                 'Roam',
                 'Exp Lane',
-                'Jungle',
                 'Mid Lane',
                 'Gold Lane',
+                'Jungle',
               ].map(filter => (
                 <Button
                   key={filter}
@@ -320,10 +318,10 @@ export default function GameId() {
                 </Button>
               ))}
             </div>
-            <div className={'h-[350px]'}>
+            <div className={'h-[300px]'}>
               <div
                 className={
-                  'mx-2 my-4 flex gap-x-[15px] flex-wrap max-h-[350px] overflow-y-auto'
+                  'mx-2 my-4 flex gap-x-[15px] flex-wrap max-h-[300px] overflow-y-auto'
                 }
               >
                 {heroData &&
