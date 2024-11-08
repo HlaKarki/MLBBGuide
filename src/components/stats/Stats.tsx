@@ -13,12 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  ArrowUpDown,
-  Check,
-  ChevronDown,
-  Filter,
-} from 'lucide-react';
+import { ArrowUpDown, Check, ChevronDown, Filter } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -43,6 +38,15 @@ import { StatsTableType } from '@/lib/types';
 import { AbilityBar } from '@/components/AbilityBar';
 
 const formatPercentage = (value: number) => (value * 100).toFixed(2) + '%';
+
+const getColumnNames = (id: string) => {
+  switch (id) {
+    case 'name':
+      return 'Hero';
+    default:
+      return id.split('_').join(' ').replace('abilities', ' ');
+  }
+};
 
 const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
   {
@@ -486,7 +490,8 @@ export default function StatsTable({
                       checked={column.getIsVisible()}
                       onCheckedChange={value => column.toggleVisibility(value)}
                     >
-                      {column.id}
+                      {/*{column.id}*/}
+                      {getColumnNames(column.id)}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
