@@ -239,7 +239,18 @@ export default function GameId() {
         };
       }
     });
-    setSelectedCursor(cursor);
+    if (cursor < 10) {
+      const newCursor = cursor + 1;
+      setSelectedCursor(newCursor);
+
+      // Determine if the cursor relates to team or enemy, then find the correct label
+      const rolesList = newCursor <= 5 ? roles.team : roles.enemy;
+      const label = rolesList.find(role => role.cursor === newCursor)?.label || heroFilter;
+
+      setHeroFilter(label);
+    } else {
+      setSelectedCursor(cursor);
+    }
   };
 
   const handleHeroSelect = (hero: FinalHeroDataType) => {
@@ -290,7 +301,10 @@ export default function GameId() {
                     role={role}
                     isEnemy={false}
                     onDrop={handleRoleSelect}
-                    onClick={() => setSelectedCursor(role.cursor)}
+                    onClick={() => {
+                      setSelectedCursor(role.cursor);
+                      setHeroFilter(role.label);
+                    }}
                     isSelected={selectedCursor === role.cursor}
                   />
                 ))}
@@ -352,7 +366,10 @@ export default function GameId() {
                     role={role}
                     isEnemy={true}
                     onDrop={handleRoleSelect}
-                    onClick={() => setSelectedCursor(role.cursor)}
+                    onClick={() => {
+                      setSelectedCursor(role.cursor);
+                      setHeroFilter(role.label);
+                    }}
                     isSelected={selectedCursor === role.cursor}
                   />
                 ))}
