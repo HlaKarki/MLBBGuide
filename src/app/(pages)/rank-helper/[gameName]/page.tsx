@@ -21,8 +21,6 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { suggestHeroes } from '@/app/(pages)/rank-helper/recommendations';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const HERO_HEAD_SIZE: string = '40px';
-
 type RoleType = {
   label: string;
   hero_id: string;
@@ -56,9 +54,11 @@ const INITIAL_ROLE_STATE = {
 const HeroItem = ({
   hero,
   onSelect,
+  roles
 }: {
   hero: FinalHeroDataType;
   onSelect: (hero: FinalHeroDataType) => void;
+  roles: RolesType
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [{ isDragging }, drag] = useDrag<
@@ -79,13 +79,17 @@ const HeroItem = ({
     <div
       ref={ref}
       className={cn(
-        'flex flex-col justify-start items-center truncate w-[50px] mb-[5px] cursor-move',
+        'flex flex-col justify-start items-center truncate w-[60px] pt-1 mb-[4px] cursor-move',
         isDragging && 'opacity-50'
       )}
       onClick={() => onSelect(hero)}
     >
       <img
-        className={`rounded-full w-[${HERO_HEAD_SIZE}] h-[${HERO_HEAD_SIZE}]`}
+        className={cn('rounded-full h-[50px]', {
+          'ring-2 ring-orange-300': roles.team.find(selection => {
+            return selection.hero_id === hero.hero_id
+          })
+        })}
         src={hero.images.head}
         alt={hero.name}
       />
@@ -303,8 +307,13 @@ export default function GameId() {
                     isEnemy={false}
                     onDrop={handleRoleSelect}
                     onClick={() => {
-                      setSelectedCursor(role.cursor);
-                      setHeroFilter(role.label);
+                      if (role.cursor !== selectedCursor) {
+                        setSelectedCursor(role.cursor);
+                        setHeroFilter(role.label);
+                      }
+                      else {
+                        setSelectedCursor(0)
+                      }
                     }}
                     isSelected={selectedCursor === role.cursor}
                   />
@@ -336,7 +345,7 @@ export default function GameId() {
             <div className={'h-[300px]'}>
               <div
                 className={
-                  'mx-2 my-4 flex gap-x-[15px] flex-wrap max-h-[300px] overflow-y-auto'
+                  'my-2 flex gap-x-[6px] flex-wrap max-h-[300px] overflow-y-auto'
                 }
               >
                 {isLoading &&
@@ -357,6 +366,7 @@ export default function GameId() {
                       key={hero.name}
                       hero={hero}
                       onSelect={handleHeroSelect}
+                      roles={roles}
                     />
                   ))}
               </div>
