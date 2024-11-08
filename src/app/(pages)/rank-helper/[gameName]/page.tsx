@@ -19,6 +19,7 @@ import {
 } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { suggestHeroes } from '@/app/(pages)/rank-helper/recommendations';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const HERO_HEAD_SIZE: string = '40px';
 
@@ -171,7 +172,7 @@ export default function GameId() {
     router.push('/rank-helper');
   }
 
-  const { data: heroData } = useQuery({
+  const { data: heroData, isLoading } = useQuery({
     queryKey: ['new-game', state.gameType, state.laneType],
     queryFn: async () => {
       const response = await fetch('/api/mlbb/final');
@@ -338,6 +339,17 @@ export default function GameId() {
                   'mx-2 my-4 flex gap-x-[15px] flex-wrap max-h-[300px] overflow-y-auto'
                 }
               >
+                {isLoading &&
+                  Array.from({length: 28}).map((_, i) => (
+                    <Skeleton
+                      key={i}
+                      className={cn(
+                        `w-[50px] h-[50px] rounded-full mb-4`
+                      )}
+                    >
+                    </Skeleton>
+                  ))
+                }
                 {heroData &&
                   filteredHeroes &&
                   filteredHeroes.map((hero: FinalHeroDataType) => (
@@ -352,7 +364,7 @@ export default function GameId() {
           </div>
 
           <Card className="flex justify-end col-span-1 border-0">
-            <CardContent className="p-4">
+          <CardContent className="p-4">
               <div className={'mb-4 flex gap-1 items-center justify-center'}>
                 <h2 className="text-sm font-semibold">Enemy Picks</h2>
                 <Button variant={'ghost'} onClick={() => resetRoles('enemy')}>
