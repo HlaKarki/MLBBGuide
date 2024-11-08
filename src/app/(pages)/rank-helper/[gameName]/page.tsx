@@ -144,8 +144,6 @@ const RoleSlot = ({
           'border-primary ring-2 ring-primary': isOver,
           'border-l-4 border-l-orange-300': isSelected && !isEnemy,
           'border-r-4 border-r-red-500': isSelected && isEnemy,
-          'brightness-100': role.head,
-          'brightness-150': isSelected && !role.head,
         }
       )}
       onClick={onClick}
@@ -156,6 +154,10 @@ const RoleSlot = ({
           alt={`${role.hero_name || 'Unselected'} avatar`}
           layout="fill"
           objectFit="cover"
+          className={cn({
+            'brightness-100': role.head,
+            'brightness-150': isSelected && !role.head,
+          })}
         />
       </div>
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
