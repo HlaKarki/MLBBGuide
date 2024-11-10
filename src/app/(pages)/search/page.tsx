@@ -164,13 +164,25 @@ export default function SearchPage() {
               variant="outline"
               className="bg-gray-700 hover:bg-gray-600 text-white"
             >
-              <a href={"https://discord.gg/xDcdyPdGEw"}>Join Community</a>
+              <a href={'https://discord.gg/xDcdyPdGEw'}>Join Community</a>
             </Button>
             <Button
               variant="outline"
               className="bg-gray-700 hover:bg-gray-600 text-white"
+              asChild
             >
-              <a href={"https://github.com/HlaKarki/mlbb/issues/new"}>Report Bug</a>
+              <a href="https://discord.gg/A7kmUGzJsr">
+                Report Bug
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              className="bg-gray-700 hover:bg-gray-600 text-white"
+              asChild
+            >
+              <a href="https://github.com/HlaKarki/mlbb/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=">
+                GitHub Issues
+              </a>
             </Button>
           </div>
         </motion.div>
