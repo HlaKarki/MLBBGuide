@@ -207,3 +207,6 @@ export type UserDataType = {
     createdAt: Date;
   }[]
 }
+
+// Ranks
+export type RanksType = "Warrior" | "Elite" | "Grandmaster" | "Epic" | "Legend" | "Mythical Honor" | "Mythical Glory" | "All";
