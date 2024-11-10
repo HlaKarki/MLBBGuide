@@ -122,7 +122,7 @@ export function SearchBar({ onHeroSelect, selectedHero }: SearchBarProps) {
         {isOpen && (
             <div
                 ref={dropdownRef}
-                className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
+                className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
             >
               {recentlySelected.length > 0 && search === '' && (
                   <div className="p-2 text-sm text-gray-500">
