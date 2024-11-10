@@ -7,7 +7,7 @@
 
 A comprehensive analytics and team composition tool for Mobile Legends: Bang Bang (MLBB) players, built with Next.js and TypeScript.
 
-[![Discord](https://img.shields.io/discord/YOUR_DISCORD_ID?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/xDcdyPdGEw)
+[![Discord](https://img.shields.io/discord/1305282572397449236?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/xDcdyPdGEw)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 </div>
