@@ -181,7 +181,11 @@ const columns = (
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {(row.getValue('speciality') as string[]).filter(Boolean).map(tag => (
-          <Badge key={tag} variant="secondary">
+          <Badge
+            key={tag}
+            variant="secondary"
+            className="px-2 py-0.5 text-xs font-medium bg-blue-900 text-neutral-300 cursor-default"
+          >
             {tag}
           </Badge>
         ))}
@@ -331,7 +335,11 @@ const columns = (
         {row.original.role.map(lane => {
           if (!lane || lane === ' ' || lane === '') return null;
             return (
-              <Badge key={lane} variant="secondary">
+              <Badge
+                key={lane}
+                variant="secondary"
+                className="px-2 py-0.5 text-xs font-medium bg-green-800 text-neutral-300 cursor-default"
+              >
                 {lane}
               </Badge>
             )
