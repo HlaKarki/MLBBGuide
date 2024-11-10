@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mobile Legends: Bang Bang Analytics & Rank Helper
 
-## Getting Started
+A comprehensive analytics and team composition tool for Mobile Legends: Bang Bang (MLBB) players, built with Next.js and TypeScript.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This application helps MLBB players make data-driven decisions by providing:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Hero statistics and performance metrics
+- Team composition recommendations
+- Counter-picking suggestions
+- Real-time analytics across all ranks
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Hero Statistics
+- Comprehensive win rates, ban rates, and performance metrics
+- Data analysis across different rank tiers
+- Visual representation of hero performance trends
 
-## Learn More
+### 2. Hero Search
+- Detailed hero information lookup
+- Counter and synergy suggestions
+- Hero lore and background information
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Rank Helper Tool
+- Interactive team composition builder
+- Real-time counter-picking suggestions
+- Role-based hero recommendations
+- Team synergy analysis
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Analytics Dashboard
+- Win rate visualization
+- Pick/ban rate trends
+- Performance metrics by rank
+- Meta analysis
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Technology Stack
 
-## Deploy on Vercel
+- **Frontend**: Next.js 14, TypeScript, TailwindCSS
+- **State Management**: React Context, TanStack Query
+- **Authentication**: Clerk
+- **Analytics**: Vercel Analytics
+- **UI Components**: Radix UI, Shadcn/UI
+- **Data Visualization**: Recharts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Features in Detail
+
+### Team Composition Analysis
+The Rank Helper tool provides real-time suggestions based on:
+- Counter potential
+- Team synergy
+- Role compatibility
+- Current meta performance
+- Specialty contribution
+
+### Data-Driven Insights
+All recommendations are calculated using:
+- Win rates
+- Pick rates
+- Ban rates
+- Hero synergies
+- Counter matchups
+
+## Contributing
+
+I welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Support
+
+If you encounter any issues or have questions, please:
+- Open an issue on GitHub
+- Join our [Discord community](https://discord.gg/xDcdyPdGEw)
+- Check our [FAQ](link-to-faq)
+
+## Disclaimer
+
+This project is not affiliated with or endorsed by Moonton. Mobile Legends: Bang Bang is a trademark of Moonton.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
