@@ -20,7 +20,7 @@ import {
 export default function SearchPage() {
   const queryClient = useQueryClient();
 
-  const [selectedRank, setSelectedRank] = useState<RanksType>('All'); // Default to All
+  const [selectedRank, setSelectedRank] = useState<RanksType>('Overall'); // Default to All
   const [recentSearches, setRecentSearches] = useState<
     Array<{ id: string | number; name: string }>
   >([]);

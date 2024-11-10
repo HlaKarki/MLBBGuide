@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import StatsTable from '@/components/stats/Stats';
 
 export default function Statistics() {
-  const [rank, setRank] = useState<RanksType>('All');
+  const [rank, setRank] = useState<RanksType>('Overall');
   const {
     data: stats,
     isFetching,
