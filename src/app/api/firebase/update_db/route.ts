@@ -4,7 +4,7 @@ import { fetchMLBBData } from '@/lib/fetches';
 
 export async function GET() {
   try {
-    const data = await fetchMLBBData();
+    const data = await fetchMLBBData(undefined, undefined);
 
     // Create a batch write
     const batch = db.batch();
