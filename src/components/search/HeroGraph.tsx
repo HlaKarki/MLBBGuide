@@ -11,12 +11,16 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import dataJSON from '@/lib/data/ids.json';
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
-import { DataPoint, HeroGraphData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { FinalHeroDataType } from '@/lib/types';
 
-const heroes = dataJSON.heroes;
+type DataPoint = {
+  date: string;
+  win_rate?: number;
+  ban_rate?: number;
+  app_rate?: number;
+};
 
 const CustomTooltip = ({ statType, active, payload, label, data }: any) => {
   if (active && payload && payload.length) {
@@ -85,7 +89,7 @@ const CustomTooltip = ({ statType, active, payload, label, data }: any) => {
             </p>
             <p className={`${changeClass} font-semibold flex items-center`}>
               {changeIcon}
-              <div className={'flex items-center gap-2'}>
+              <div className="flex items-center gap-2">
                 <span>{`Change: ${changeText}`}</span>
                 <span className={percentageChangeClass}>
                   {percentageChangeText}
@@ -100,82 +104,55 @@ const CustomTooltip = ({ statType, active, payload, label, data }: any) => {
   return null;
 };
 
-export default function HeroGraph({ graphData }: { graphData: HeroGraphData }) {
-  const [data, setData] = useState<Partial<DataPoint>[]>([]);
-  const [heroName, setHeroName] = useState<string>('');
+export default function HeroGraph({
+  heroData,
+}: {
+  heroData: FinalHeroDataType;
+}) {
+  const [data, setData] = useState<DataPoint[]>([]);
   const [statType, setStatType] = useState<'win' | 'ban' | 'app'>('win');
 
   const processData = useCallback(() => {
     try {
-      let processedData;
-      switch (statType) {
-        case 'ban':
-          processedData = graphData.data.win_rate
-            .map(item => ({
-              date: new Date(item.date).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              }),
-              ban_rate: Number((item.ban_rate * 100).toFixed(2)),
-            }))
-            .sort(
-              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-            );
-          break;
-        case 'app':
-          processedData = graphData.data.win_rate
-            .map(item => ({
-              date: new Date(item.date).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              }),
-              app_rate: Number((item.app_rate * 100).toFixed(2)),
-            }))
-            .sort(
-              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-            );
-          break;
-        default:
-          processedData = graphData.data.win_rate
-            .map(item => ({
-              date: new Date(item.date).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              }),
-              win_rate: Number((item.win_rate * 100).toFixed(2)),
-            }))
-            .sort(
-              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-            );
+      if (!heroData.graph?.win_rate) {
+        setData([]);
+        return;
       }
-      setData(processedData);
 
-      const hero = heroes.find(h => h.id === graphData.data.main_heroid);
-      setHeroName(hero ? hero.name : `Hero ${graphData.data.main_heroid}`);
+      let processedData = heroData.graph.win_rate
+        .map(item => ({
+          date: new Date(item.date).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+          }),
+          win_rate: Number((item.win_rate * 100).toFixed(2)),
+          ban_rate: Number((item.ban_rate * 100).toFixed(2)),
+          app_rate: Number((item.app_rate * 100).toFixed(2)),
+        }))
+        .sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+
+      setData(processedData);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error processing data:', error);
+      setData([]);
     }
-  }, [graphData, statType]);
+  }, [heroData]);
 
   useEffect(() => {
     processData();
-  }, [graphData, processData, statType]);
+  }, [heroData, processData]);
 
-  // const minRate = Math.floor(Math.min(...data.map(d => d[`${statType}_rate`] || 0)) - 0.01)
-  // const maxRate = Math.ceil(Math.max(...data.map(d => d[`${statType}_rate`] || 0)) + 0.01)
-
-  // two type
   const dataValues = data.map(d => d[`${statType}_rate`] || 0);
   const minDataValue = Math.min(...dataValues);
   const maxDataValue = Math.max(...dataValues);
   const dataRange = maxDataValue - minDataValue;
 
-  // Define a percentage for padding (e.g., 10% of the data range)
   const paddingPercentage = 0.1;
   let padding = dataRange * paddingPercentage;
 
-  // Set a minimum padding value to maintain readability for small ranges
-  const minPadding = 0.2; // Adjust this value as needed
+  const minPadding = 0.2;
   if (padding < minPadding) {
     padding = minPadding;
   }
@@ -187,15 +164,15 @@ export default function HeroGraph({ graphData }: { graphData: HeroGraphData }) {
     <Card className="w-full bg-gradient-to-br from-blue-900 to-blue-700">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-blue-100">
-          <div className={'flex justify-between'}>
+          <div className="flex justify-between">
             <h2>
-              {heroName}{' '}
+              {heroData.name}{' '}
               {statType === 'app'
                 ? 'Pick'
                 : statType[0].toUpperCase() + statType.slice(1)}{' '}
               Rate Trend
             </h2>
-            <div className={'flex gap-1'}>
+            <div className="flex gap-1">
               <Button
                 variant={statType === 'win' ? 'default' : 'ghost'}
                 onClick={() => setStatType('win')}
@@ -244,13 +221,7 @@ export default function HeroGraph({ graphData }: { graphData: HeroGraphData }) {
               />
               <Line
                 type="monotone"
-                dataKey={
-                  statType === 'win'
-                    ? 'win_rate'
-                    : statType === 'ban'
-                      ? 'ban_rate'
-                      : 'app_rate'
-                }
+                dataKey={`${statType}_rate`}
                 stroke="#48bb78"
                 strokeWidth={2}
                 dot={{ r: 4, fill: '#48bb78', stroke: '#fff', strokeWidth: 2 }}
