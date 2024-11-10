@@ -1,8 +1,7 @@
-Adds a service defined at an ubuntu machine in '/etc/systemd/system' that facilitates a persistent docker-compose across users and log ins
+Please go to the `Preview` tab and select the appropriate template by clicking one of these links:
 
-Please go to the `Preview` tab and select the appropriate sub-template:
+* [Owner PR](?expand=1&template=owner_pr.md)
+* [Contributor PR](?expand=1&template=contributors_pr.md)
 
-* [Default](?expand=1&template=default.md)
-* [Documentation](?expand=1&template=documentation.md)
-* [Patch](?expand=1&template=patch.md)
-* [Localization](?expand=1&template=localization.md)
+---
+Note: If none of the above templates fit your PR, you can delete this text and continue with a blank PR.
