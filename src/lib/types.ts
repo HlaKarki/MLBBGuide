@@ -1,12 +1,3 @@
-export type MetaHeroesType = {
-  ban_rate: string;
-  win_rate: string;
-  pick_rate: string;
-  heroid: string;
-  head: string;
-  name: string;
-};
-
 export type FinalHeroDataType = {
   name: string;
   hero_id: string;
