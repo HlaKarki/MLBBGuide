@@ -1,5 +1,6 @@
 import { HeroInfo, PayloadType, RawDataType } from '@/lib/types';
 import { NextResponse } from 'next/server';
+import { getRankId } from '@/lib/utils';
 
 const baseUrl = process.env.MLBB_API_BASE_URL || '';
 const firstId = process.env.MLBB_FIRST_ID;
@@ -71,7 +72,7 @@ export async function fetchHeroDetails(
     filters: [
       { field: 'match_type', operator: 'eq', value: match_type },
       hero_id ? { field: 'main_heroid', operator: 'eq', value: hero_id } : {},
-      { field: 'bigrank', operator: 'eq', value: rank || '101' },
+      { field: 'bigrank', operator: 'eq', value: getRankId(rank || "All").toString()},
     ],
     sorts: [
       { data: { field: 'main_heroid', order: 'desc' }, type: 'sequence' },
@@ -106,13 +107,14 @@ export async function fetchHeroDetails(
 export async function fetchStats(
   sortField: string,
   count: number,
-  hero_id?: number
+  hero_id?: number,
+  rank?: string,
 ) {
   const url = baseUrl + firstId + meta_heroes;
   const payload: PayloadType = {
     pageSize: count,
     filters: [
-      { field: 'bigrank', operator: 'eq', value: '101' },
+      { field: 'bigrank', operator: 'eq', value: getRankId(rank || "All").toString() },
       { field: 'match_type', operator: 'eq', value: '0' },
     ],
     sorts: [
@@ -167,7 +169,7 @@ export async function fetchGraph(
       {
         field: 'bigrank',
         operator: 'eq',
-        value: rank || 7,
+        value: getRankId(rank || "All"),
       },
       {
         field: 'match_type',
