@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import {
   ColumnDef,
@@ -34,8 +32,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { StatsTableType } from '@/lib/types';
+import { RanksType, StatsTableType } from '@/lib/types';
 import { AbilityBar } from '@/components/AbilityBar';
+import { getRanks } from '@/lib/utils';
 
 const formatPercentage = (value: number) => (value * 100).toFixed(2) + '%';
 
@@ -345,24 +344,25 @@ interface StatsTableProps {
   stats: StatsTableType[] | undefined;
   isLoading: boolean;
   error: Error | null;
+  currentRank: RanksType;
+  setRank: (rank: RanksType) => void;
 }
 
 export default function StatsTable({
-  stats,
-  isLoading,
-  error,
-}: StatsTableProps) {
+                                     stats,
+                                     isLoading,
+                                     error,
+                                     currentRank,
+                                     setRank
+                                   }: StatsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
 
   const table = useReactTable({
     data: stats || [],
-    columns: stats ? columns(stats) : [],
+    columns: columns(stats || []),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -383,73 +383,10 @@ export default function StatsTable({
 
   const rows = table.getRowModel().rows;
 
-  if (isLoading) {
-    return (
-      <div className="w-full space-y-4 animate-pulse">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-10 w-[250px]" /> {/* Search input skeleton */}
-          <div className="flex space-x-2">
-            <Skeleton className="h-10 w-[100px]" />{' '}
-            {/* Columns button skeleton */}
-            <Skeleton className="h-10 w-[100px]" />{' '}
-            {/* Show rows button skeleton */}
-          </div>
-        </div>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {Array(9)
-                  .fill(0)
-                  .map((_, index) => (
-                    <TableHead key={index}>
-                      <Skeleton className="h-8 w-full" />
-                    </TableHead>
-                  ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Array(10)
-                .fill(0)
-                .map((_, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {Array(9)
-                      .fill(0)
-                      .map((_, cellIndex) => (
-                        <TableCell key={cellIndex}>
-                          <Skeleton className="h-10 w-full" />
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-5 w-[250px]" />{' '}
-          {/* Pagination info skeleton */}
-          <div className="flex space-x-2">
-            <Skeleton className="h-8 w-[80px]" />{' '}
-            {/* Previous button skeleton */}
-            <Skeleton className="h-8 w-[80px]" /> {/* Next button skeleton */}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="text-red-500 bg-red-100 border border-red-400 rounded-md p-4 my-4">
         Error: {error.message}
-      </div>
-    );
-  }
-
-  if (!stats) {
-    return (
-      <div className="text-gray-500 bg-gray-100 border border-gray-400 rounded-md p-4 my-4">
-        No data available
       </div>
     );
   }
@@ -472,6 +409,34 @@ export default function StatsTable({
                 variant="outline"
                 className="bg-gray-700 text-gray-100 hover:bg-gray-600"
               >
+                Rank <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-gray-800 text-gray-100"
+            >
+              {getRanks().map((rank: RanksType) => (
+                <DropdownMenuCheckboxItem
+                  key={rank}
+                  checked={currentRank === rank}
+                  onCheckedChange={() => {
+                    if (rank !== currentRank) {
+                      setRank(rank);
+                    }
+                  }}
+                >
+                  {rank}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="bg-gray-700 text-gray-100 hover:bg-gray-600"
+              >
                 Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -482,19 +447,16 @@ export default function StatsTable({
               {table
                 .getAllColumns()
                 .filter(column => column.getCanHide())
-                .map(column => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={value => column.toggleVisibility(value)}
-                    >
-                      {/*{column.id}*/}
-                      {getColumnNames(column.id)}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
+                .map(column => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={value => column.toggleVisibility(value)}
+                  >
+                    {getColumnNames(column.id)}
+                  </DropdownMenuCheckboxItem>
+                ))}
             </DropdownMenuContent>
           </DropdownMenu>
           <DropdownMenu>
@@ -535,23 +497,31 @@ export default function StatsTable({
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} className="hover:bg-gray-700">
-                {headerGroup.headers.map(header => {
-                  return (
-                    <TableHead key={header.id} className="text-gray-300">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map(header => (
+                  <TableHead key={header.id} className="text-gray-300">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {rows?.length ? (
+            {isLoading ? (
+              Array(10).fill(0).map((_, rowIndex) => (
+                <TableRow key={rowIndex} className="hover:bg-gray-700">
+                  {Array(table.getAllColumns().length).fill(0).map((_, cellIndex) => (
+                    <TableCell key={cellIndex}>
+                      <Skeleton className="h-10 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : rows?.length ? (
               rows.map(row => (
                 <TableRow
                   key={row.id}
@@ -571,7 +541,7 @@ export default function StatsTable({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
                   No results.
@@ -583,19 +553,25 @@ export default function StatsTable({
       </div>
       <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-2 py-4">
         <div className="text-sm text-gray-400">
-          Showing {table.getState().pagination.pageIndex * rowsPerPage + 1} to{' '}
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) * rowsPerPage,
-            table.getFilteredRowModel().rows.length
-          )}{' '}
-          of {table.getFilteredRowModel().rows.length} entries
+          {isLoading ? (
+            <Skeleton className="h-5 w-[250px]" />
+          ) : (
+            <>
+              Showing {table.getState().pagination.pageIndex * rowsPerPage + 1} to{' '}
+              {Math.min(
+                (table.getState().pagination.pageIndex + 1) * rowsPerPage,
+                table.getFilteredRowModel().rows.length
+              )}{' '}
+              of {table.getFilteredRowModel().rows.length} entries
+            </>
+          )}
         </div>
         <div className="space-x-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            disabled={!table.getCanPreviousPage() || isLoading}
             className="bg-gray-700 text-gray-100 hover:bg-gray-600"
           >
             Previous
@@ -604,7 +580,7 @@ export default function StatsTable({
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            disabled={!table.getCanNextPage() || isLoading}
             className="bg-gray-700 text-gray-100 hover:bg-gray-600"
           >
             Next
@@ -614,3 +590,5 @@ export default function StatsTable({
     </div>
   );
 }
+
+export const MemoizedStatsTable = React.memo(StatsTable);
