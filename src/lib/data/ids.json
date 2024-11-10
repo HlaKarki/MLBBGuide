@@ -515,7 +515,7 @@
     "Mythic": 7,
     "Mythical Honor": 8,
     "Mythical Glory": 9,
-    "All": 101
+    "Overall": 101
   },
   "rank": {
     "1": "Warrior",
@@ -527,7 +527,7 @@
     "7": "Mythic",
     "8": "Mythical Honor",
     "9": "Mythical Glory",
-    "101": "All"
+    "101": "Overall"
   },
   "roles": {
     "Exp Lane": "Fighter",
