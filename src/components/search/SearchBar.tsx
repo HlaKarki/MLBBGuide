@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useState, useEffect, useRef, KeyboardEvent } from 'react'
 import { Search, X, Clock } from 'lucide-react'
 import heroData from '@/lib/data/ids.json'
