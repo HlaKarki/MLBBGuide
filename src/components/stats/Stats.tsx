@@ -412,27 +412,25 @@ export default function StatsTable({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="bg-gray-700 text-gray-100 hover:bg-gray-600"
+                className="w-[200px] justify-between bg-gray-700 text-gray-100 hover:bg-gray-600"
               >
-                Rank <ChevronDown className="ml-2 h-4 w-4" />
+          <span className="flex items-center gap-2">
+            <span className="font-semibold">Rank:</span>
+            <span className="text-gray-300">{currentRank}</span>
+          </span>
+                <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="bg-gray-800 text-gray-100"
-            >
-              {getRanks().map((rank: RanksType) => (
-                <DropdownMenuCheckboxItem
+            <DropdownMenuContent align="end" className="w-[200px] bg-gray-800 text-gray-100">
+              {getRanks().map((rank) => (
+                <DropdownMenuItem
                   key={rank}
-                  checked={currentRank === rank}
-                  onCheckedChange={() => {
-                    if (rank !== currentRank) {
-                      setRank(rank);
-                    }
-                  }}
+                  onSelect={() => setRank(rank)}
+                  className="flex items-center justify-between py-2 px-4 hover:bg-gray-700 cursor-pointer"
                 >
                   {rank}
-                </DropdownMenuCheckboxItem>
+                  {currentRank === rank && <Check className="h-4 w-4 text-primary" />}
+                </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
