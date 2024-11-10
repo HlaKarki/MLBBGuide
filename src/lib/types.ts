@@ -1,44 +1,3 @@
-// Hero Details
-export type HeroInfo = {
-  name: string;
-  head: string;
-  head_big: string;
-  square_head: string;
-  square_head_big: string;
-  createdAt: number;
-  updatedAt: number;
-  abilities: {
-    Durability: string;
-    Offense: string;
-    'Ability Effects': string;
-    Difficulty: string;
-  };
-  lane: string[];
-  speciality: string[];
-  title: string;
-  relation: {
-    works_well_with: Relation;
-    strong_against: Relation;
-    weak_against: Relation;
-  };
-};
-
-// meta heroes
-export type MetaHeroesQueryType = {
-  data: {
-    main_hero_ban_rate: string;
-    main_hero_win_rate: string;
-    main_hero_appearance_rate: string;
-    main_heroid: string;
-    main_hero: {
-      data: {
-        head: string;
-        name: string;
-      };
-    };
-  };
-};
-
 export type MetaHeroesType = {
   ban_rate: string;
   win_rate: string;
@@ -47,52 +6,6 @@ export type MetaHeroesType = {
   head: string;
   name: string;
 };
-
-export type StatsType = {
-  totalHeroes: string;
-  mostWin: string;
-  mostWinHead: string;
-  mostBanned: string;
-  mostBannedHead: string;
-  mostPicked: string;
-  mostPickedHead: string;
-  banRate: string;
-  winRate: string;
-  pickRate: string;
-};
-
-// Stats (Table)
-
-export type StatsTableType = {
-  id: string;
-  name: string;
-  head: string;
-  win_rate: number;
-  ban_rate: number;
-  pick_rate: number;
-  speciality: string[];
-  abilities: {
-    Durability: number;
-    Offense: number;
-    'Ability Effects': number;
-    Difficulty: number;
-  };
-  lanes: string[];
-};
-
-export type RawDataType = {
-  data: {
-    records: Record<string, { data: any }>;
-  };
-};
-
-export interface PayloadType {
-  pageSize: number;
-  filters: Array<{ field?: string; operator?: string; value?: string }>;
-  sorts: Array<{ data: { field: string; order: string }; type: string }>;
-  pageIndex: number;
-  fields?: string[];
-}
 
 export type FinalHeroDataType = {
   name: string;
@@ -170,7 +83,7 @@ export type RanksType =
   | 'Legend'
   | 'Mythical Honor'
   | 'Mythical Glory'
-  | 'All';
+  | 'Overall';
 
 // Define interfaces for API responses
 export interface HeroDataAPIResponse {
