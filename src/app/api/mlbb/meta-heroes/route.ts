@@ -6,9 +6,10 @@ import { fetchStats } from '@/app/api/mlbb/fetches';
 export async function GET(request: NextRequest) {
   const count = Number(request.nextUrl.searchParams.get('count')) || 5;
   const hero_id = Number(request.nextUrl.searchParams.get('id'));
+  const rank = request.nextUrl.searchParams.get('rank') || "All";
 
   try {
-    const data = await fetchStats('main_hero_ban_rate', count, hero_id);
+    const data = await fetchStats('main_hero_ban_rate', count, hero_id, rank);
     const processedData = data.data.records.map(
       (record: MetaHeroesQueryType) => {
         return {
