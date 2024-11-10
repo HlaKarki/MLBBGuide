@@ -8,6 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { getRanks } from '@/lib/utils'
+import { RanksType } from '@/lib/types';
 
 const ranks = [
   { id: 1, name: "Warrior" },
@@ -23,15 +25,15 @@ const ranks = [
 ]
 
 interface RankSelectorProps {
-  selectedRank: number
-  onRankChange: (rankId: number) => void
+  selectedRank: string
+  onRankChange: (rank: RanksType) => void
 }
 
 export default function RankSelector({ selectedRank, onRankChange }: RankSelectorProps) {
   return (
       <Select
-          defaultValue={selectedRank.toString()}
-          onValueChange={(value) => onRankChange(Number(value))}
+          defaultValue={selectedRank}
+          onValueChange={(value: RanksType) => onRankChange(value)}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select a rank" />
@@ -39,9 +41,9 @@ export default function RankSelector({ selectedRank, onRankChange }: RankSelecto
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Rank</SelectLabel>
-            {ranks.map((rank) => (
-                <SelectItem key={rank.id} value={rank.id.toString()}>
-                  {rank.name}
+            {getRanks().map((rank, idx) => (
+                <SelectItem key={idx} value={rank}>
+                  {rank}
                 </SelectItem>
             ))}
           </SelectGroup>
