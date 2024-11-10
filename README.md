@@ -16,34 +16,34 @@ A comprehensive analytics and team composition tool for Mobile Legends: Bang Ban
 
 This application helps MLBB players make data-driven decisions by providing:
 
-- 📈 Hero statistics and performance metrics
-- 🤝 Team composition recommendations
-- 🎯 Counter-picking suggestions
-- 🌐 Real-time analytics across all ranks
+- Hero statistics and performance metrics
+- Team composition recommendations
+- Counter-picking suggestions
+- Real-time analytics across all ranks
 
 ## 🌟 Key Features
 
 ### 1. Hero Statistics
-- 📊 Comprehensive win rates, ban rates, and performance metrics
-- 📈 Data analysis across different rank tiers
-- 📉 Visual representation of hero performance trends
+- Comprehensive win rates, ban rates, and performance metrics
+- Data analysis across different rank tiers
+- Visual representation of hero performance trends
 
 ### 2. Hero Search
-- 🔍 Detailed hero information lookup
-- ⚔️ Counter and synergy suggestions
-- 📜 Hero lore and background information
+- Detailed hero information lookup
+- Counter and synergy suggestions
+- Hero lore and background information
 
 ### 3. Rank Helper Tool
-- 🛠️ Interactive team composition builder
-- 🎭 Real-time counter-picking suggestions
-- 👥 Role-based hero recommendations
-- 🤝 Team synergy analysis
+- Interactive team composition builder
+- Real-time counter-picking suggestions
+- Role-based hero recommendations
+- Team synergy analysis
 
 ### 4. Analytics Dashboard
-- 📊 Win rate visualization
-- 📈 Pick/ban rate trends
-- 📉 Performance metrics by rank
-- 🔮 Meta analysis
+- Win rate visualization
+- Pick/ban rate trends
+- Performance metrics by rank
+- Meta analysis
 
 ## 🛠️ Technology Stack
 
@@ -58,26 +58,25 @@ This application helps MLBB players make data-driven decisions by providing:
 
 ### Team Composition Analysis
 The Rank Helper tool provides real-time suggestions based on:
-- 🎯 Counter potential
-- 🤝 Team synergy
-- 👥 Role compatibility
-- 🌟 Current meta performance
-- 🏆 Specialty contribution
+- Counter potential
+- Team synergy
+- Role compatibility
+- Current meta performance
+- Specialty contribution
 
 ### Data-Driven Insights
 All recommendations are calculated using:
-- 🏆 Win rates
-- 📊 Pick rates
-- 🚫 Ban rates
-- 🤝 Hero synergies
-- ⚔️ Counter matchups
+- Win rates
+- Pick rates
+- Ban rates
+- Hero synergies
+- Counter matchups
 
 ## 🤝 Support / Contributions
 
 If you encounter any issues or have questions, please:
-- 🐛 Open an issue on GitHub
 - 💬 Join our [Discord community](https://discord.gg/xDcdyPdGEw)
-- ❓ Check our [FAQ](link-to-faq)
+- 🐛 Open an issue on GitHub
 
 ## ⚠️ Disclaimer
 
