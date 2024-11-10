@@ -2,13 +2,15 @@
 import {NextRequest, NextResponse} from "next/server";
 import {fetchHeroDetails, fetchHeroInfoData, fetchStats, processData} from "@/app/api/mlbb/fetches";
 import {MetaHeroesQueryType} from "@/lib/types";
+import { getRankId } from '@/lib/utils';
 
 export async function GET(request: NextRequest) {
   const all = Number(request.nextUrl.searchParams.get("hla"))
+  const rank = request.nextUrl.searchParams.get("rank") || 'All'
 
   if (all) {
     const [metaStats, heroDetails, pickRate] = await Promise.all([
-      await fetchStatsTemp().then(data => {
+      await fetchStatsTemp(rank).then(data => {
         return data.data.records.map((record: MetaHeroesQueryType) => {
           return {
             ban_rate: record.data.main_hero_ban_rate,
@@ -18,13 +20,25 @@ export async function GET(request: NextRequest) {
             name: record.data.main_hero.data.name,
           }
         })
+      })
+      .catch(error => {
+        console.error("Error fetching meta stats:", error);
+        return []; // Fallback in case of failure
       }),
-      await fetchHeroInfoData().then(response => processData(response)),
-      await fetchHeroDetails("0", null, null, true).then(data => {
+      await fetchHeroInfoData().then(response => processData(response))
+        .catch(error => {
+          console.error("Error fetching meta stats:", error);
+          return []; // Fallback in case of failure
+        }),
+      await fetchHeroDetails("0", null, rank, true).then(data => {
         return data.data.records.map((record: {data: { main_hero_appearance_rate: string }}) => {
           return record.data.main_hero_appearance_rate
         })
       })
+        .catch(error => {
+          console.error("Error fetching meta stats:", error);
+          return []; // Fallback in case of failure
+        })
     ])
 
     const data = combineData(metaStats, heroDetails, pickRate)
@@ -61,7 +75,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function fetchStatsTemp() {
+async function fetchStatsTemp(rank?: string) {
   const baseUrl = process.env.MLBB_API_BASE_URL || "";
   const firstId = process.env.MLBB_FIRST_ID || "/2669606";
   const meta_heroes = process.env.MLBB_SECOND_ID_META_HEROES || "/2756567";
@@ -70,7 +84,7 @@ async function fetchStatsTemp() {
   const payload = {
     pageSize: 200,
     filters: [
-      { field: "bigrank", operator: "eq", value: "101" },
+      { field: "bigrank", operator: "eq", value: getRankId(rank || "All") },
       { field: "match_type", operator: "eq", value: "0" }
     ],
     sorts: [
