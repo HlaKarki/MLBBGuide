@@ -328,11 +328,15 @@ const columns = (
     },
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
-        {row.original.role.map(lane => (
-          <Badge key={lane} variant="secondary">
-            {lane}
-          </Badge>
-        ))}
+        {row.original.role.map(lane => {
+          if (!lane || lane === ' ' || lane === '') return null;
+            return (
+              <Badge key={lane} variant="secondary">
+                {lane}
+              </Badge>
+            )
+          }
+        )}
       </div>
     ),
   },
