@@ -105,7 +105,7 @@ export default function SearchPage() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto px-4 py-8 max-w-6xl"
+        className="container mx-auto px-4 py-8 max-w-6xl relative"
       >
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 text-yellow-400 drop-shadow-lg">
@@ -120,7 +120,7 @@ export default function SearchPage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-gray-800 bg-opacity-50 rounded-lg p-8 shadow-2xl mb-12"
+          className="bg-gray-800 bg-opacity-50 rounded-lg p-8 shadow-2xl mb-12 relative z-10"
         >
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div className="w-full md:w-2/3">
@@ -154,7 +154,7 @@ export default function SearchPage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center mt-12"
+          className="text-center mt-12 relative z-[5]"
         >
           <h2 className="text-3xl font-bold mb-6 text-yellow-400">
             Need More Help?
@@ -164,19 +164,13 @@ export default function SearchPage() {
               variant="outline"
               className="bg-gray-700 hover:bg-gray-600 text-white"
             >
-              View Tutorials
+              <a href={"https://discord.gg/xDcdyPdGEw"}>Join Community</a>
             </Button>
             <Button
               variant="outline"
               className="bg-gray-700 hover:bg-gray-600 text-white"
             >
-              Join Community
-            </Button>
-            <Button
-              variant="outline"
-              className="bg-gray-700 hover:bg-gray-600 text-white"
-            >
-              Report Bug
+              <a href={"https://github.com/HlaKarki/mlbb/issues/new"}>Report Bug</a>
             </Button>
           </div>
         </motion.div>
