@@ -1,37 +1,4 @@
 // Hero Details
-type Info = {
-  heroid: number;
-  head: string;
-  hero_win_rate: number;
-  increase_win_rate: number;
-};
-
-type CountersData = {
-  rank: string;
-  head: string;
-  name: string;
-  appearance_rate: number;
-  ban_rate: number;
-  win_rate: number;
-  counters: Info[];
-  most_countered_by: Info[];
-};
-
-type CompatibilitiesData = {
-  head: string;
-  name: string;
-  appearance_rate: number;
-  ban_rate: number;
-  win_rate: number;
-  most_compatible: Info[];
-  least_compatible: Info[];
-};
-
-export type HeroDetails = {
-  counters: CountersData;
-  compatibilities: CompatibilitiesData;
-};
-
 export type HeroInfo = {
   name: string;
   head: string;
@@ -127,13 +94,6 @@ export interface PayloadType {
   fields?: string[];
 }
 
-export interface DataPoint {
-  date: string;
-  win_rate: number;
-  ban_rate: number;
-  app_rate: number;
-}
-
 export type FinalHeroDataType = {
   name: string;
   hero_id: string;
@@ -211,25 +171,6 @@ export type RanksType =
   | 'Mythical Honor'
   | 'Mythical Glory'
   | 'All';
-
-export interface APIRequestConfig {
-  pageSize: number;
-  filters?: Array<{
-    field: string;
-    operator: string;
-    value: string | number;
-  }>;
-  sorts: Array<{
-    data: {
-      field: string;
-      order: 'asc' | 'desc';
-    };
-    type: 'sequence';
-  }>;
-  pageIndex: number;
-  fields: string[];
-  object?: any[];
-}
 
 // Define interfaces for API responses
 export interface HeroDataAPIResponse {
