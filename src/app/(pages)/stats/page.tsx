@@ -1,22 +1,28 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion'
-import { StatsTableType } from "@/lib/types"
+import { RanksType, StatsTableType } from '@/lib/types';
 import { useQuery } from '@tanstack/react-query'
-import StatsTable from "@/components/stats/Stats"
+import StatsTable, { MemoizedStatsTable } from '@/components/stats/Stats';
 
 export default function Statistics() {
-  const { data: stats, isLoading, error } = useQuery<StatsTableType[], Error>({
+  const [rank, setRank] = useState<RanksType>('All')
+  const { data: stats, isFetching, error, refetch } = useQuery<StatsTableType[], Error>({
     queryKey: ['stats'],
     queryFn: async (): Promise<StatsTableType[]> => {
-      const response = await fetch("/api/mlbb/stats?hla=1")
+      const response = await fetch("/api/mlbb/stats?hla=1&rank=" + encodeURIComponent(rank))
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
       return response.json()
     },
+    enabled: false
   })
+
+  useEffect(() => {
+    refetch().catch(error => console.error(error))
+  }, [rank, refetch])
 
   return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
@@ -35,7 +41,7 @@ export default function Statistics() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <StatsTable stats={stats} isLoading={isLoading} error={error} />
+            <StatsTable stats={stats} isLoading={isFetching} error={error} currentRank={rank} setRank={setRank} />
           </motion.div>
         </div>
       </div>
