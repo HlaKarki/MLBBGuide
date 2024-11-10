@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import jsonData from "@/lib/data/ids.json"
+import { RanksType } from '@/lib/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -24,4 +25,13 @@ export function getHeroId(name: string) : number | undefined {
 
 export function getRole(apiRole: string) {
   return jsonData.roles[apiRole as keyof typeof jsonData.roles]
+}
+
+export function getRankId(rank: string): number {
+  const decodedRank = decodeURIComponent(rank); // Decode any URL-encoded rank
+  return jsonData.rankId[decodedRank as keyof typeof jsonData.rankId]
+}
+
+export function getRanks(): RanksType[] {
+  return Object.values(jsonData.rank) as RanksType[]
 }
