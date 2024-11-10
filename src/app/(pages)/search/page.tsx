@@ -8,6 +8,7 @@ import {
   HeroGraphData,
   HeroInfo,
   MetaHeroesType,
+  RanksType,
 } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -28,13 +29,13 @@ const fetchHeroInfo = async (heroId: number | string) => {
   return response.json();
 };
 
-const fetchHeroDetails = async (heroId: number | string, rank: number) => {
+const fetchHeroDetails = async (heroId: number | string, rank: RanksType) => {
   const response = await fetch(`/api/mlbb/details?id=${heroId}&rank=${rank}`);
   if (!response.ok) throw new Error('Failed to fetch hero details');
   return response.json();
 };
 
-const fetchGraphData = async (heroId: number | string, rank: number) => {
+const fetchGraphData = async (heroId: number | string, rank: RanksType) => {
   const response = await fetch(
     `/api/mlbb/graph?id=${heroId}&period=${30}&rank=${rank}`
   );
@@ -42,8 +43,8 @@ const fetchGraphData = async (heroId: number | string, rank: number) => {
   return response.json();
 };
 
-const fetchMetaStats = async (heroId: number | string) => {
-  const response = await fetch(`/api/mlbb/meta-heroes?id=${heroId}`);
+const fetchMetaStats = async (heroId: number | string, rank: RanksType) => {
+  const response = await fetch(`/api/mlbb/meta-heroes?id=${heroId}&rank=${rank}`);
   if (!response.ok) throw new Error('Failed to fetch meta stats');
   return response.json();
 };
@@ -51,7 +52,7 @@ const fetchMetaStats = async (heroId: number | string) => {
 export default function SearchPage() {
   const queryClient = useQueryClient();
 
-  const [selectedRank, setSelectedRank] = useState<number>(7); // Default to Mythic
+  const [selectedRank, setSelectedRank] = useState<RanksType>('All'); // Default to All
   const [recentSearches, setRecentSearches] = useState<
     Array<{ id: string | number; name: string }>
   >([]);
@@ -100,11 +101,14 @@ export default function SearchPage() {
 
   // Handle rank changes
   const handleRankChange = useCallback(
-    (newRank: number) => {
+    (newRank: RanksType) => {
       setSelectedRank(newRank);
       if (selectedHero) {
         queryClient
           .invalidateQueries({ queryKey: ['heroDetails', selectedHero.id] })
+          .catch(error => console.error(error));
+        queryClient
+          .invalidateQueries({ queryKey: ['metaStats', selectedHero.id] })
           .catch(error => console.error(error));
       }
     },
@@ -131,8 +135,11 @@ export default function SearchPage() {
   });
 
   const heroMetaStats = useQuery<MetaHeroesType[], Error>({
-    queryKey: ['metaStats', selectedHero?.id],
-    queryFn: () => fetchMetaStats(selectedHero?.id || ''),
+    queryKey: ['metaStats', selectedHero?.id, selectedRank],
+    queryFn: () => {
+      console.log("metaStats!");
+      return fetchMetaStats(selectedHero?.id || '', selectedRank);
+    },
     enabled: !!selectedHero,
   });
 
