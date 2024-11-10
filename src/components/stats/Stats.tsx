@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RanksType, StatsTableType } from '@/lib/types';
+import { FinalHeroDataType, RanksType } from '@/lib/types';
 import { AbilityBar } from '@/components/AbilityBar';
 import { getRanks } from '@/lib/utils';
 
@@ -47,7 +47,9 @@ const getColumnNames = (id: string) => {
   }
 };
 
-const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
+const columns = (
+  stats: FinalHeroDataType[]
+): ColumnDef<FinalHeroDataType>[] => [
   {
     accessorKey: 'name',
     header: () => <div className={'text-center'}>Hero</div>,
@@ -57,7 +59,7 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
         className="flex flex-col justify-center items-center space-y-2"
       >
         <img
-          src={row.original.head}
+          src={row.original.images.head}
           alt={row.getValue('name')}
           className="h-10 w-10 rounded-full"
         />
@@ -202,7 +204,7 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
     ),
     cell: ({ row }) => (
       <AbilityBar
-        value={row.original.abilities.Durability}
+        value={Number(row.original.abilities.Durability)}
         label="Durability"
         color="bg-green-500"
       />
@@ -224,7 +226,7 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
     ),
     cell: ({ row }) => (
       <AbilityBar
-        value={row.original.abilities.Offense}
+        value={Number(row.original.abilities.Offense)}
         label="Offense"
         color="bg-red-500"
       />
@@ -246,7 +248,7 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
     ),
     cell: ({ row }) => (
       <AbilityBar
-        value={row.original.abilities['Ability Effects']}
+        value={Number(row.original.abilities['Ability Effects'])}
         label="Ability Effects"
         color="bg-purple-500"
       />
@@ -268,7 +270,7 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
     ),
     cell: ({ row }) => (
       <AbilityBar
-        value={row.original.abilities.Difficulty}
+        value={Number(row.original.abilities.Difficulty)}
         label="Difficulty"
         color="bg-yellow-500"
       />
@@ -292,32 +294,28 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {Array.from(new Set(stats.flatMap(hero => hero.lanes))).map(
-              lane => (
-                <DropdownMenuCheckboxItem
-                  key={lane}
-                  className="capitalize"
-                  checked={
-                    (column.getFilterValue() as string[] | undefined)?.includes(
-                      lane
-                    ) ?? false
+            {Array.from(new Set(stats.flatMap(hero => hero.role))).map(lane => (
+              <DropdownMenuCheckboxItem
+                key={lane}
+                className="capitalize"
+                checked={
+                  (column.getFilterValue() as string[] | undefined)?.includes(
+                    lane
+                  ) ?? false
+                }
+                onCheckedChange={value => {
+                  const filterValue =
+                    (column.getFilterValue() as string[] | undefined) ?? [];
+                  if (value) {
+                    column.setFilterValue([...filterValue, lane]);
+                  } else {
+                    column.setFilterValue(filterValue.filter(v => v !== lane));
                   }
-                  onCheckedChange={value => {
-                    const filterValue =
-                      (column.getFilterValue() as string[] | undefined) ?? [];
-                    if (value) {
-                      column.setFilterValue([...filterValue, lane]);
-                    } else {
-                      column.setFilterValue(
-                        filterValue.filter(v => v !== lane)
-                      );
-                    }
-                  }}
-                >
-                  {lane}
-                </DropdownMenuCheckboxItem>
-              )
-            )}
+                }}
+              >
+                {lane}
+              </DropdownMenuCheckboxItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -330,7 +328,7 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
     },
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
-        {row.original.lanes.map(lane => (
+        {row.original.role.map(lane => (
           <Badge key={lane} variant="secondary">
             {lane}
           </Badge>
@@ -341,7 +339,7 @@ const columns = (stats: StatsTableType[]): ColumnDef<StatsTableType>[] => [
 ];
 
 interface StatsTableProps {
-  stats: StatsTableType[] | undefined;
+  stats: FinalHeroDataType[] | undefined;
   isLoading: boolean;
   error: Error | null;
   currentRank: RanksType;
@@ -349,15 +347,18 @@ interface StatsTableProps {
 }
 
 export default function StatsTable({
-                                     stats,
-                                     isLoading,
-                                     error,
-                                     currentRank,
-                                     setRank
-                                   }: StatsTableProps) {
+  stats,
+  isLoading,
+  error,
+  currentRank,
+  setRank,
+}: StatsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
 
   const table = useReactTable({
@@ -502,9 +503,9 @@ export default function StatsTable({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -512,15 +513,19 @@ export default function StatsTable({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array(10).fill(0).map((_, rowIndex) => (
-                <TableRow key={rowIndex} className="hover:bg-gray-700">
-                  {Array(table.getAllColumns().length).fill(0).map((_, cellIndex) => (
-                    <TableCell key={cellIndex}>
-                      <Skeleton className="h-10 w-full" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              Array(10)
+                .fill(0)
+                .map((_, rowIndex) => (
+                  <TableRow key={rowIndex} className="hover:bg-gray-700">
+                    {Array(table.getAllColumns().length)
+                      .fill(0)
+                      .map((_, cellIndex) => (
+                        <TableCell key={cellIndex}>
+                          <Skeleton className="h-10 w-full" />
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                ))
             ) : rows?.length ? (
               rows.map(row => (
                 <TableRow
@@ -557,7 +562,8 @@ export default function StatsTable({
             <Skeleton className="h-5 w-[250px]" />
           ) : (
             <>
-              Showing {table.getState().pagination.pageIndex * rowsPerPage + 1} to{' '}
+              Showing {table.getState().pagination.pageIndex * rowsPerPage + 1}{' '}
+              to{' '}
               {Math.min(
                 (table.getState().pagination.pageIndex + 1) * rowsPerPage,
                 table.getFilteredRowModel().rows.length
