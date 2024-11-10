@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader } from '@/components/Loader';
-import { FinalHeroDataType, RanksType } from '@/lib/types';
+import { RanksType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { SearchBar } from '@/components/search/SearchBar';
@@ -98,10 +98,6 @@ export default function SearchPage() {
 
   const isLoading = finalData.isLoading;
   const error = finalData.error;
-
-  useEffect(() => {
-    console.log(finalData.data);
-  }, [finalData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-white">
