@@ -23,20 +23,23 @@ export class RequestBodyFactory {
         'data.hero.data.roadsortlabel',
         'data.hero.data.speciality',
         'data.hero.data.abilityshow',
+        'data.relation',
       ],
       object: [],
     };
 
     if (heroId) {
-      request.filters = [
-        { field: 'hero_id', operator: 'eq', value: heroId },
-      ];
+      request.filters = [{ field: 'hero_id', operator: 'eq', value: heroId }];
     }
 
     return request;
   }
 
-  static createMatchupRequest(type: 'counter' | 'compatible', rank: string, heroId?: string): RequestBody {
+  static createMatchupRequest(
+    type: 'counter' | 'compatible',
+    rank: string,
+    heroId?: string
+  ): RequestBody {
     const matchType = type === 'counter' ? 0 : 1;
     const filters = [
       { field: 'match_type', operator: 'eq', value: matchType },
@@ -44,7 +47,11 @@ export class RequestBodyFactory {
     ];
 
     if (heroId) {
-      filters.push({ field: 'main_heroid', operator: 'eq', value: Number(heroId) });
+      filters.push({
+        field: 'main_heroid',
+        operator: 'eq',
+        value: Number(heroId),
+      });
     }
 
     return {
