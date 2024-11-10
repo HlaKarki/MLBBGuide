@@ -8,7 +8,9 @@ import {
 } from '@/lib/types';
 
 export class DataProcessor {
-  static processHeroData(data: HeroDataAPIResponse): Map<string, Partial<FinalHeroDataType>> {
+  static processHeroData(
+    data: HeroDataAPIResponse
+  ): Map<string, Partial<FinalHeroDataType>> {
     const heroMap = new Map<string, Partial<FinalHeroDataType>>();
 
     data.data.records.forEach(({ data: heroData }) => {
@@ -31,6 +33,11 @@ export class DataProcessor {
           'Ability Effects': heroData.hero.data.abilityshow[2],
           Difficulty: heroData.hero.data.abilityshow[3],
         },
+        relation: {
+          works_well_with: processRelation(heroData.relation.assist),
+          strong_against: processRelation(heroData.relation.strong),
+          weak_against: processRelation(heroData.relation.weak),
+        },
       });
     });
 
@@ -46,16 +53,18 @@ export class DataProcessor {
     data.data.records.forEach(({ data: matchupData }) => {
       const hero_id = matchupData.main_heroid;
       const processedData = {
-        [type === 'counter' ? 'effective' : 'compatible']: matchupData.sub_hero.map(item => ({
-          image: item.hero.data.head,
-          hero_id: item.heroid,
-          increase_win_rate: item.increase_win_rate,
-        })),
-        [type === 'counter' ? 'ineffective' : 'incompatible']: matchupData.sub_hero_last.map(item => ({
-          image: item.hero.data.head,
-          hero_id: item.heroid,
-          increase_win_rate: item.increase_win_rate,
-        })),
+        [type === 'counter' ? 'effective' : 'compatible']:
+          matchupData.sub_hero.map(item => ({
+            image: item.hero.data.head,
+            hero_id: item.heroid,
+            increase_win_rate: item.increase_win_rate,
+          })),
+        [type === 'counter' ? 'ineffective' : 'incompatible']:
+          matchupData.sub_hero_last.map(item => ({
+            image: item.hero.data.head,
+            hero_id: item.heroid,
+            increase_win_rate: item.increase_win_rate,
+          })),
       };
 
       matchupMap.set(hero_id, processedData);
@@ -64,7 +73,9 @@ export class DataProcessor {
     return matchupMap;
   }
 
-  static processMeta(data: MetaDataAPIResponse): Map<string, Partial<FinalHeroDataType>> {
+  static processMeta(
+    data: MetaDataAPIResponse
+  ): Map<string, Partial<FinalHeroDataType>> {
     return new Map(
       data.data.records.map(({ data: metaData }) => [
         metaData.main_heroid,
@@ -77,7 +88,9 @@ export class DataProcessor {
     );
   }
 
-  static processGraph(data: GraphDataAPIResponse): Map<string, Partial<FinalHeroDataType>> {
+  static processGraph(
+    data: GraphDataAPIResponse
+  ): Map<string, Partial<FinalHeroDataType>> {
     return new Map(
       data.data.records.map(record => [
         record.data.main_heroid,
@@ -109,3 +122,13 @@ export class DataProcessor {
     })) as FinalHeroDataType[];
   }
 }
+
+const processRelation = (relationData: any) => ({
+  heads: relationData.target_hero
+    .filter(
+      (hero: any) =>
+        hero && typeof hero === 'object' && hero.data && hero.data.head
+    )
+    .map((hero: any) => hero.data.head),
+  description: relationData.desc,
+});
