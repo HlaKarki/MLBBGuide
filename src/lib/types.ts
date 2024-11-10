@@ -32,12 +32,6 @@ export type HeroDetails = {
   compatibilities: CompatibilitiesData;
 };
 
-// hero info
-type Relation = {
-  heads: string[];
-  description: string;
-};
-
 export type HeroInfo = {
   name: string;
   head: string;
@@ -133,23 +127,12 @@ export interface PayloadType {
   fields?: string[];
 }
 
-export interface HeroGraphData {
-  _createdAt: number;
-  _updatedAt: number;
-  data: {
-    bigrank: string;
-    main_heroid: number;
-    win_rate: DataPoint[];
-  };
-}
-
 export interface DataPoint {
   date: string;
   win_rate: number;
   ban_rate: number;
   app_rate: number;
 }
-
 
 export type FinalHeroDataType = {
   name: string;
@@ -169,6 +152,11 @@ export type FinalHeroDataType = {
     'Ability Effects': string;
     Difficulty: string;
   };
+  relation?: {
+    works_well_with: Relation;
+    strong_against: Relation;
+    weak_against: Relation;
+  };
   effective?: CounterHero[];
   ineffective?: CounterHero[];
   compatible?: CounterHero[];
@@ -185,7 +173,7 @@ type CounterHero = {
   increase_win_rate: string;
 };
 
-type GraphData = {
+export type GraphData = {
   _createdAt: number;
   _updatedAt: number;
   win_rate: {
@@ -196,6 +184,11 @@ type GraphData = {
   }[];
 };
 
+// hero info
+type Relation = {
+  heads: string[];
+  description: string;
+};
 
 // clerk
 export type UserDataType = {
@@ -205,11 +198,19 @@ export type UserDataType = {
   games: {
     name: string;
     createdAt: Date;
-  }[]
-}
+  }[];
+};
 
 // Ranks
-export type RanksType = "Warrior" | "Elite" | "Grandmaster" | "Epic" | "Legend" | "Mythical Honor" | "Mythical Glory" | "All";
+export type RanksType =
+  | 'Warrior'
+  | 'Elite'
+  | 'Grandmaster'
+  | 'Epic'
+  | 'Legend'
+  | 'Mythical Honor'
+  | 'Mythical Glory'
+  | 'All';
 
 export interface APIRequestConfig {
   pageSize: number;
@@ -230,7 +231,6 @@ export interface APIRequestConfig {
   object?: any[];
 }
 
-
 // Define interfaces for API responses
 export interface HeroDataAPIResponse {
   data: {
@@ -249,6 +249,11 @@ export interface HeroDataAPIResponse {
             roadsortlabel: string[];
             story: string;
           };
+        };
+        relation: {
+          assist: any;
+          strong: any;
+          weak: any;
         };
       };
     }[];
