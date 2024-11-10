@@ -3,13 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader } from '@/components/Loader';
-import {
-  HeroDetails as HeroDetailsType,
-  HeroGraphData,
-  HeroInfo,
-  MetaHeroesType,
-  RanksType,
-} from '@/lib/types';
+import { FinalHeroDataType, RanksType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { SearchBar } from '@/components/search/SearchBar';
@@ -22,32 +16,6 @@ import {
   getHeroNameURL,
   replaceHyphenInHeroName,
 } from '@/lib/utils';
-
-const fetchHeroInfo = async (heroId: number | string) => {
-  const response = await fetch(`/api/mlbb/heroes?id=${heroId}`);
-  if (!response.ok) throw new Error('Failed to fetch hero info');
-  return response.json();
-};
-
-const fetchHeroDetails = async (heroId: number | string, rank: RanksType) => {
-  const response = await fetch(`/api/mlbb/details?id=${heroId}&rank=${rank}`);
-  if (!response.ok) throw new Error('Failed to fetch hero details');
-  return response.json();
-};
-
-const fetchGraphData = async (heroId: number | string, rank: RanksType) => {
-  const response = await fetch(
-    `/api/mlbb/graph?id=${heroId}&period=${30}&rank=${rank}`
-  );
-  if (!response.ok) throw new Error('Failed to fetch hero graph');
-  return response.json();
-};
-
-const fetchMetaStats = async (heroId: number | string, rank: RanksType) => {
-  const response = await fetch(`/api/mlbb/meta-heroes?id=${heroId}&rank=${rank}`);
-  if (!response.ok) throw new Error('Failed to fetch meta stats');
-  return response.json();
-};
 
 export default function SearchPage() {
   const queryClient = useQueryClient();
@@ -105,50 +73,35 @@ export default function SearchPage() {
       setSelectedRank(newRank);
       if (selectedHero) {
         queryClient
-          .invalidateQueries({ queryKey: ['heroDetails', selectedHero.id] })
-          .catch(error => console.error(error));
-        queryClient
-          .invalidateQueries({ queryKey: ['metaStats', selectedHero.id] })
+          .invalidateQueries({ queryKey: ['heroInfo', selectedHero.id] })
           .catch(error => console.error(error));
       }
     },
     [selectedHero, queryClient]
   );
 
-  // Fetch queries for hero data, details, and graph
-  const heroInfoQuery = useQuery<HeroInfo, Error>({
+  // Fetch once for all data
+  const finalData = useQuery({
     queryKey: ['heroInfo', selectedHero?.id],
-    queryFn: () => fetchHeroInfo(selectedHero?.id || ''),
-    enabled: !!selectedHero,
-  });
-
-  const heroDetailsQuery = useQuery<HeroDetailsType, Error>({
-    queryKey: ['heroDetails', selectedHero?.id, selectedRank],
-    queryFn: () => fetchHeroDetails(selectedHero?.id || '', selectedRank),
-    enabled: !!selectedHero,
-  });
-
-  const graphDataQuery = useQuery<HeroGraphData, Error>({
-    queryKey: ['heroGraph', selectedHero?.id, selectedRank],
-    queryFn: () => fetchGraphData(selectedHero?.id || '', selectedRank),
-    enabled: !!selectedHero,
-  });
-
-  const heroMetaStats = useQuery<MetaHeroesType[], Error>({
-    queryKey: ['metaStats', selectedHero?.id, selectedRank],
-    queryFn: () => {
-      console.log("metaStats!");
-      return fetchMetaStats(selectedHero?.id || '', selectedRank);
+    queryFn: async () => {
+      const response = await fetch('/api/mlbb/final', {
+        method: 'POST',
+        body: JSON.stringify({
+          hero_id: selectedHero?.id,
+          rank: selectedRank,
+        }),
+      });
+      return response.json();
     },
-    enabled: !!selectedHero,
+    enabled: !!selectedHero?.id,
   });
 
-  const isLoading =
-    heroInfoQuery.isLoading ||
-    heroDetailsQuery.isLoading ||
-    graphDataQuery.isLoading;
-  const error =
-    heroInfoQuery.error || heroDetailsQuery.error || graphDataQuery.error;
+  const isLoading = finalData.isLoading;
+  const error = finalData.error;
+
+  useEffect(() => {
+    console.log(finalData.data);
+  }, [finalData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-white">
@@ -195,19 +148,11 @@ export default function SearchPage() {
                 {error.message}
               </div>
             )}
-            {heroDetailsQuery.data &&
-              heroInfoQuery.data &&
-              heroMetaStats.data && (
-                <HeroData
-                  details={heroDetailsQuery.data}
-                  info={heroInfoQuery.data}
-                  metaStats={heroMetaStats.data[0]}
-                />
-              )}
+            {finalData.data && <HeroData data={finalData.data.data[0]} />}
           </div>
         </motion.div>
 
-        {graphDataQuery.data && <HeroGraph graphData={graphDataQuery.data} />}
+        {finalData.data && <HeroGraph heroData={finalData.data.data[0]} />}
 
         <motion.div
           initial={{ opacity: 0, y: 50 }}
