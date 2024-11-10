@@ -11,42 +11,21 @@ import {
   Info,
   Ban,
 } from 'lucide-react';
-import {
-  HeroDetails as HeroDetailsType,
-  HeroInfo,
-  MetaHeroesType,
-} from '@/lib/types';
+import { FinalHeroDataType } from '@/lib/types';
 import dataJSON from '@/lib/data/ids.json';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AbilityBar } from '@/components/AbilityBar';
+import { cn } from '@/lib/utils';
 
-interface CombinedHeroProps {
-  details: HeroDetailsType;
-  info: HeroInfo;
-  metaStats: MetaHeroesType;
-}
-
-export default function HeroData({
-  details,
-  info,
-  metaStats,
-}: CombinedHeroProps) {
-  const { counters, compatibilities } = details;
-
-  console.log({
-    details,
-    info,
-    metaStats,
-  });
-
+export default function HeroData({ data }: { data: FinalHeroDataType }) {
   const BriefStats = () => (
     <Card className="bg-gradient-to-br from-indigo-900 to-indigo-700">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-2xl font-bold">{counters.name}</CardTitle>
+        <CardTitle className="text-2xl font-bold">{data.name}</CardTitle>
         <Image
-          src={counters.head}
-          alt={counters.name}
+          src={data.images.head}
+          alt={data.name}
           width={60}
           height={60}
           className="rounded-full border-2 border-indigo-300"
@@ -56,22 +35,22 @@ export default function HeroData({
         <div className="grid grid-cols-3 gap-4">
           <Stat
             label="Rank"
-            value={counters.rank}
+            value={'Rank'}
             icon={<Info className="h-4 w-4" />}
           />
           <Stat
             label="Appearance"
-            value={`${(Number(metaStats.pick_rate) * 100).toFixed(2)}%`}
+            value={`${(Number(data.pick_rate) * 100).toFixed(2)}%`}
             icon={<Users className="h-4 w-4" />}
           />
           <Stat
             label="Win Rate"
-            value={`${(Number(metaStats.win_rate) * 100).toFixed(2)}%`}
+            value={`${(Number(data.win_rate) * 100).toFixed(2)}%`}
             icon={<TrendingUp className="h-4 w-4" />}
           />
           <Stat
             label="Ban Rate"
-            value={`${(Number(metaStats.ban_rate) * 100).toFixed(2)}%`}
+            value={`${(Number(data.ban_rate) * 100).toFixed(2)}%`}
             icon={<Ban className="h-4 w-4" />}
           />
         </div>
@@ -97,53 +76,36 @@ export default function HeroData({
     </div>
   );
 
-  const HeroList = ({
-    heroes,
-    type,
-  }: {
-    heroes: any[];
-    type: 'counter' | 'compatibility';
-  }) => (
+  const HeroList = ({ heroes }: { heroes: FinalHeroDataType['effective'] }) => (
     <ul className="space-y-2">
-      {heroes.map((hero, index) => (
+      {heroes?.map((hero, index) => (
         <li
           key={index}
           className="flex items-center justify-between bg-white bg-opacity-10 p-2 rounded-lg"
         >
           <div className="flex items-center">
             <Image
-              src={hero.head}
-              alt={`Hero ${hero.heroid}`}
+              src={hero.image}
+              alt={`Hero ${hero.hero_id}`}
               width={40}
               height={40}
               className="rounded-full mr-2"
             />
-            <span>{getHeroName(hero.heroid)}</span>
+            <span>{getHeroName(parseInt(hero.hero_id))}</span>
           </div>
-          <div className="flex items-center">
-            {type === 'counter' ? (
-              <Sword
-                className={`w-4 h-4 mr-1 ${hero.hero_win_rate > 0.5 ? 'text-green-400' : 'text-red-400'}`}
-              />
-            ) : hero.increase_win_rate > 0 ? (
-              <TrendingUp className="w-4 h-4 mr-1 text-green-400" />
-            ) : (
-              <TrendingDown className="w-4 h-4 mr-1 text-red-400" />
-            )}
+          <div className="flex flex-col items-center">
+            <h3 className={'text-xs text-neutral-400'}>Win rate</h3>
             <span
-              className={
-                type === 'counter'
-                  ? hero.hero_win_rate > 0.5
-                    ? 'text-green-400'
-                    : 'text-red-400'
-                  : hero.increase_win_rate > 0
-                    ? 'text-green-400'
-                    : 'text-red-400'
-              }
+              className={cn('flex items-center text-red-400', {
+                'text-green-400': Number(hero.increase_win_rate) > 0,
+              })}
             >
-              {type === 'counter'
-                ? `${(hero.hero_win_rate * 100).toFixed(1)}%`
-                : `${hero.increase_win_rate > 0 ? '+' : ''} ${(hero.increase_win_rate * 100).toFixed(1)}%`}
+              {Number(hero.increase_win_rate) > 0 ? (
+                <TrendingUp className="w-4 h-4 mr-1 text-green-400" />
+              ) : (
+                <TrendingDown className="w-4 h-4 mr-1 text-red-400" />
+              )}
+              {`${Number(hero.increase_win_rate) > 0 ? '+' : ''} ${(Number(hero.increase_win_rate) * 100).toFixed(1)}%`}
             </span>
           </div>
         </li>
@@ -155,19 +117,19 @@ export default function HeroData({
     <div className="bg-gradient-to-br from-indigo-900 to-purple-900 text-white rounded-lg p-6 mt-8 shadow-2xl">
       <div className="flex flex-col lg:flex-row items-start gap-6 mb-8">
         <Image
-          src={info.head_big}
-          alt={info.title}
+          src={data.images.head_big}
+          alt={data.name}
           width={300}
           height={300}
           className="rounded-lg shadow-lg border-4 border-indigo-300"
         />
         <div className="flex-grow">
           <h2 className="text-4xl font-bold mb-4 text-indigo-200">
-            {info.title}
+            {data.tagline}
           </h2>
           <div className="flex flex-wrap gap-2 mb-4">
-            {info.speciality
-              .concat(info.lane)
+            {data.speciality
+              .concat(data.role)
               .filter(Boolean)
               .map((type, index) => (
                 <span
@@ -184,7 +146,7 @@ export default function HeroData({
               ))}
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-6">
-            {Object.entries(info.abilities).map(([stat, value]) => (
+            {Object.entries(data.abilities).map(([stat, value]) => (
               <div key={stat} className="text-center">
                 <div className="text-lg font-semibold text-indigo-300">
                   {stat}
@@ -213,17 +175,17 @@ export default function HeroData({
               </TabsList>
               <TabsContent value="best-against">
                 <h3 className="text-lg font-semibold mb-2 flex items-center">
-                  <TrendingUp className="mr-2" /> {counters.name} counters these
+                  <TrendingUp className="mr-2" /> {data.name} counters these
                   heroes
                 </h3>
-                <HeroList heroes={counters.counters} type="counter" />
+                <HeroList heroes={data.effective} />
               </TabsContent>
               <TabsContent value="worst-against">
                 <h3 className="text-lg font-semibold mb-2 flex items-center">
-                  <TrendingDown className="mr-2" /> {counters.name} is countered
-                  by these heroes
+                  <TrendingDown className="mr-2" /> {data.name} is countered by
+                  these heroes
                 </h3>
-                <HeroList heroes={counters.most_countered_by} type="counter" />
+                <HeroList heroes={data.ineffective} />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -242,23 +204,17 @@ export default function HeroData({
               </TabsList>
               <TabsContent value="best-with">
                 <h3 className="text-lg font-semibold mb-2 flex items-center">
-                  <TrendingUp className="mr-2" /> {counters.name} works best
-                  with these heroes
+                  <TrendingUp className="mr-2" /> {data.name} works best with
+                  these heroes
                 </h3>
-                <HeroList
-                  heroes={compatibilities.most_compatible}
-                  type="compatibility"
-                />
+                <HeroList heroes={data.compatible} />
               </TabsContent>
               <TabsContent value="worst-with">
                 <h3 className="text-lg font-semibold mb-2 flex items-center">
-                  <TrendingDown className="mr-2" /> {counters.name} works poorly
+                  <TrendingDown className="mr-2" /> {data.name} works poorly
                   with these heroes
                 </h3>
-                <HeroList
-                  heroes={compatibilities.least_compatible}
-                  type="compatibility"
-                />
+                <HeroList heroes={data.incompatible} />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -272,46 +228,54 @@ export default function HeroData({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {['works_well_with', 'strong_against', 'weak_against'].map(
-              relation => (
-                <div
-                  key={relation}
-                  className="bg-indigo-800 bg-opacity-50 p-4 rounded-lg"
-                >
-                  <h3 className="text-lg font-semibold mb-2 flex items-center">
-                    {relation === 'works_well_with' && (
-                      <Users className="mr-2" />
-                    )}
-                    {relation === 'strong_against' && (
-                      <Sword className="mr-2" />
-                    )}
-                    {relation === 'weak_against' && <Shield className="mr-2" />}
-                    {relation
-                      .split('_')
-                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                      .join(' ')}
-                  </h3>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {info.relation[
-                      relation as keyof typeof info.relation
-                    ].heads.map((head, index) => (
-                      <Image
-                        key={index}
-                        src={head}
-                        alt={`Hero ${index + 1}`}
-                        width={40}
-                        height={40}
-                        className="rounded-full border-2 border-indigo-300"
-                      />
-                    ))}
+              relationKey => {
+                const relationData =
+                  data.relation?.[relationKey as keyof typeof data.relation];
+                // Filter for unique head URLs to avoid duplicates
+                const uniqueHeads = Array.from(
+                  new Set(relationData?.heads || [])
+                );
+
+                return (
+                  <div
+                    key={relationKey}
+                    className="bg-indigo-800 bg-opacity-50 p-4 rounded-lg"
+                  >
+                    <h3 className="text-lg font-semibold mb-2 flex items-center">
+                      {relationKey === 'works_well_with' && (
+                        <Users className="mr-2" />
+                      )}
+                      {relationKey === 'strong_against' && (
+                        <Sword className="mr-2" />
+                      )}
+                      {relationKey === 'weak_against' && (
+                        <Shield className="mr-2" />
+                      )}
+                      {relationKey
+                        .split('_')
+                        .map(
+                          word => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(' ')}
+                    </h3>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {uniqueHeads.map(head => (
+                        <Image
+                          key={`${relationKey}-${head}`}
+                          src={head}
+                          alt={`Hero ${head}`}
+                          width={40}
+                          height={40}
+                          className="rounded-full border-2 border-indigo-300"
+                        />
+                      ))}
+                    </div>
+                    <p className="text-sm text-indigo-200">
+                      {relationData?.description || 'No description available'}
+                    </p>
                   </div>
-                  <p className="text-sm text-indigo-200">
-                    {
-                      info.relation[relation as keyof typeof info.relation]
-                        .description
-                    }
-                  </p>
-                </div>
-              )
+                );
+              }
             )}
           </div>
         </CardContent>
