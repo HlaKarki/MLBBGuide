@@ -596,5 +596,3 @@ export default function StatsTable({
     </div>
   );
 }
-
-export const MemoizedStatsTable = React.memo(StatsTable);
