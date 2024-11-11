@@ -171,7 +171,7 @@ export default function SearchPage() {
               className="bg-gray-700 hover:bg-gray-600 text-white"
               asChild
             >
-              <a href="https://discord.gg/A7kmUGzJsr">
+              <a href="https://discord.gg/1305282572397449236#bug-reports">
                 Report Bug
               </a>
             </Button>
