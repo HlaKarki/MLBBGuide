@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useUser } from '@clerk/nextjs';
 import { checkUser } from '@/app/(pages)/rank-helper/helpers';
-import { Games } from '@/app/(pages)/rank-helper/games';
+import { Games } from '@/app/(pages)/rank-helper/games'
 
 export default function RankHelper() {
   const {user, isSignedIn} = useUser();
