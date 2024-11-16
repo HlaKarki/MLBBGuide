@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     'A comprehensive analytics and team composition tool for Mobile Legends: Bang Bang (MLBB) players, built with Next.js and TypeScript.',
   keywords:
-    'Mobile Legends, Bang Bang, MLBB, analytics, rank helper, team composition, hero statistics, counter-picking, meta analysis',
+    'Mobile Legends, Bang Bang, MLBB, analytics, rank helper, team composition, hero statistics, counter-picking, meta analysis, guide',
   icons: {
     icon: '/favicon.ico',
   },
