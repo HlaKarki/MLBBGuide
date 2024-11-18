@@ -7,6 +7,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function getHeroNames(): string[] {
+  return jsonData.heroes.map(hero => hero.name)
+}
+
 export function getHeroName(id: string | number): string {
   return jsonData.heroes.find(hero => hero.id === Number(id))?.name || "unknown";
 }
@@ -21,10 +25,6 @@ export function replaceHyphenInHeroName(name: string): string {
 
 export function getHeroId(name: string) : number | undefined {
   return jsonData.heroes.find(hero => hero.name === (name.replace(/\-+/g, ' ')))?.id || undefined
-}
-
-export function getRole(apiRole: string) {
-  return jsonData.roles[apiRole as keyof typeof jsonData.roles]
 }
 
 export function getRankId(rank: string): number {
