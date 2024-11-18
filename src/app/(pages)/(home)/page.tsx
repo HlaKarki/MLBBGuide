@@ -8,14 +8,14 @@ import { Card } from "@/components/ui/card";
 import { ChevronRight, BarChart2, Users, Search, Zap } from 'lucide-react';
 import { Discord } from '@/lib/assets/icons';
 
-const HeroBackground = ({ mousePosition }: {mousePosition: any}) => (
-  <div className="absolute inset-0 overflow-hidden">
+const HeroBackground = ({ mousePosition }: {mousePosition: {x: number, y: number}}) => (
+  <div className="fixed inset-0 w-full h-full pointer-events-none">
     {/* Grid Background */}
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,#8B5CF6_1px,transparent_1px),linear-gradient(to_bottom,#8B5CF6_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
+    <div className="fixed inset-0 w-full h-full bg-[linear-gradient(to_right,#8B5CF6_1px,transparent_1px),linear-gradient(to_bottom,#8B5CF6_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
 
     {/* Mouse-following glow effect */}
     <motion.div
-      className="absolute rounded-full w-96 h-96 bg-blue-500 filter blur-3xl opacity-20"
+      className="fixed rounded-full w-96 h-96 bg-blue-500 filter blur-3xl opacity-20"
       animate={{
         x: mousePosition.x - 200,
         y: mousePosition.y - 200,
@@ -24,8 +24,8 @@ const HeroBackground = ({ mousePosition }: {mousePosition: any}) => (
     />
 
     {/* Additional ambient glow effects */}
-    <div className="absolute top-0 -right-4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-    <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+    <div className="fixed top-0 -right-4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+    <div className="fixed -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
   </div>
 );
 
@@ -34,7 +34,7 @@ export default function MLBBLandingPage () {
 
   useEffect(() => {
     const handleMouseMove = (e: any) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      setMousePosition({x: e.clientX, y: e.clientY});
     };
 
     window.addEventListener('mousemove', handleMouseMove);
