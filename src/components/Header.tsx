@@ -14,7 +14,7 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="text-white p-4">
+    <header className="z-10 text-white p-4">
       <div className="flex justify-start items-center gap-8">
         <div className="flex items-center space-x-4">
           <Logo className={'h-auto w-20'} />
