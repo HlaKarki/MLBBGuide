@@ -1,7 +1,5 @@
 # Mobile Legends: Bang Bang Analytics & Rank Helper
 
-<div align="center">
-
 ![MLBB Logo](https://github.com/user-attachments/assets/b9c60e6e-f6c8-4a2b-8ce3-55b61010a22d)
 
 
@@ -9,8 +7,6 @@ A comprehensive analytics and team composition tool for Mobile Legends: Bang Ban
 
 [![Discord](https://img.shields.io/discord/1305282572397449236?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/xDcdyPdGEw)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
-
-</div>
 
 ## 📊 Overview
 
@@ -45,6 +41,14 @@ This application helps MLBB players make data-driven decisions by providing:
 - Performance metrics by rank
 - Meta analysis
 
+### 5. The Ancient Chronicler AI
+- Interactive AI-powered lore exploration
+- Character-driven responses from an immortal witness of the Land of Dawn
+- Deep insights into hero backgrounds and relationships
+- Atmospheric storytelling with dynamic environmental details
+- Personalized responses to hero-specific questions
+
+
 ## 🛠️ Technology Stack
 
 - **Frontend**: Next.js 14, TypeScript, TailwindCSS
@@ -71,6 +75,16 @@ All recommendations are calculated using:
 - Ban rates
 - Hero synergies
 - Counter matchups
+
+### The Ancient Chronicler Experience
+Users can interact with an AI-powered entity known as "The Ancient Chronicler," who:
+- Provides immersive, in-character responses about MLBB heroes
+- Shares firsthand "accounts" of historical events in the Land of Dawn
+- Offers unique perspectives on hero relationships and motivations
+- Delivers responses in an atmospheric, story-driven format
+- Combines official lore with contextual storytelling
+- Creates dynamic ambient details for each interaction
+
 
 ## 🤝 Support / Contributions
 
