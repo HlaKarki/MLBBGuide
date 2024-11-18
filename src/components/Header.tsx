@@ -3,15 +3,15 @@
 import Link from 'next/link';
 import React from 'react';
 import { Logo } from '@/components/Logo';
-import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from '@clerk/nextjs';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { usePathname } from 'next/navigation';
+// import { SignedIn, SignedOut, SignInButton, useClerk, useUser } from '@clerk/nextjs';
+// import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+// import { Button } from '@/components/ui/button';
+// import { usePathname } from 'next/navigation';
 
 export default function Header() {
-  const { user } = useUser();
-  const { signOut } = useClerk();
-  const pathname = usePathname();
+  // const { user } = useUser();
+  // const { signOut } = useClerk();
+  // const pathname = usePathname();
 
   return (
     <header className="z-10 text-white p-4">
@@ -37,6 +37,11 @@ export default function Header() {
             <li>
               <Link href="/rank-helper" className={''}>
                 Rank Helper
+              </Link>
+            </li>
+            <li>
+              <Link href="/ai" className={''}>
+                Ai
               </Link>
             </li>
           </ul>
