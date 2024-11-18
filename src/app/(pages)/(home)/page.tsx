@@ -5,8 +5,16 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ChevronRight, BarChart2, Users, Search, Zap, MessageSquare } from 'lucide-react';
+import {
+  ChevronRight,
+  BarChart2,
+  Users,
+  Search,
+  Zap,
+  MessageSquare,
+} from 'lucide-react';
 import { Discord } from '@/lib/assets/icons';
+import { Input } from '@/components/ui/input';
 
 const HeroBackground = ({
   mousePosition,
@@ -72,13 +80,23 @@ export default function MLBBLandingPage() {
               analysis, and real-time strategies.
             </motion.p>
             <motion.div
-              className="space-x-4"
+              className="flex space-x-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
-                Get Started <ChevronRight className="ml-2" />
+              <Button
+                size={'lg'}
+                className={
+                  'bg-violet-600 hover:bg-violet-700 flex gap-2 items-center'
+                }
+              >
+                <Search className={'text-violet-200'} />
+                <Input
+                  type={'text'}
+                  className={'text-violet-200 border-0 focus-visible:ring-0'}
+                  placeholder={'Search for heroes'}
+                ></Input>
               </Button>
               <Button
                 size="lg"
