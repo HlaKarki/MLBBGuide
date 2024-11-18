@@ -41,24 +41,24 @@ export default function Header() {
             </li>
           </ul>
         </nav>
-        <span className={'flex-grow flex justify-end'}>
-          <SignedOut>
-            <SignInButton mode={"modal"} forceRedirectUrl={pathname} />
-          </SignedOut>
-          <SignedIn>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" className="p-0 rounded-full">
-                  <img src={user?.imageUrl} alt="Avatar" className="w-8 h-8 rounded-full" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className={"max-w-[200px] flex flex-col gap-2"}>
-                <Button>Logged Matches</Button>
-                <Button onClick={() => signOut({redirectUrl: pathname})}>Log Out</Button>
-              </PopoverContent>
-            </Popover>
-          </SignedIn>
-        </span>
+        {/*<span className={'flex-grow flex justify-end'}>*/}
+        {/*  <SignedOut>*/}
+        {/*    <SignInButton mode={"modal"} forceRedirectUrl={pathname} />*/}
+        {/*  </SignedOut>*/}
+        {/*  <SignedIn>*/}
+        {/*    <Popover>*/}
+        {/*      <PopoverTrigger asChild>*/}
+        {/*        <Button variant="ghost" className="p-0 rounded-full">*/}
+        {/*          <img src={user?.imageUrl} alt="Avatar" className="w-8 h-8 rounded-full" />*/}
+        {/*        </Button>*/}
+        {/*      </PopoverTrigger>*/}
+        {/*      <PopoverContent className={"max-w-[200px] flex flex-col gap-2"}>*/}
+        {/*        <Button>Logged Matches</Button>*/}
+        {/*        <Button onClick={() => signOut({redirectUrl: pathname})}>Log Out</Button>*/}
+        {/*      </PopoverContent>*/}
+        {/*    </Popover>*/}
+        {/*  </SignedIn>*/}
+        {/*</span>*/}
       </div>
     </header>
   );
