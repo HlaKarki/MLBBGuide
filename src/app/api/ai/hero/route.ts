@@ -1,3 +1,4 @@
+export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchLore, fetchMLBBData } from '@/lib/fetches';
