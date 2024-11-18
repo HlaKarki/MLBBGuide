@@ -1,120 +1,133 @@
-'use client';
+'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, BarChart2, Search, Shield } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ChevronRight, BarChart2, Users, Search, Zap } from 'lucide-react';
+import { Discord } from '@/lib/assets/icons';
 
-export default function Home() {
-  const features = [
-    {
-      title: 'Hero Statistics',
-      description:
-        'Comprehensive win rates, ban rates, and performance metrics across all ranks',
-      icon: <BarChart2 className="h-6 w-6" />,
-      link: '/stats',
-    },
-    {
-      title: 'Hero Search',
-      description:
-        'Find detailed information about any hero, including counters and synergies',
-      icon: <Search className="h-6 w-6" />,
-      link: '/search',
-    },
-    {
-      title: 'Rank Helper',
-      description:
-        'Get personalized hero recommendations based on your rank and playstyle',
-      icon: <Shield className="h-6 w-6" />,
-      link: '/rank-helper',
-    },
-  ];
+const HeroBackground = ({ mousePosition }: {mousePosition: any}) => (
+  <div className="absolute inset-0 overflow-hidden">
+    {/* Grid Background */}
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#8B5CF6_1px,transparent_1px),linear-gradient(to_bottom,#8B5CF6_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
+
+    {/* Mouse-following glow effect */}
+    <motion.div
+      className="absolute rounded-full w-96 h-96 bg-blue-500 filter blur-3xl opacity-20"
+      animate={{
+        x: mousePosition.x - 200,
+        y: mousePosition.y - 200,
+      }}
+      transition={{ type: 'spring', damping: 10, stiffness: 50 }}
+    />
+
+    {/* Additional ambient glow effects */}
+    <div className="absolute top-0 -right-4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+    <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+  </div>
+);
+
+export default function MLBBLandingPage () {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: any) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-900 to-blue-950 text-white">
-      <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="container mx-auto px-4 py-16 max-w-6xl"
-      >
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 text-yellow-400 drop-shadow-lg">
-            Mobile Legends: Bang Bang Analytics
-          </h1>
-          <p className="text-xl text-gray-200 max-w-3xl mx-auto">
-            Mobile Legends: Bang Bang is a multiplayer online battle arena
-            (MOBA) game where two teams of five players battle to destroy the
-            enemy base while defending their own. With over 100 unique heroes,
-            each with distinct abilities and roles, mastering the game requires
-            deep understanding of hero mechanics, team composition, and counter
-            strategies.
-          </p>
-        </div>
+    <div className="min-h-screen  text-white overflow-hidden">
+      <HeroBackground mousePosition={mousePosition} />
 
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="grid md:grid-cols-3 gap-8 mb-16"
-        >
-          {features.map((feature, index) => (
-            <Link href={feature.link} key={index}>
-              <Card className="bg-blue-800 bg-opacity-50 hover:bg-opacity-70 transition-all cursor-pointer h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      {feature.icon}
-                      {feature.title}
-                    </span>
-                    <ArrowRight className="h-5 w-5" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-200">{feature.description}</p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-center bg-blue-800 bg-opacity-50 p-8 rounded-lg"
-        >
-          <h2 className="text-3xl font-bold mb-4 text-yellow-400">
-            Why Use Our Analytics?
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-            <div>
-              <h3 className="text-xl font-semibold mb-2">
-                Data-Driven Decisions
-              </h3>
-              <p>
-                Make informed choices based on real-time statistics and
-                performance metrics from millions of matches.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Counter Picking</h3>
-              <p>
-                Learn which heroes effectively counter your opponents and
-                improve your draft phase strategy.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Team Composition</h3>
-              <p>
-                Understand hero synergies and build optimal team compositions
-                for better coordination.
-              </p>
-            </div>
+      {/* Main Content */}
+      <div className="relative container mx-auto px-4 py-8">
+        {/* Hero Section */}
+        <main className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
+          <div>
+            <motion.h1
+              className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-600"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Dominate the Land of Dawn
+            </motion.h1>
+            <motion.p
+              className="text-xl text-gray-300 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Elevate your MLBB game with data-driven insights, team composition analysis, and real-time strategies.
+            </motion.p>
+            <motion.div
+              className="space-x-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
+                Get Started <ChevronRight className="ml-2" />
+              </Button>
+              <Button size="lg" variant="outline" className="border-violet-500 text-violet-400 hover:bg-violet-950">
+                <Discord className="mr-2 h-4 w-4" />
+                Join Discord
+              </Button>
+            </motion.div>
           </div>
-        </motion.div>
-      </motion.div>
+
+          {/* Featured Heroes Card */}
+          <motion.div
+            className="relative"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg filter blur-xl opacity-50" />
+            <Card className="relative bg-gray-900/80 backdrop-blur-sm p-8 border-violet-500/20">
+              <h2 className="text-2xl font-bold mb-4">Featured Heroes</h2>
+              <div className="grid grid-cols-3 gap-4">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="bg-gray-800 rounded-lg p-2 flex items-center justify-center">
+                    <Image src={`/unselected.webp`} alt={`Hero ${i}`} width={80} height={80} className="rounded-full" />
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </motion.div>
+        </main>
+
+        {/* Features Section */}
+        <section className="mt-24">
+          <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: BarChart2, title: 'Hero Statistics', description: 'Comprehensive win rates and performance metrics' },
+              { icon: Users, title: 'Team Composition', description: 'Build the perfect team with our analysis tool' },
+              { icon: Search, title: 'Counter Picking', description: 'Get real-time suggestions to counter opponents' },
+              { icon: Zap, title: 'Real-time Analytics', description: 'Stay updated with the latest meta across ranks' },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-violet-500/20 hover:border-violet-500/40 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 * index }}
+              >
+                <feature.icon className="w-12 h-12 mb-4 text-violet-400" />
+                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <p className="text-gray-300">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
-}
+};
