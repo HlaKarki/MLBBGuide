@@ -170,7 +170,7 @@ export default function MLBBLandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-900/50 to-purple-900/50 backdrop-blur-sm" />
+            <div className="absolute inset-0 " />
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 items-center p-12">
               <div>
                 <h2 className="text-3xl font-bold mb-6">
@@ -187,8 +187,8 @@ export default function MLBBLandingPage() {
                 </Button>
               </div>
               <div className="relative h-[300px] flex items-center justify-center">
-                <div className="absolute inset-0 bg-violet-500 rounded-full filter blur-3xl opacity-20 animate-pulse" />
-                <MessageSquare className="w-32 h-32 text-violet-300" />
+                <div className="absolute inset-0 rounded-full filter blur-3xl opacity-20 " />
+                <MessageSquare className="w-32 h-32 text-violet-200" />
               </div>
             </div>
           </motion.div>
