@@ -1,14 +1,18 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ChevronRight, BarChart2, Users, Search, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { ChevronRight, BarChart2, Users, Search, Zap, MessageSquare } from 'lucide-react';
 import { Discord } from '@/lib/assets/icons';
 
-const HeroBackground = ({ mousePosition }: {mousePosition: {x: number, y: number}}) => (
+const HeroBackground = ({
+  mousePosition,
+}: {
+  mousePosition: { x: number; y: number };
+}) => (
   <div className="fixed inset-0 w-full h-full pointer-events-none">
     {/* Grid Background */}
     <div className="fixed inset-0 w-full h-full bg-[linear-gradient(to_right,#8B5CF6_1px,transparent_1px),linear-gradient(to_bottom,#8B5CF6_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
@@ -29,12 +33,12 @@ const HeroBackground = ({ mousePosition }: {mousePosition: {x: number, y: number
   </div>
 );
 
-export default function MLBBLandingPage () {
+export default function MLBBLandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e: any) => {
-      setMousePosition({x: e.clientX, y: e.clientY});
+      setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -64,7 +68,8 @@ export default function MLBBLandingPage () {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Elevate your MLBB game with data-driven insights, team composition analysis, and real-time strategies.
+              Elevate your MLBB game with data-driven insights, team composition
+              analysis, and real-time strategies.
             </motion.p>
             <motion.div
               className="space-x-4"
@@ -75,7 +80,11 @@ export default function MLBBLandingPage () {
               <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
                 Get Started <ChevronRight className="ml-2" />
               </Button>
-              <Button size="lg" variant="outline" className="border-violet-500 text-violet-400 hover:bg-violet-950">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-violet-500 text-violet-400 hover:bg-violet-950"
+              >
                 <Discord className="mr-2 h-4 w-4" />
                 Join Discord
               </Button>
@@ -93,9 +102,18 @@ export default function MLBBLandingPage () {
             <Card className="relative bg-gray-900/80 backdrop-blur-sm p-8 border-violet-500/20">
               <h2 className="text-2xl font-bold mb-4">Featured Heroes</h2>
               <div className="grid grid-cols-3 gap-4">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-gray-800 rounded-lg p-2 flex items-center justify-center">
-                    <Image src={`/unselected.webp`} alt={`Hero ${i}`} width={80} height={80} className="rounded-full" />
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div
+                    key={i}
+                    className="bg-gray-800 rounded-lg p-2 flex items-center justify-center"
+                  >
+                    <Image
+                      src={`/unselected.webp`}
+                      alt={`Hero ${i}`}
+                      width={80}
+                      height={80}
+                      className="rounded-full"
+                    />
                   </div>
                 ))}
               </div>
@@ -108,10 +126,26 @@ export default function MLBBLandingPage () {
           <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: BarChart2, title: 'Hero Statistics', description: 'Comprehensive win rates and performance metrics' },
-              { icon: Users, title: 'Team Composition', description: 'Build the perfect team with our analysis tool' },
-              { icon: Search, title: 'Counter Picking', description: 'Get real-time suggestions to counter opponents' },
-              { icon: Zap, title: 'Real-time Analytics', description: 'Stay updated with the latest meta across ranks' },
+              {
+                icon: BarChart2,
+                title: 'Hero Statistics',
+                description: 'Comprehensive win rates and performance metrics',
+              },
+              {
+                icon: Users,
+                title: 'Team Composition',
+                description: 'Build the perfect team with our analysis tool',
+              },
+              {
+                icon: Search,
+                title: 'Counter Picking',
+                description: 'Get real-time suggestions to counter opponents',
+              },
+              {
+                icon: Zap,
+                title: 'Real-time Analytics',
+                description: 'Stay updated with the latest meta across ranks',
+              },
             ].map((feature, index) => (
               <motion.div
                 key={index}
@@ -127,7 +161,39 @@ export default function MLBBLandingPage () {
             ))}
           </div>
         </section>
+
+        {/* New Ancient Chronicler Section */}
+        <section className="mt-24">
+          <motion.div
+            className="relative rounded-lg overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-900/50 to-purple-900/50 backdrop-blur-sm" />
+            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 items-center p-12">
+              <div>
+                <h2 className="text-3xl font-bold mb-6">
+                  Meet The Ancient Chronicler
+                </h2>
+                <p className="text-lg text-gray-300 mb-6">
+                  Unlock the secrets of the Land of Dawn through conversations
+                  with our AI loremaster. Get unique insights into hero stories,
+                  relationships, and strategies straight from an immortal
+                  witness.
+                </p>
+                <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
+                  Start a Conversation <ChevronRight className="ml-2" />
+                </Button>
+              </div>
+              <div className="relative h-[300px] flex items-center justify-center">
+                <div className="absolute inset-0 bg-violet-500 rounded-full filter blur-3xl opacity-20 animate-pulse" />
+                <MessageSquare className="w-32 h-32 text-violet-300" />
+              </div>
+            </div>
+          </motion.div>
+        </section>
       </div>
     </div>
   );
-};
+}
