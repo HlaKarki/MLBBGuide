@@ -217,7 +217,6 @@ const columns = (
       <AbilityBar
         value={Number(row.original.abilities.Durability)}
         label="Durability"
-        color="bg-green-500"
       />
     ),
   },
@@ -240,7 +239,6 @@ const columns = (
       <AbilityBar
         value={Number(row.original.abilities.Offense)}
         label="Offense"
-        color="bg-red-500"
       />
     ),
   },
@@ -263,7 +261,6 @@ const columns = (
       <AbilityBar
         value={Number(row.original.abilities['Ability Effects'])}
         label="Ability Effects"
-        color="bg-purple-500"
       />
     ),
   },
@@ -286,7 +283,6 @@ const columns = (
       <AbilityBar
         value={Number(row.original.abilities.Difficulty)}
         label="Difficulty"
-        color="bg-yellow-500"
       />
     ),
   },
@@ -311,28 +307,35 @@ const columns = (
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {Array.from(new Set(stats.flatMap(hero => hero.role))).map(lane => lane && lane !== ' ' && lane !== '' && (
-              <DropdownMenuCheckboxItem
-                key={lane}
-                className="capitalize"
-                checked={
-                  (column.getFilterValue() as string[] | undefined)?.includes(
-                    lane
-                  ) ?? false
-                }
-                onCheckedChange={value => {
-                  const filterValue =
-                    (column.getFilterValue() as string[] | undefined) ?? [];
-                  if (value) {
-                    column.setFilterValue([...filterValue, lane]);
-                  } else {
-                    column.setFilterValue(filterValue.filter(v => v !== lane));
-                  }
-                }}
-              >
-                {lane}
-              </DropdownMenuCheckboxItem>
-            ))}
+            {Array.from(new Set(stats.flatMap(hero => hero.role))).map(
+              lane =>
+                lane &&
+                lane !== ' ' &&
+                lane !== '' && (
+                  <DropdownMenuCheckboxItem
+                    key={lane}
+                    className="capitalize"
+                    checked={
+                      (
+                        column.getFilterValue() as string[] | undefined
+                      )?.includes(lane) ?? false
+                    }
+                    onCheckedChange={value => {
+                      const filterValue =
+                        (column.getFilterValue() as string[] | undefined) ?? [];
+                      if (value) {
+                        column.setFilterValue([...filterValue, lane]);
+                      } else {
+                        column.setFilterValue(
+                          filterValue.filter(v => v !== lane)
+                        );
+                      }
+                    }}
+                  >
+                    {lane}
+                  </DropdownMenuCheckboxItem>
+                )
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );
