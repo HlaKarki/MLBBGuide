@@ -1,14 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { fetchMicroData } from '@/lib/fetches';
+import { NextResponse } from 'next/server';
+import { fetchMicroHeroData } from '@/lib/fetches';
 
-export async function POST(request: NextRequest){
-  const {heroes} = await request.json();
-
+export async function GET() {
   try {
-    const response = await fetchMicroData(heroes);
-
+    const response = await fetchMicroHeroData();
     return NextResponse.json({
-      data: response,
+      data: response.reverse(),
       success: true,
     });
   } catch (error) {
