@@ -34,11 +34,11 @@ export default function Header() {
                 Search
               </Link>
             </li>
-            <li>
-              <Link href="/rank-helper" className={''}>
-                Rank Helper
-              </Link>
-            </li>
+            {/*<li>*/}
+            {/*  <Link href="/rank-helper" className={''}>*/}
+            {/*    Rank Helper*/}
+            {/*  </Link>*/}
+            {/*</li>*/}
             <li>
               <Link href="/ai" className={''}>
                 Ai
