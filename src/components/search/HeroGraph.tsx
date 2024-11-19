@@ -44,22 +44,24 @@ const CustomTooltip = ({ statType, active, payload, label, data }: any) => {
       const absoluteChange = currentStat - previousStat;
       const percentageChange = (absoluteChange / previousStat) * 100;
 
-      changeText = `${absoluteChange > 0 ? '+' : ''}${absoluteChange.toFixed(2)}%`;
+      changeText = `${absoluteChange > 0 ? '+' : ''}${absoluteChange.toFixed(
+        2
+      )}%`;
       percentageChangeText = `(${percentageChange.toFixed(2)}%)`;
 
       changeClass =
         absoluteChange > 0
           ? 'text-green-400'
           : absoluteChange < 0
-            ? 'text-red-400'
-            : 'text-blue-300';
+          ? 'text-red-400'
+          : 'text-blue-300';
 
       percentageChangeClass =
         percentageChange > 0
           ? 'text-green-200'
           : percentageChange < 0
-            ? 'text-red-200'
-            : 'text-blue-300';
+          ? 'text-red-200'
+          : 'text-blue-300';
 
       changeIcon =
         absoluteChange > 0 ? (
@@ -77,14 +79,14 @@ const CustomTooltip = ({ statType, active, payload, label, data }: any) => {
         : `${statType[0].toUpperCase()}${statType.slice(1)} Rate`;
 
     return (
-      <div className="bg-blue-900 p-4 rounded shadow-lg border border-blue-500">
-        <p className="text-blue-200">{label}</p>
-        <p className="font-bold text-blue-100">
+      <div className="bg-gray-900/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-violet-500/20">
+        <p className="text-violet-300">{label}</p>
+        <p className="font-bold text-violet-100">
           {`${statLabel}: ${currentStat.toFixed(2)}%`}
         </p>
         {previousStat !== null && (
           <>
-            <p className="text-blue-200">
+            <p className="text-violet-300">
               {`Previous ${statLabel}: ${previousStat.toFixed(2)}%`}
             </p>
             <p className={`${changeClass} font-semibold flex items-center`}>
@@ -161,11 +163,11 @@ export default function HeroGraph({
   const maxRate = Math.ceil(maxDataValue + padding);
 
   return (
-    <Card className="w-full bg-gradient-to-br from-blue-900 to-blue-700">
+    <Card className="w-full bg-gray-900/80 backdrop-blur-sm border-violet-500/20">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-blue-100">
+        <CardTitle className="text-2xl font-bold text-violet-100">
           <div className="flex justify-between">
-            <h2>
+            <h2 className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-600">
               {heroData.name}{' '}
               {statType === 'app'
                 ? 'Pick'
@@ -176,18 +178,33 @@ export default function HeroGraph({
               <Button
                 variant={statType === 'win' ? 'default' : 'ghost'}
                 onClick={() => setStatType('win')}
+                className={
+                  statType === 'win'
+                    ? 'bg-violet-600 hover:bg-violet-700'
+                    : 'text-violet-300 hover:text-violet-100 hover:bg-violet-950/50'
+                }
               >
                 Win Rate
               </Button>
               <Button
                 variant={statType === 'ban' ? 'default' : 'ghost'}
                 onClick={() => setStatType('ban')}
+                className={
+                  statType === 'ban'
+                    ? 'bg-violet-600 hover:bg-violet-700'
+                    : 'text-violet-300 hover:text-violet-100 hover:bg-violet-950/50'
+                }
               >
                 Ban Rate
               </Button>
               <Button
                 variant={statType === 'app' ? 'default' : 'ghost'}
                 onClick={() => setStatType('app')}
+                className={
+                  statType === 'app'
+                    ? 'bg-violet-600 hover:bg-violet-700'
+                    : 'text-violet-300 hover:text-violet-100 hover:bg-violet-950/50'
+                }
               >
                 Pick Rate
               </Button>
@@ -202,18 +219,18 @@ export default function HeroGraph({
               data={data}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#4c3a88" />
               <XAxis
                 dataKey="date"
-                stroke="#a0aec0"
-                tick={{ fill: '#a0aec0' }}
-                tickLine={{ stroke: '#a0aec0' }}
+                stroke="#a78bfa"
+                tick={{ fill: '#a78bfa' }}
+                tickLine={{ stroke: '#a78bfa' }}
               />
               <YAxis
                 domain={[minRate, maxRate]}
-                stroke="#a0aec0"
-                tick={{ fill: '#a0aec0' }}
-                tickLine={{ stroke: '#a0aec0' }}
+                stroke="#a78bfa"
+                tick={{ fill: '#a78bfa' }}
+                tickLine={{ stroke: '#a78bfa' }}
                 tickFormatter={value => `${value}%`}
               />
               <Tooltip
@@ -222,12 +239,12 @@ export default function HeroGraph({
               <Line
                 type="monotone"
                 dataKey={`${statType}_rate`}
-                stroke="#48bb78"
+                stroke="#8b5cf6"
                 strokeWidth={2}
-                dot={{ r: 4, fill: '#48bb78', stroke: '#fff', strokeWidth: 2 }}
+                dot={{ r: 4, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }}
                 activeDot={{
                   r: 6,
-                  fill: '#48bb78',
+                  fill: '#8b5cf6',
                   stroke: '#fff',
                   strokeWidth: 2,
                 }}
