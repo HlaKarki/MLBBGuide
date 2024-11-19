@@ -25,6 +25,11 @@ export async function fetchMLBBData(hero_id: string | undefined, rank: string | 
   );
 }
 
+export async function fetchMicroData(heroes: string[]){
+  const rawData = await MLBBApiClient.fetchMicroHeroData(heroes);
+  return DataProcessor.processSearchMeta(rawData.data);
+}
+
 export async function fetchLore(hero_id: string) {
   const docRef = db.collection("lores").doc(hero_id);
   const docSnap = await docRef.get();
