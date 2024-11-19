@@ -34,7 +34,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FinalHeroDataType, RanksType } from '@/lib/types';
 import { AbilityBar } from '@/components/AbilityBar';
-import { getRanks } from '@/lib/utils';
+import { cn, getRanks } from '@/lib/utils';
 
 const formatPercentage = (value: number) => (value * 100).toFixed(2) + '%';
 
@@ -73,9 +73,10 @@ const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className={
-          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
-        }
+        className={cn(
+          'text-violet-100 hover:bg-violet-900/50',
+          column.getIsSorted() && 'bg-violet-900/50'
+        )}
       >
         Win Rate
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -93,9 +94,10 @@ const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className={
-          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
-        }
+        className={cn(
+          'text-violet-100 hover:bg-violet-900/50',
+          column.getIsSorted() && 'bg-violet-900/50'
+        )}
       >
         Ban Rate
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -113,9 +115,10 @@ const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className={
-          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
-        }
+        className={cn(
+          'text-violet-100 hover:bg-violet-900/50',
+          column.getIsSorted() && 'bg-violet-900/50'
+        )}
       >
         Pick Rate
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -137,7 +140,10 @@ const columns = (
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className={isFiltered ? 'bg-primary text-primary-foreground' : ''}
+              className={cn(
+                'text-violet-100 hover:bg-violet-900/50',
+                isFiltered && 'bg-violet-900/50'
+              )}
             >
               Speciality
               <Filter className="ml-2 h-4 w-4" />
@@ -198,9 +204,10 @@ const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className={
-          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
-        }
+        className={cn(
+          'text-violet-100 hover:bg-violet-900/50',
+          column.getIsSorted() && 'bg-violet-900/50'
+        )}
       >
         Durability
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -220,9 +227,10 @@ const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className={
-          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
-        }
+        className={cn(
+          'text-violet-100 hover:bg-violet-900/50',
+          column.getIsSorted() && 'bg-violet-900/50'
+        )}
       >
         Offense
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -242,9 +250,10 @@ const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className={
-          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
-        }
+        className={cn(
+          'text-violet-100 hover:bg-violet-900/50',
+          column.getIsSorted() && 'bg-violet-900/50'
+        )}
       >
         Ability Effects
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -264,9 +273,10 @@ const columns = (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        className={
-          column.getIsSorted() ? 'bg-primary text-primary-foreground' : ''
-        }
+        className={cn(
+          'text-violet-100 hover:bg-violet-900/50',
+          column.getIsSorted() && 'bg-violet-900/50'
+        )}
       >
         Difficulty
         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -281,7 +291,7 @@ const columns = (
     ),
   },
   {
-    accessorKey: 'lanes',
+    accessorKey: 'role',
     header: ({ column }) => {
       const filterValue = column.getFilterValue() as string[] | undefined;
       const isFiltered = filterValue && filterValue.length > 0;
@@ -290,7 +300,10 @@ const columns = (
         <DropdownMenu>
           <DropdownMenuTrigger
             asChild
-            className={isFiltered ? 'bg-primary text-primary-foreground' : ''}
+            className={cn(
+              'text-violet-100 hover:bg-violet-900/50',
+              isFiltered && 'bg-violet-900/50'
+            )}
           >
             <Button variant="ghost">
               Lanes
@@ -298,7 +311,7 @@ const columns = (
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {Array.from(new Set(stats.flatMap(hero => hero.role))).map(lane => (
+            {Array.from(new Set(stats.flatMap(hero => hero.role))).map(lane => lane && lane !== ' ' && lane !== '' && (
               <DropdownMenuCheckboxItem
                 key={lane}
                 className="capitalize"
@@ -332,19 +345,18 @@ const columns = (
     },
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
-        {row.original.role.map(lane => {
+        {(row.original.role || []).map(lane => {
           if (!lane || lane === ' ' || lane === '') return null;
-            return (
-              <Badge
-                key={lane}
-                variant="secondary"
-                className="px-2 py-0.5 text-xs font-medium bg-green-800 text-neutral-300 cursor-default"
-              >
-                {lane}
-              </Badge>
-            )
-          }
-        )}
+          return (
+            <Badge
+              key={lane}
+              variant="secondary"
+              className="px-2 py-0.5 text-xs font-medium bg-green-800 text-neutral-300 cursor-default"
+            >
+              {lane}
+            </Badge>
+          );
+        })}
       </div>
     ),
   },
@@ -398,7 +410,7 @@ export default function StatsTable({
 
   if (error) {
     return (
-      <div className="text-red-500 bg-red-100 border border-red-400 rounded-md p-4 my-4">
+      <div className="text-red-400 bg-red-950/50 backdrop-blur-sm border border-red-500/20 rounded-md p-4 my-4">
         Error: {error.message}
       </div>
     );
@@ -413,31 +425,36 @@ export default function StatsTable({
           onChange={event =>
             table.getColumn('name')?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm bg-violet-950/50 border-violet-500/20 text-violet-100 placeholder:text-violet-400/70"
         />
         <div className="flex items-center space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="w-[200px] justify-between bg-gray-700 text-gray-100 hover:bg-gray-600"
+                className="w-[200px] justify-between bg-violet-950/50 border-violet-500/20 text-violet-100 hover:bg-violet-900/50 hover:border-violet-500/40"
               >
-          <span className="flex items-center gap-2">
-            <span className="font-semibold">Rank:</span>
-            <span className="text-gray-300">{currentRank}</span>
-          </span>
+                <span className="flex items-center gap-2">
+                  <span className="font-semibold text-violet-300">Rank:</span>
+                  <span className="text-violet-100">{currentRank}</span>
+                </span>
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px] bg-gray-800 text-gray-100">
-              {getRanks().map((rank) => (
+            <DropdownMenuContent
+              align="end"
+              className="w-[200px] bg-gray-900/95 backdrop-blur-sm border-violet-500/20"
+            >
+              {getRanks().map(rank => (
                 <DropdownMenuItem
                   key={rank}
                   onSelect={() => setRank(rank)}
-                  className="flex items-center justify-between py-2 px-4 hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center justify-between py-2 px-4 hover:bg-violet-950/50 cursor-pointer text-violet-100"
                 >
                   {rank}
-                  {currentRank === rank && <Check className="h-4 w-4 text-primary" />}
+                  {currentRank === rank && (
+                    <Check className="h-4 w-4 text-violet-400" />
+                  )}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -446,14 +463,14 @@ export default function StatsTable({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="bg-gray-700 text-gray-100 hover:bg-gray-600"
+                className="bg-violet-950/50 border-violet-500/20 text-violet-100 hover:bg-violet-900/50 hover:border-violet-500/40"
               >
                 Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="bg-gray-800 text-gray-100"
+              className="bg-gray-900/95 backdrop-blur-sm border-violet-500/20"
             >
               {table
                 .getAllColumns()
@@ -461,7 +478,7 @@ export default function StatsTable({
                 .map(column => (
                   <DropdownMenuCheckboxItem
                     key={column.id}
-                    className="capitalize"
+                    className="capitalize text-violet-100 hover:bg-violet-950/50"
                     checked={column.getIsVisible()}
                     onCheckedChange={value => column.toggleVisibility(value)}
                   >
@@ -474,28 +491,29 @@ export default function StatsTable({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="bg-gray-700 text-gray-100 hover:bg-gray-600"
+                className="bg-violet-950/50 border-violet-500/20 text-violet-100 hover:bg-violet-900/50 hover:border-violet-500/40"
               >
                 Show {rowsPerPage} <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="bg-gray-800 text-gray-100"
+              className="bg-gray-900/95 backdrop-blur-sm border-violet-500/20"
             >
               {[10, 20, 30, 40, 50, 100, 150].map(pageSize => (
                 <DropdownMenuItem
                   key={pageSize}
                   onClick={() => setRowsPerPage(pageSize)}
-                  className={rowsPerPage === pageSize ? 'bg-gray-700' : ''}
+                  className={cn(
+                    'text-violet-100 hover:bg-violet-950/50',
+                    rowsPerPage === pageSize && 'bg-violet-950/50'
+                  )}
                 >
                   <div className="flex w-full justify-between">
                     <span>Show {pageSize}</span>
-                    <span>
-                      {rowsPerPage === pageSize && (
-                        <Check className="h-4 w-4" />
-                      )}
-                    </span>
+                    {rowsPerPage === pageSize && (
+                      <Check className="h-4 w-4 text-violet-400" />
+                    )}
                   </div>
                 </DropdownMenuItem>
               ))}
@@ -503,13 +521,17 @@ export default function StatsTable({
           </DropdownMenu>
         </div>
       </div>
-      <div className="rounded-md border border-gray-700 overflow-hidden">
-        <Table className="bg-gray-800 text-gray-100">
+
+      <div className="rounded-md border border-violet-500/20 overflow-hidden">
+        <Table className="bg-gray-900/80 backdrop-blur-sm">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className="hover:bg-gray-700">
+              <TableRow
+                key={headerGroup.id}
+                className="hover:bg-violet-950/50 border-b border-violet-500/20"
+              >
                 {headerGroup.headers.map(header => (
-                  <TableHead key={header.id} className="text-gray-300">
+                  <TableHead key={header.id} className="text-violet-300">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -526,12 +548,15 @@ export default function StatsTable({
               Array(10)
                 .fill(0)
                 .map((_, rowIndex) => (
-                  <TableRow key={rowIndex} className="hover:bg-gray-700">
+                  <TableRow
+                    key={rowIndex}
+                    className="hover:bg-violet-950/50 border-b border-violet-500/10"
+                  >
                     {Array(table.getAllColumns().length)
                       .fill(0)
                       .map((_, cellIndex) => (
                         <TableCell key={cellIndex}>
-                          <Skeleton className="h-10 w-full" />
+                          <Skeleton className="h-10 w-full bg-violet-950/50" />
                         </TableCell>
                       ))}
                   </TableRow>
@@ -541,10 +566,10 @@ export default function StatsTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-gray-700"
+                  className="hover:bg-violet-950/50 border-b border-violet-500/10"
                 >
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="text-violet-100">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -557,7 +582,7 @@ export default function StatsTable({
               <TableRow>
                 <TableCell
                   colSpan={table.getAllColumns().length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-violet-300"
                 >
                   No results.
                 </TableCell>
@@ -566,10 +591,11 @@ export default function StatsTable({
           </TableBody>
         </Table>
       </div>
+
       <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-2 py-4">
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-violet-400">
           {isLoading ? (
-            <Skeleton className="h-5 w-[250px]" />
+            <Skeleton className="h-5 w-[250px] bg-violet-950/50" />
           ) : (
             <>
               Showing {table.getState().pagination.pageIndex * rowsPerPage + 1}{' '}
@@ -588,7 +614,7 @@ export default function StatsTable({
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage() || isLoading}
-            className="bg-gray-700 text-gray-100 hover:bg-gray-600"
+            className="bg-violet-950/50 border-violet-500/20 text-violet-100 hover:bg-violet-900/50 hover:border-violet-500/40 disabled:opacity-50"
           >
             Previous
           </Button>
@@ -597,7 +623,7 @@ export default function StatsTable({
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage() || isLoading}
-            className="bg-gray-700 text-gray-100 hover:bg-gray-600"
+            className="bg-violet-950/50 border-violet-500/20 text-violet-100 hover:bg-violet-900/50 hover:border-violet-500/40 disabled:opacity-50"
           >
             Next
           </Button>
