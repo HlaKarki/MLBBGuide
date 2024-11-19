@@ -83,7 +83,7 @@ export function HeroSearch() {
 function HeroListItem({ hero }: { hero: Hero }) {
   return (
     <Link
-      href={'/search#' + hero.name}
+      href={'/search?hero=' + hero.name}
       className="block px-4 py-2 text-violet-400 hover:bg-violet-950/50 transition-colors duration-150"
     >
       <div className="flex items-center space-x-2 justify-between">
