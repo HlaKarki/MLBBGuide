@@ -30,8 +30,6 @@ export function CreateGameFlow({
     dispatch({ type: 'SET_LANE_TYPE', payload: type });
   };
 
-
-
   return (
     <div>
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
