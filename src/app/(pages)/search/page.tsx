@@ -7,16 +7,11 @@ import { Loader } from '@/components/Loader';
 import { RanksType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { SearchBar } from '@/components/search/SearchBar';
 import RankSelector from '@/components/search/RankSelector';
 import HeroGraph from '@/components/search/HeroGraph';
 import HeroData from '@/components/search/HeroData';
-import {
-  getHeroId,
-  getHeroName,
-  getHeroNameURL,
-  replaceHyphenInHeroName,
-} from '@/lib/utils';
+import { getHeroId, getHeroNameURL } from '@/lib/utils';
+import { HeroSearch } from '@/components/home/Search';
 
 function SearchPageContent() {
   const queryClient = useQueryClient();
@@ -24,9 +19,6 @@ function SearchPageContent() {
   const searchParams = useSearchParams();
 
   const [selectedRank, setSelectedRank] = useState<RanksType>('Overall');
-  const [recentSearches, setRecentSearches] = useState<
-    Array<{ id: string | number; name: string }>
-  >([]);
   const [selectedHero, setSelectedHero] = useState<{
     id: number;
     name: string;
@@ -34,17 +26,11 @@ function SearchPageContent() {
 
   // On mount, read the URL query parameter to determine the hero to load
   useEffect(() => {
-    const savedSearches = localStorage.getItem('recentSearches');
-    if (savedSearches) {
-      setRecentSearches(JSON.parse(savedSearches));
-    }
-
     const heroParam = searchParams.get('hero');
     if (!heroParam) return;
-    const name = replaceHyphenInHeroName(heroParam);
-    const heroId = getHeroId(name);
+    const heroId = getHeroId(heroParam);
     if (!heroId) return;
-    setSelectedHero({ id: heroId, name: name });
+    setSelectedHero({ id: heroId, name: heroParam });
   }, [searchParams]);
 
   // Update URL whenever the selected hero changes
@@ -54,23 +40,6 @@ function SearchPageContent() {
       router.push(`/search?hero=${heroName}`, { scroll: false });
     }
   }, [selectedHero, router]);
-
-  // Handle hero selection, which sets both state and updates URL
-  const handleHeroSelect = useCallback(
-    (heroId: number | string) => {
-      setSelectedHero({ id: Number(heroId), name: getHeroName(heroId) });
-
-      // Update recent searches
-      const newSearch = { id: heroId, name: getHeroName(heroId) };
-      const updatedSearches = [
-        newSearch,
-        ...recentSearches.filter(h => h.id !== heroId),
-      ].slice(0, 5);
-      setRecentSearches(updatedSearches);
-      localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
-    },
-    [recentSearches]
-  );
 
   // Handle rank changes
   const handleRankChange = useCallback(
@@ -142,14 +111,11 @@ function SearchPageContent() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="relative backdrop-blur-sm  rounded-lg p-8 shadow-2xl mb-12"
+          className="relative z-20 backdrop-blur-sm  rounded-lg p-8 shadow-2xl mb-12"
         >
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <div className="w-full md:w-2/3">
-              <SearchBar
-                onHeroSelect={handleHeroSelect}
-                selectedHero={selectedHero}
-              />
+              <HeroSearch />
             </div>
             <div className="w-full md:w-1/3">
               <RankSelector
@@ -176,7 +142,7 @@ function SearchPageContent() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center mt-12 relative z-[5]"
+          className="text-center mt-12 relative z-0"
         >
           <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-600">
             Need More Help?
