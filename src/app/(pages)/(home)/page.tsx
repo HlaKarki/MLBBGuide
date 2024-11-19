@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import {
   ChevronRight,
   BarChart2,
-  Users,
+  // Users,
   Search,
   Zap,
   MessageSquare,
@@ -145,12 +145,12 @@ export default function MLBBLandingPage() {
                 title: 'Counter Picking',
                 description: 'Get real-time suggestions to counter opponents',
               },
-              {
-                link: '/rank-helper',
-                icon: Users,
-                title: 'Team Composition',
-                description: 'Build the perfect team with our analysis tool',
-              },
+              // {
+              //   link: '/rank-helper',
+              //   icon: Users,
+              //   title: 'Team Composition',
+              //   description: 'Build the perfect team with our analysis tool',
+              // },
               {
                 link: '/ai',
                 icon: Zap,
