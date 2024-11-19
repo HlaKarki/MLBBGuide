@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader } from '@/components/Loader';
@@ -18,7 +18,7 @@ import {
   replaceHyphenInHeroName,
 } from '@/lib/utils';
 
-export default function SearchPage() {
+function SearchPageContent() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -191,5 +191,13 @@ export default function SearchPage() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<Loader className="mx-auto mt-8" />}>
+      <SearchPageContent />
+    </Suspense>
   );
 }
