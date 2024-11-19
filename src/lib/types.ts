@@ -137,6 +137,12 @@ export interface MetaDataAPIResponse {
   data: {
     records: {
       data: {
+        main_hero: {
+          data: {
+            head: string;
+            name: string;
+          }
+        }
         main_heroid: string;
         main_hero_win_rate: string;
         main_hero_ban_rate: string;
