@@ -32,10 +32,17 @@ export default function Statistics() {
   }, [rank, refetch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen text-white overflow-hidden">
+      {/* Background effects */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none">
+        <div className="fixed top-0 -right-4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
+        <div className="fixed -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <motion.h1
-          className="text-4xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600"
+          className="text-4xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-600"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -43,7 +50,7 @@ export default function Statistics() {
           Hero Statistics
         </motion.h1>
         <motion.div
-          className="bg-gray-800 rounded-lg shadow-lg p-6"
+          className="backdrop-blur-sm rounded-lg shadow-lg p-6"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
