@@ -14,7 +14,8 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { Discord } from '@/lib/assets/icons';
-import { Input } from '@/components/ui/input';
+import { getHeroNames } from '@/lib/utils';
+import { HeroSearch } from '@/components/home/Search';
 
 const HeroBackground = ({
   mousePosition,
@@ -53,15 +54,19 @@ export default function MLBBLandingPage() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  const heroes = getHeroNames();
+
+  if (!heroes || heroes.length < 1) return null;
+
   return (
     <div className="min-h-screen  text-white overflow-hidden">
       <HeroBackground mousePosition={mousePosition} />
 
       {/* Main Content */}
-      <div className="relative container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <main className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
-          <div>
+          <div className={'relative z-10'}>
             <motion.h1
               className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-600"
               initial={{ opacity: 0, y: 20 }}
@@ -85,24 +90,8 @@ export default function MLBBLandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <Button
-                size={'lg'}
-                className={
-                  'bg-violet-600 hover:bg-violet-700 flex gap-2 items-center'
-                }
-              >
-                <Search className={'text-violet-200'} />
-                <Input
-                  type={'text'}
-                  className={'text-violet-200 border-0 focus-visible:ring-0'}
-                  placeholder={'Search for heroes'}
-                ></Input>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-violet-500 text-violet-400 hover:bg-violet-950"
-              >
+              <HeroSearch />
+              <Button size="lg" variant="outline">
                 <Discord className="mr-2 h-4 w-4" />
                 Join Discord
               </Button>
@@ -111,7 +100,7 @@ export default function MLBBLandingPage() {
 
           {/* Featured Heroes Card */}
           <motion.div
-            className="relative"
+            className={'relative z-0'}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
@@ -140,32 +129,37 @@ export default function MLBBLandingPage() {
         </main>
 
         {/* Features Section */}
-        <section className="mt-24">
+        <section className="mt-24 relative z-0">
           <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
+                link: '/stats',
                 icon: BarChart2,
                 title: 'Hero Statistics',
                 description: 'Comprehensive win rates and performance metrics',
               },
               {
-                icon: Users,
-                title: 'Team Composition',
-                description: 'Build the perfect team with our analysis tool',
-              },
-              {
+                link: '/search',
                 icon: Search,
                 title: 'Counter Picking',
                 description: 'Get real-time suggestions to counter opponents',
               },
               {
+                link: '/rank-helper',
+                icon: Users,
+                title: 'Team Composition',
+                description: 'Build the perfect team with our analysis tool',
+              },
+              {
+                link: '/ai',
                 icon: Zap,
                 title: 'Real-time Analytics',
                 description: 'Stay updated with the latest meta across ranks',
               },
             ].map((feature, index) => (
-              <motion.div
+              <motion.a
+                href={feature.link}
                 key={index}
                 className="bg-gray-800/50 backdrop-blur-sm p-6 rounded-lg border border-violet-500/20 hover:border-violet-500/40 transition-all duration-300"
                 initial={{ opacity: 0, y: 20 }}
@@ -175,13 +169,13 @@ export default function MLBBLandingPage() {
                 <feature.icon className="w-12 h-12 mb-4 text-violet-400" />
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                 <p className="text-gray-300">{feature.description}</p>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
         </section>
 
         {/* New Ancient Chronicler Section */}
-        <section className="mt-24">
+        <section className="mt-24 relative z-0">
           <motion.div
             className="relative rounded-lg overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
