@@ -5,6 +5,7 @@ import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { useQuery } from '@tanstack/react-query';
+import { getHeroNameURL } from '@/lib/utils';
 
 type Hero = {
   name: string;
@@ -83,7 +84,7 @@ export function HeroSearch() {
 function HeroListItem({ hero }: { hero: Hero }) {
   return (
     <Link
-      href={'/search?hero=' + hero.name}
+      href={'/search?hero=' + getHeroNameURL(hero.hero_id)}
       className="block px-4 py-2 text-violet-400 hover:bg-violet-950/50 transition-colors duration-150"
     >
       <div className="flex items-center space-x-2 justify-between">
