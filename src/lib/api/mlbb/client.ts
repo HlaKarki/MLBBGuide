@@ -45,4 +45,16 @@ export class MLBBApiClient {
       throw error;
     }
   }
+
+  static async fetchMicroHeroData(heroes: string[]){
+    try {
+      const response: MetaDataAPIResponse = await this.fetchData(API_CONFIG.endpoints.meta, RequestBodyFactory.createMetaRequest('Overall', '30', true))
+      return {
+        data: response,
+      };
+    } catch (error) {
+      console.error('Error fetching micro hero data:', error);
+      throw error;
+    }
+  }
 }
