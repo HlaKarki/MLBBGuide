@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader } from '@/components/Loader';
 import { RanksType } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -19,8 +20,10 @@ import {
 
 export default function SearchPage() {
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [selectedRank, setSelectedRank] = useState<RanksType>('Overall'); // Default to All
+  const [selectedRank, setSelectedRank] = useState<RanksType>('Overall');
   const [recentSearches, setRecentSearches] = useState<
     Array<{ id: string | number; name: string }>
   >([]);
@@ -29,26 +32,28 @@ export default function SearchPage() {
     name: string;
   } | null>(null);
 
-  // On mount, read the URL hash to determine the hero to load
+  // On mount, read the URL query parameter to determine the hero to load
   useEffect(() => {
     const savedSearches = localStorage.getItem('recentSearches');
     if (savedSearches) {
       setRecentSearches(JSON.parse(savedSearches));
     }
 
-    const name = replaceHyphenInHeroName(window.location.hash.substring(1));
-    if (!name) return;
+    const heroParam = searchParams.get('hero');
+    if (!heroParam) return;
+    const name = replaceHyphenInHeroName(heroParam);
     const heroId = getHeroId(name);
     if (!heroId) return;
     setSelectedHero({ id: heroId, name: name });
-  }, []);
+  }, [searchParams]);
 
   // Update URL whenever the selected hero changes
   useEffect(() => {
     if (selectedHero) {
-      window.location.hash = `#${getHeroNameURL(selectedHero.id)}`;
+      const heroName = getHeroNameURL(selectedHero.id);
+      router.push(`/search?hero=${heroName}`, { scroll: false });
     }
-  }, [selectedHero]);
+  }, [selectedHero, router]);
 
   // Handle hero selection, which sets both state and updates URL
   const handleHeroSelect = useCallback(
@@ -171,9 +176,7 @@ export default function SearchPage() {
               className="bg-gray-700 hover:bg-gray-600 text-white"
               asChild
             >
-              <a href="https://discord.gg/A7kmUGzJsr">
-                Report Bug
-              </a>
+              <a href="https://discord.gg/A7kmUGzJsr">Report Bug</a>
             </Button>
             <Button
               variant="outline"
