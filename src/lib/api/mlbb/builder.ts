@@ -83,7 +83,7 @@ export class RequestBodyFactory {
     };
   }
 
-  static createMetaRequest(rank: string, heroId?: string): RequestBody {
+  static createMetaRequest(rank: string, heroId?: string, getHead:boolean = false): RequestBody {
     const filters = [
       { field: 'match_type', operator: 'eq', value: '0' },
       { field: 'bigrank', operator: 'eq', value: getRankId(rank || 'All') },
@@ -105,6 +105,7 @@ export class RequestBodyFactory {
         'main_hero_win_rate',
         'main_hero_appearance_rate',
         'main_heroid',
+        getHead ? 'main_hero': ''
       ],
     };
   }
