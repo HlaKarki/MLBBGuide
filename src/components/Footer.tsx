@@ -8,7 +8,7 @@ export function Footer() {
       <p className="text-sm text-gray-400">
         This site is not affiliated with or endorsed by Moonton.
       </p>
-      <div className="mt-4">
+      <div className="my-4">
         <Link href="https://discord.gg/xDcdyPdGEw" className="text-violet-400 hover:text-violet-300 hover:underline">
           Join our Discord
         </Link>
