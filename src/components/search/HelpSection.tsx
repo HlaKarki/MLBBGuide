@@ -8,7 +8,7 @@ export function HelpSection() {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.6 }}
-      className="text-center mt-12 relative z-0"
+      className="text-center mt-40 relative z-0"
     >
       <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-600">
         Need More Help?
