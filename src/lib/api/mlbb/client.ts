@@ -78,7 +78,7 @@ export class MLBBApiClient {
           undefined,
           true,
           stat_type,
-          hero_count
+          hero_count || 200
         )
       );
       return {
