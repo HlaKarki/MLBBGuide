@@ -12,16 +12,7 @@ import { BackgroundEffects } from '@/components/BackgroundEffects';
 import { HelpSection } from '@/components/search/HelpSection';
 import { PageHeader } from '@/components/search/PageHeader';
 import { SearchSection } from '@/components/search/SearchSection';
-import { FeatureCard } from '@/components/featureCard';
-import { BarChart2, Search, Users } from 'lucide-react';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import RankSelector from '@/components/search/RankSelector';
+import { EmptyState } from '@/components/search/EmptyState';
 
 function SearchPageContent() {
   const queryClient = useQueryClient();
@@ -134,104 +125,5 @@ export default function SearchPage() {
     <Suspense fallback={<Loader className="mx-auto mt-8" />}>
       <SearchPageContent />
     </Suspense>
-  );
-}
-
-function EmptyState({
-  data,
-  stat_type,
-  setStatType,
-  selectedRank,
-  onRankChange,
-}: {
-  data?: APIMetaHeroDataType;
-  stat_type: MetaStatsType;
-  setStatType: (stat_type: MetaStatsType) => void;
-  selectedRank: RanksType;
-  onRankChange: (rank: RanksType) => void;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="text-center space-y-8 mt-12"
-    >
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-pink-600">
-          Get Started with Hero Analysis
-        </h2>
-        <p className="text-violet-200 max-w-2xl mx-auto">
-          Search for any hero to discover detailed statistics, counters, and
-          team compositions. Make informed decisions for your next match!
-        </p>
-      </div>
-
-      <div className="mt-12">
-        <h3 className="text-xl font-semibold text-violet-300 mb-4">
-          Popular Heroes
-        </h3>
-        <div className={'flex gap-4'}>
-          <Select onValueChange={setStatType}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder={'Pick rate'} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pick">Pick rate</SelectItem>
-              <SelectItem value="win">Win rate</SelectItem>
-              <SelectItem value="ban">Ban rate</SelectItem>
-            </SelectContent>
-          </Select>
-          <RankSelector
-            selectedRank={selectedRank}
-            onRankChange={onRankChange}
-          />
-        </div>
-        <div className={'flex flex-wrap gap-4'}>
-          {data &&
-            data.success &&
-            data.data
-              .sort((a, b) => b[`${stat_type}_rate`] - a[`${stat_type}_rate`])
-              .map(hero => {
-                return (
-                  <div key={hero.hero_id}>
-                    <img
-                      src={hero.head}
-                      className={'w-10 h-10'}
-                      alt={hero.name}
-                    />
-                  </div>
-                );
-              })}
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <FeatureCard
-          feature={{
-            title: 'Search Heroes',
-            description:
-              'Look up any hero to see their current performance stats and trends',
-            icon: Search,
-          }}
-        />
-        <FeatureCard
-          feature={{
-            title: 'Find Counters',
-            description:
-              'Discover which heroes work best with or against your chosen hero',
-            icon: Users,
-          }}
-        />
-        <FeatureCard
-          feature={{
-            title: 'Track Performance',
-            description:
-              'View detailed win rates and performance metrics across different ranks',
-            icon: BarChart2,
-          }}
-        />
-      </div>
-    </motion.div>
   );
 }
