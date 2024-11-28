@@ -6,21 +6,7 @@ import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { useQuery } from '@tanstack/react-query';
 import { getHeroNameURL } from '@/lib/utils';
-
-type Hero = {
-  name: string;
-  hero_id: string;
-  head: string;
-  pick_rate: string;
-  ban_rate: string;
-  win_rate: string;
-};
-
-type APIMetaHeroDataType = {
-  data: Hero[];
-  success: boolean;
-  error?: any;
-};
+import { APIMetaHeroDataType, MetaHeroType } from '@/lib/types';
 
 export function HeroSearch() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -31,12 +17,12 @@ export function HeroSearch() {
     queryKey: ['heroes'],
     queryFn: async () => {
       const res = await fetch('/api/mlbb/search');
-      return res.json();
+      return await res.json();
     },
   });
 
   const filteredHeroes = useMemo(() => {
-    if (!heroes) return [];
+    if (!heroes || !heroes.success) return [];
     return heroes.data.filter(hero =>
       hero.name.trim().toLowerCase().includes(searchTerm.trim().toLowerCase())
     );
@@ -81,7 +67,7 @@ export function HeroSearch() {
   );
 }
 
-function HeroListItem({ hero }: { hero: Hero }) {
+function HeroListItem({ hero }: { hero: MetaHeroType }) {
   return (
     <Link
       href={'/search?hero=' + getHeroNameURL(hero.hero_id)}
@@ -120,10 +106,10 @@ function StatDisplay({
   className,
 }: {
   label: string;
-  value: string;
+  value: number;
   className?: string;
 }) {
-  const percentage = (Number(value) * 100).toFixed(1);
+  const percentage = (value * 100).toFixed(1);
   return (
     <div className={'flex flex-col items-center ' + className}>
       <p className="text-xs text-violet-500">{label}</p>
