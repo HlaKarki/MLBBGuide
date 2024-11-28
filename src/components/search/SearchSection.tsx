@@ -6,25 +6,31 @@ import { Loader } from '@/components/Loader';
 import HeroData from '@/components/search/HeroData';
 import React from 'react';
 
-export function SearchSection({ selectedRank, onRankChange, isLoading, error, finalData }: {
+export function SearchSection({
+  selectedRank,
+  onRankChange,
+  isLoading,
+  error,
+  finalData,
+}: {
   selectedRank: RanksType;
   onRankChange: (newRank: RanksType) => void;
   isLoading: boolean;
   error: Error | null;
-  finalData: {data: FinalHeroDataType[]};
+  finalData: { data: FinalHeroDataType[] };
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="relative z-20 backdrop-blur-sm rounded-lg p-8 shadow-2xl mb-12"
+      className="relative z-20 backdrop-blur-sm rounded-lg py-8 mb-12 md:px-28"
     >
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <div className="w-full md:w-2/3">
+        <div className="w-full">
           <HeroSearch />
         </div>
-        <div className="w-full md:w-1/3">
+        <div className="w-full flex-1">
           <RankSelector
             selectedRank={selectedRank}
             onRankChange={onRankChange}
