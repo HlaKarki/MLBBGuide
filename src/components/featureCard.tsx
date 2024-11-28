@@ -26,7 +26,7 @@ export function FeatureCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 * index }}
     >
-      <feature.icon className="w-12 h-12 mb-4 text-violet-400" />
+      <feature.icon className="mx-auto w-12 h-12 mb-4 text-violet-400" />
       <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
       <p className="text-gray-300">{feature.description}</p>
     </Component>
