@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageSquare, Send } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { guessHeroName } from '@/app/(pages)/ai/helper';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -26,11 +27,13 @@ export default function AIPage() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (message: string) => {
+      const guessedName = guessHeroName(message);
+
       const response = await fetch('/api/ai/hero', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          hero_id: "30",
+          hero_id: (guessedName.found && guessedName.hero_id) || -1,
           question: message,
         }),
       });
@@ -41,19 +44,22 @@ export default function AIPage() {
 
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       const aiMessage = {
         role: 'assistant' as const,
         content: data.content[0].text,
         ambient_details: data.ambient_details,
       };
       setMessages(prev => [...prev, aiMessage]);
-      queryClient.invalidateQueries({ queryKey: ['chat-history'] }).catch(console.error);
+      queryClient
+        .invalidateQueries({ queryKey: ['chat-history'] })
+        .catch(console.error);
     },
     onError: () => {
       const errorMessage = {
         role: 'assistant' as const,
-        content: "The mystical energies are disturbed. Please seek wisdom again shortly.",
+        content:
+          'The mystical energies are disturbed. Please seek wisdom again shortly.',
       };
       setMessages(prev => [...prev, errorMessage]);
     },
@@ -131,7 +137,7 @@ export default function AIPage() {
               disabled={isPending || !input.trim()}
               className="bg-violet-600 hover:bg-violet-700"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4 text-violet-50" />
             </Button>
           </form>
         </Card>
