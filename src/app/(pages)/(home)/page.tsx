@@ -16,6 +16,7 @@ import {
 import { Discord } from '@/lib/assets/icons';
 import { getHeroNames } from '@/lib/utils';
 import { HeroSearch } from '@/components/home/Search';
+import Link from 'next/link';
 
 const HeroBackground = ({
   mousePosition,
@@ -194,9 +195,11 @@ export default function MLBBLandingPage() {
                   relationships, and strategies straight from an immortal
                   witness.
                 </p>
-                <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
-                  Start a Conversation <ChevronRight className="ml-2" />
-                </Button>
+                <Link href={"/ai"}>
+                  <Button  className="bg-violet-600 hover:bg-violet-700 text-violet-100">
+                    Start a Conversation <ChevronRight className="ml-2" />
+                  </Button>
+                </Link>
               </div>
               <div className="relative h-[300px] flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full filter blur-3xl opacity-20 " />
