@@ -1,4 +1,4 @@
-import { FinalHeroDataType } from '@/lib/types';
+import { FinalHeroDataType, MetaStatsType } from '@/lib/types';
 import { MLBBApiClient } from '@/lib/api/mlbb/client';
 import { DataProcessor } from '@/lib/api/mlbb/processors';
 import { db } from '@/lib/db/firebase-admin';
@@ -29,8 +29,16 @@ export async function fetchMLBBData(
   );
 }
 
-export async function fetchMicroHeroData() {
-  const rawData = await MLBBApiClient.fetchMicroHeroData();
+export async function fetchMicroHeroData(
+  rank?: string,
+  stat_type?: MetaStatsType,
+  hero_count?: number
+) {
+  const rawData = await MLBBApiClient.fetchMicroHeroData(
+    rank,
+    stat_type,
+    hero_count
+  );
   return DataProcessor.processSearchMeta(rawData.data);
 }
 
