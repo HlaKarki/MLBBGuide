@@ -42,8 +42,8 @@ export async function fetchMicroHeroData(
   return DataProcessor.processSearchMeta(rawData.data);
 }
 
-export async function fetchLore(hero_id: string) {
-  const docRef = db.collection('lores').doc(hero_id);
+export async function fetchLore(hero_id: number) {
+  const docRef = db.collection('lores').doc(hero_id.toString());
   const docSnap = await docRef.get();
   if (docSnap.exists) {
     const data = docSnap.data();
