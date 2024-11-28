@@ -4,6 +4,7 @@ import {
   GraphDataAPIResponse,
   HeroDataAPIResponse,
   MetaDataAPIResponse,
+  MetaStatsType,
 } from '@/lib/types';
 import { API_CONFIG, RequestBody } from '@/config/api';
 import { RequestBodyFactory } from '@/lib/api/mlbb/builder';
@@ -64,11 +65,21 @@ export class MLBBApiClient {
     }
   }
 
-  static async fetchMicroHeroData() {
+  static async fetchMicroHeroData(
+    rank?: string,
+    stat_type?: MetaStatsType,
+    hero_count?: number
+  ) {
     try {
       const response: MetaDataAPIResponse = await this.fetchData(
         API_CONFIG.endpoints.meta,
-        RequestBodyFactory.createMetaRequest('Overall', undefined, true)
+        RequestBodyFactory.createMetaRequest(
+          rank || 'Overall',
+          undefined,
+          true,
+          stat_type,
+          hero_count
+        )
       );
       return {
         data: response,
