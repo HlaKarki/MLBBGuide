@@ -28,7 +28,7 @@ export function HelpSection() {
           <a href="https://discord.gg/A7kmUGzJsr">Report Bug</a>
         </Button>
         <Button
-          variant-outline
+          variant="outline"
           className="border-violet-500/20 hover:border-violet-500/40 backdrop-blur-sm"
           asChild
         >
