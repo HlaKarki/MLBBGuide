@@ -55,7 +55,7 @@ const columns = (
     header: () => <div className={'text-center'}>Hero</div>,
     cell: ({ row }) => (
       <a
-        href={'/search#' + row.getValue('name')}
+        href={'/search?hero=' + row.getValue('name')}
         className="flex flex-col justify-center items-center space-y-2"
       >
         <img
