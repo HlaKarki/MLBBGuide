@@ -1,6 +1,7 @@
 // Request body factory
 import { RequestBody } from '@/config/api';
 import { getRankId } from '@/lib/utils';
+import { MetaStatsType } from '@/lib/types';
 
 export class RequestBodyFactory {
   static createHeroDataRequest(heroId?: string): RequestBody {
@@ -83,7 +84,13 @@ export class RequestBodyFactory {
     };
   }
 
-  static createMetaRequest(rank: string, heroId?: string): RequestBody {
+  static createMetaRequest(
+    rank: string,
+    heroId?: string,
+    getHead: boolean = false,
+    stat_type?: MetaStatsType,
+    heroCount: number = 200
+  ): RequestBody {
     const filters = [
       { field: 'match_type', operator: 'eq', value: '0' },
       { field: 'bigrank', operator: 'eq', value: getRankId(rank || 'All') },
@@ -93,18 +100,30 @@ export class RequestBodyFactory {
       filters.push({ field: 'main_heroid', operator: 'eq', value: heroId });
     }
 
+    let sortField = 'main_heroid';
+    switch (stat_type) {
+      case 'ban':
+        sortField = 'main_hero_ban_rate';
+        break;
+      case 'pick':
+        sortField = 'main_hero_appearance_rate';
+        break;
+      case 'win':
+        sortField = 'main_hero_win_rate';
+        break;
+    }
+
     return {
-      pageSize: 200,
+      pageSize: heroCount,
       pageIndex: 1,
       filters,
-      sorts: [
-        { data: { field: 'main_heroid', order: 'desc' }, type: 'sequence' },
-      ],
+      sorts: [{ data: { field: sortField, order: 'desc' }, type: 'sequence' }],
       fields: [
         'main_hero_ban_rate',
         'main_hero_win_rate',
         'main_hero_appearance_rate',
         'main_heroid',
+        getHead ? 'main_hero' : '',
       ],
     };
   }

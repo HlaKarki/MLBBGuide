@@ -8,7 +8,7 @@ import { Games } from '@/app/(pages)/rank-helper/games';
 export default function RankHelper() {
   const {user, isSignedIn} = useUser();
 
-  const { data: userData, isLoading, error, isError } = useQuery({
+  const { data: userData } = useQuery({
     queryKey: ['username', user?.username],
     queryFn: async () => {
       return await checkUser(user).catch(console.error);

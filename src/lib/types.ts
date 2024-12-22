@@ -137,6 +137,12 @@ export interface MetaDataAPIResponse {
   data: {
     records: {
       data: {
+        main_hero: {
+          data: {
+            head: string;
+            name: string;
+          };
+        };
         main_heroid: string;
         main_hero_win_rate: string;
         main_hero_ban_rate: string;
@@ -164,3 +170,20 @@ export interface GraphDataAPIResponse {
     }[];
   };
 }
+
+export type MetaHeroType = {
+  name: string;
+  hero_id: number;
+  head: string;
+  pick_rate: number;
+  ban_rate: number;
+  win_rate: number;
+};
+
+export type APIMetaHeroDataType = {
+  data: MetaHeroType[];
+  success: boolean;
+  error?: any;
+};
+
+export type MetaStatsType = 'pick' | 'ban' | 'win';

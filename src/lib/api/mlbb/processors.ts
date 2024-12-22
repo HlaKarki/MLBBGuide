@@ -105,6 +105,19 @@ export class DataProcessor {
     );
   }
 
+  static processSearchMeta(data: MetaDataAPIResponse) {
+    return data.data.records.map(record => {
+      return {
+        name: record.data.main_hero.data.name,
+        hero_id: record.data.main_heroid,
+        head: record.data.main_hero.data.head,
+        pick_rate: record.data.main_hero_appearance_rate,
+        ban_rate: record.data.main_hero_ban_rate,
+        win_rate: record.data.main_hero_win_rate,
+      };
+    });
+  }
+
   static combineData(
     heroData: Map<string, Partial<FinalHeroDataType>>,
     counters: Map<string, Partial<FinalHeroDataType>>,
